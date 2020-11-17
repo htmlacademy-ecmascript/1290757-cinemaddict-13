@@ -1,7 +1,7 @@
 # Проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Aлексей Серебряков](https://up.htmlacademy.ru/ecmascript/13/user/1290757).
-* Наставник: `Неизвестно`.
+* Наставник: [Артём Мязитов](https://htmlacademy.ru/profile/axema).
 
 ---
 
