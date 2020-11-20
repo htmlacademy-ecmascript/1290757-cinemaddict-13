@@ -8,9 +8,12 @@ import {createStatisticsTemplate} from "./view/stats.js";
 import {createPopupTemplate} from "./view/popup.js";
 import {generateFilm} from "./mock/film.js";
 
-const MOVIES_ON_PAGE = 5;
+const MOVIES_PER_STEP = 5;
 const MOVIES_TOP_RATED = 2;
 const MOVIES_MOST_COMMENTED = 2;
+const TOTAL_FILMS = 18;
+
+const films = new Array(TOTAL_FILMS).fill().map(generateFilm);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -29,11 +32,31 @@ const filmList = main.querySelector(`.films-list`);
 const filmsContainer = filmList.querySelector(`.films-list__container`);
 const filmListExtra = main.querySelectorAll(`.films-list.films-list--extra`);
 
-for (let i = 0; i < MOVIES_ON_PAGE; i++) {
-  render(filmsContainer, createFilmsTemplate(generateFilm()), `beforeend`);
+for (let i = 0; i < Math.min(films.length, MOVIES_PER_STEP); i++) {
+  render(filmsContainer, createFilmsTemplate(films[i]), `beforeend`);
 }
 
-render(filmList, createButtonTemplate(), `beforeend`);
+if (TOTAL_FILMS > MOVIES_PER_STEP) {
+  let renderedTaskCount = MOVIES_PER_STEP;
+
+  render(filmList, createButtonTemplate(), `beforeend`);
+
+  const loadMoreButton = filmList.querySelector(`.films-list__show-more`);
+
+  loadMoreButton.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+
+    films
+      .slice(renderedTaskCount, renderedTaskCount + MOVIES_PER_STEP)
+      .forEach((film) => render(filmsContainer, createFilmsTemplate(film), `beforeend`));
+
+    renderedTaskCount += MOVIES_PER_STEP;
+
+    if (renderedTaskCount >= films.length) {
+      loadMoreButton.remove();
+    }
+  });
+}
 
 if (filmListExtra[0]) {
   const topRatedFilmsContainer = filmListExtra[0].querySelector(`.films-list__container`);
@@ -51,5 +74,5 @@ if (filmListExtra[1]) {
   }
 }
 
-render(main, createStatisticsTemplate(), `beforeend`);
+//render(main, createStatisticsTemplate(), `beforeend`);
 //render(body, createPopupTemplate(), `beforeend`);
