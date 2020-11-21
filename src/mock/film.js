@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
 import {getRandomInteger, getRandomArrayItem, getArrayWithRandomItems} from "../utils.js";
+import {PROPOSALS, ACTORS} from "../const";
+import {generateComment} from "./comment.js";
 
 const MAX_COMMENT = 5;
 const MAX_RATING = 10;
@@ -31,18 +33,6 @@ const GENRES = [
   `Comedy`,
   `Cartoon`
 ];
-const DESCRIPTION_TEXTS = [
-  `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-  `Cras aliquet varius magna, non porta ligula feugiat eget.`,
-  `Fusce tristique felis at fermentum pharetra.`,
-  `Aliquam id orci ut lectus varius viverra.`,
-  `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
-  `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
-  `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
-  `Sed sed nisi sed augue convallis suscipit in sed felis.`,
-  `Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.`,
-  `In rutrum ac purus sit amet tempus.`
-];
 const DIRECTORS = [
   `Anthony Mann`,
   `Peter Jackson`,
@@ -59,15 +49,6 @@ const WRITERS = [
   `Ernest Hemingway`,
   `John Houston`,
   `Truman Capote`,
-];
-const ACTORS = [
-  `Erich von Stroheim`,
-  `Mary Beth Hughes`,
-  `Dan Duryea`,
-  `Leonardo DiCaprio`,
-  `Brad Pitt`,
-  `Tom Cruise`,
-  `Angelina Jolie`
 ];
 const COUNTRIES = [
   `USA`,
@@ -94,7 +75,7 @@ const generateRating = (a = 1, b = 0) => {
 };
 
 const generateDescription = () => {
-  return getArrayWithRandomItems(DESCRIPTION_TEXTS).join(` `);
+  return getArrayWithRandomItems(PROPOSALS).join(` `);
 };
 
 const generateDate = () => {
@@ -109,13 +90,19 @@ const generateTime = () => {
     : `${minutes % 60}m`;
 };
 
+const getComments = () => {
+  const commentCount = getRandomInteger(0, MAX_COMMENT);
+
+  return new Array(commentCount).fill().map(generateComment);
+};
+
 const generateFilm = () => {
   return {
     id: getRandomInteger(0, MAX_ID),
     name: getRandomArrayItem(NAMES),
     poster: getRandomArrayItem(POSTERS),
     description: generateDescription(),
-    commentCount: getRandomInteger(0, MAX_COMMENT),
+    comments: getComments(),
     rating: generateRating(MAX_RATING),
     releaseDate: generateDate(),
     runtime: generateTime(),

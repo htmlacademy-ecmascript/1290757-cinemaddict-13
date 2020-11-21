@@ -3,8 +3,9 @@ import dayjs from "dayjs";
 const SHORT_DESCRIPTION_LENGTH = 139;
 
 const createFilmsTemplate = (film) => {
-  const {id, name, poster, description, commentCount, rating, releaseDate, runtime, genres} = film;
+  const {id, name, poster, description, comments, rating, releaseDate, runtime, genres} = film;
 
+  const commentCount = comments.length;
   const year = dayjs(releaseDate).format(`YYYY`);
   const shortDescription = description.length > SHORT_DESCRIPTION_LENGTH
     ? `${description.substr(0, SHORT_DESCRIPTION_LENGTH)}&hellip;`
