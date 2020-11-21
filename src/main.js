@@ -139,8 +139,14 @@ if (TOTAL_FILMS > MOVIES_PER_STEP) {
 if (filmListExtra[0]) {
   const topRatedFilmsContainer = filmListExtra[0].querySelector(`.films-list__container`);
 
+  const topRatedFilms = [...films];
+
+  topRatedFilms.sort((a, b) => {
+    return b.rating - a.rating;
+  });
+
   for (let i = 0; i < MOVIES_TOP_RATED; i++) {
-    render(topRatedFilmsContainer, createFilmsTemplate(films[i]), `beforeend`);
+    render(topRatedFilmsContainer, createFilmsTemplate(topRatedFilms[i]), `beforeend`);
   }
 
   const topRatedFilmCards = topRatedFilmsContainer.querySelectorAll(`.film-card`);
@@ -153,8 +159,14 @@ if (filmListExtra[0]) {
 if (filmListExtra[1]) {
   const mostCommentedFilmsContainer = filmListExtra[1].querySelector(`.films-list__container`);
 
+  const mostCommentedFilms = [...films];
+
+  mostCommentedFilms.sort((a, b) => {
+    return b.comments.length - a.comments.length;
+  });
+
   for (let i = 0; i < MOVIES_MOST_COMMENTED; i++) {
-    render(mostCommentedFilmsContainer, createFilmsTemplate(films[i + 2]), `beforeend`);
+    render(mostCommentedFilmsContainer, createFilmsTemplate(mostCommentedFilms[i]), `beforeend`);
   }
 
   const mostCommentedFilmCards = mostCommentedFilmsContainer.querySelectorAll(`.film-card`);
