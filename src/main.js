@@ -151,4 +151,3 @@ if (filmListExtra[1]) {
 }
 
 //render(main, createStatisticsTemplate(), `beforeend`);
-//

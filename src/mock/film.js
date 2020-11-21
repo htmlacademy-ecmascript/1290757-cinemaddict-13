@@ -43,6 +43,55 @@ const DESCRIPTION_TEXTS = [
   `Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.`,
   `In rutrum ac purus sit amet tempus.`
 ];
+const DIRECTORS = [
+  `Anthony Mann`,
+  `Peter Jackson`,
+  `Robert Zemeckis`,
+  `David Lynch`,
+  `George Lucas`,
+  `Thomas Harper Ince`,
+  `Elia Kazan`
+];
+const WRITERS = [
+  `Anne Wigton`,
+  `Heinz Herald`,
+  `Richard Weil`,
+  `Ernest Hemingway`,
+  `John Houston`,
+  `Truman Capote`,
+];
+const ACTORS = [
+  `Erich von Stroheim`,
+  `Mary Beth Hughes`,
+  `Dan Duryea`,
+  `Leonardo DiCaprio`,
+  `Brad Pitt`,
+  `Tom Cruise`,
+  `Angelina Jolie`
+];
+const COUNTRIES = [
+  `USA`,
+  `Russia`,
+  `UK`,
+  `Canada`,
+  `India`,
+  `France`,
+  `Mexico`
+];
+const AGE_RATING = [
+  `0`,
+  `6`,
+  `12`,
+  `16`,
+  `18`
+];
+
+const generateRating = (a = 1, b = 0) => {
+  const lower = Math.min(a, b);
+  const upper = Math.max(a, b);
+
+  return Number(lower + Math.random() * (upper - lower)).toFixed(1);
+};
 
 const generateDescription = () => {
   return getArrayWithRandomItems(DESCRIPTION_TEXTS).join(` `);
@@ -67,10 +116,15 @@ const generateFilm = () => {
     poster: getRandomArrayItem(POSTERS),
     description: generateDescription(),
     commentCount: getRandomInteger(0, MAX_COMMENT),
-    rating: getRandomInteger(0, MAX_RATING),
+    rating: generateRating(MAX_RATING),
     releaseDate: generateDate(),
     runtime: generateTime(),
-    genres: getArrayWithRandomItems(GENRES)
+    genres: getArrayWithRandomItems(GENRES),
+    director: getRandomArrayItem(DIRECTORS),
+    writers: getArrayWithRandomItems(WRITERS),
+    actors: getArrayWithRandomItems(ACTORS),
+    country: getRandomArrayItem(COUNTRIES),
+    age: getRandomArrayItem(AGE_RATING),
   };
 };
 

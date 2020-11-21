@@ -6,7 +6,6 @@ const createFilmsTemplate = (film) => {
   const {id, name, poster, description, commentCount, rating, releaseDate, runtime, genres} = film;
 
   const year = dayjs(releaseDate).format(`YYYY`);
-  const genre = genres[0] ? genres[0] : ``;
   const shortDescription = description.length > SHORT_DESCRIPTION_LENGTH
     ? `${description.substr(0, SHORT_DESCRIPTION_LENGTH)}&hellip;`
     : description;
@@ -17,7 +16,7 @@ const createFilmsTemplate = (film) => {
     <p class="film-card__info">
       <span class="film-card__year">${year}</span>
       <span class="film-card__duration">${runtime}</span>
-      <span class="film-card__genre">${genre}</span>
+      <span class="film-card__genre">${genres[0]}</span>
     </p>
     <img src="./images/posters/${poster}" alt="${name}" class="film-card__poster">
     <p class="film-card__description">${shortDescription}</p>

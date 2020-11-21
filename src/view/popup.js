@@ -1,11 +1,16 @@
 const createPopupTemplate = (filmData) => {
-  const {name, poster, description, commentCount, rating, releaseDate, runtime, genres} = filmData;
+  const {name, poster, description, commentCount, rating, releaseDate, runtime, genres, director, writers, actors,
+    country, age} = filmData;
+
+  const genreTitle = genres.length > 1 ? `Genres` : `Genre`;
 
   const createGenresTemplate = () => {
     return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
   };
 
   const genresTemplate = createGenresTemplate();
+  const writersTemplate = writers.join(`, `);
+  const actorsTemplate = actors.join(`, `);
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -17,14 +22,14 @@ const createPopupTemplate = (filmData) => {
           <div class="film-details__poster">
             <img class="film-details__poster-img" src="./images/posters/${poster}" alt="${name}">
 
-            <p class="film-details__age">18+</p>
+            <p class="film-details__age">${age}+</p>
           </div>
 
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${name}</h3>
-                <p class="film-details__title-original">Original: The Great Flamarion</p>
+                <p class="film-details__title-original">Original: ${name}</p>
               </div>
 
               <div class="film-details__rating">
@@ -35,15 +40,15 @@ const createPopupTemplate = (filmData) => {
             <table class="film-details__table">
               <tr class="film-details__row">
                 <td class="film-details__term">Director</td>
-                <td class="film-details__cell">Anthony Mann</td>
+                <td class="film-details__cell">${director}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
+                <td class="film-details__cell">${writersTemplate}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
+                <td class="film-details__cell">${actorsTemplate}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
@@ -55,10 +60,10 @@ const createPopupTemplate = (filmData) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">USA</td>
+                <td class="film-details__cell">${country}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
+                <td class="film-details__term">${genreTitle}</td>
                 <td class="film-details__cell">${genresTemplate}</td>
               </tr>
             </table>

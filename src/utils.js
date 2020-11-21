@@ -15,9 +15,11 @@ const getRandomArrayItem = (arr) => {
 };
 
 const getArrayWithRandomItems = (arr) => {
-  return arr.filter(() => {
+  const randomItems = arr.filter(() => {
     return Boolean(getRandomInteger());
   });
+
+  return randomItems.length === 0 ? arr[0] : randomItems;
 };
 
 const pressEnter = (evt, action) => {
