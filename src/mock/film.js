@@ -3,6 +3,7 @@ import {getRandomInteger, getRandomArrayItem, getArrayWithRandomItems} from "../
 
 const MAX_COMMENT = 5;
 const MAX_RATING = 10;
+const MAX_ID = 999999;
 const NAMES = [
   `The Dance of Life`,
   `Sagebrush Trail`,
@@ -61,6 +62,7 @@ const generateTime = () => {
 
 const generateFilm = () => {
   return {
+    id: getRandomInteger(0, MAX_ID),
     name: getRandomArrayItem(NAMES),
     poster: getRandomArrayItem(POSTERS),
     description: generateDescription(),

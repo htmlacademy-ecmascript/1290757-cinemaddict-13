@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 const SHORT_DESCRIPTION_LENGTH = 139;
 
 const createFilmsTemplate = (film) => {
-  const {name, poster, description, commentCount, rating, releaseDate, runtime, genres} = film;
+  const {id, name, poster, description, commentCount, rating, releaseDate, runtime, genres} = film;
 
   const year = dayjs(releaseDate).format(`YYYY`);
   const genre = genres[0] ? genres[0] : ``;
@@ -11,7 +11,7 @@ const createFilmsTemplate = (film) => {
     ? `${description.substr(0, SHORT_DESCRIPTION_LENGTH)}&hellip;`
     : description;
 
-  return `<article class="film-card">
+  return `<article id="${id}" class="film-card">
     <h3 class="film-card__title">${name}</h3>
     <p class="film-card__rating">${rating}</p>
     <p class="film-card__info">
