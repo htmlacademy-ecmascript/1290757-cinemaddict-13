@@ -75,19 +75,13 @@ const generateRating = (a = 1, b = 0) => {
 };
 
 const generateDescription = () => {
-  return getArrayWithRandomItems(PROPOSALS).join(` `);
+  const descriptionArr = getArrayWithRandomItems(PROPOSALS);
+
+  return typeof descriptionArr === `string` ? descriptionArr : descriptionArr.join(` `);
 };
 
 const generateDate = () => {
   return dayjs().startOf(`year`).add(getRandomInteger(0, 300), `day`).format(`D MMMM YYYY`);
-};
-
-const generateTime = () => {
-  const minutes = getRandomInteger(1, 120);
-
-  return Math.floor(minutes / 60)
-    ? `${Math.floor(minutes / 60)}h ${minutes % 60}m`
-    : `${minutes % 60}m`;
 };
 
 const getComments = () => {
@@ -105,13 +99,14 @@ const generateFilm = () => {
     comments: getComments(),
     rating: generateRating(MAX_RATING),
     releaseDate: generateDate(),
-    runtime: generateTime(),
+    runtime: getRandomInteger(1, 120),
     genres: getArrayWithRandomItems(GENRES),
     director: getRandomArrayItem(DIRECTORS),
     writers: getArrayWithRandomItems(WRITERS),
     actors: getArrayWithRandomItems(ACTORS),
     country: getRandomArrayItem(COUNTRIES),
     age: getRandomArrayItem(AGE_RATING),
+    isWatched: Boolean(getRandomInteger()),
   };
 };
 

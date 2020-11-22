@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import {getFormatTime} from "../utils";
 
 const SHORT_DESCRIPTION_LENGTH = 139;
 
@@ -7,6 +8,7 @@ const createFilmsTemplate = (film) => {
 
   const commentCount = comments.length;
   const year = dayjs(releaseDate).format(`YYYY`);
+  const duration = getFormatTime(runtime);
   const shortDescription = description.length > SHORT_DESCRIPTION_LENGTH
     ? `${description.substr(0, SHORT_DESCRIPTION_LENGTH)}&hellip;`
     : description;
@@ -16,7 +18,7 @@ const createFilmsTemplate = (film) => {
     <p class="film-card__rating">${rating}</p>
     <p class="film-card__info">
       <span class="film-card__year">${year}</span>
-      <span class="film-card__duration">${runtime}</span>
+      <span class="film-card__duration">${duration}</span>
       <span class="film-card__genre">${genres[0]}</span>
     </p>
     <img src="./images/posters/${poster}" alt="${name}" class="film-card__poster">

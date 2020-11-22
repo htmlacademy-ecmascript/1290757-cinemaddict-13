@@ -1,3 +1,5 @@
+import {getFormatTime} from "../utils";
+
 const createCommentsTemplate = (comments) => {
   return comments.length === 0 ? `` : `<ul class="film-details__comments-list">
     ${comments.map((comment) => `<li class="film-details__comment">
@@ -21,6 +23,7 @@ const createPopupTemplate = (filmData) => {
 
   const commentCount = comments.length;
   const genreTitle = genres.length > 1 ? `Genres` : `Genre`;
+  const duration = getFormatTime(runtime);
 
   const createGenresTemplate = () => {
     return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
@@ -75,7 +78,7 @@ const createPopupTemplate = (filmData) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${runtime}</td>
+                <td class="film-details__cell">${duration}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>

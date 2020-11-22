@@ -43,11 +43,18 @@ const pressLeftMouseButton = (evt, action) => {
   }
 };
 
+const getFormatTime = (minutes) => {
+  return Math.floor(minutes / 60)
+    ? `${Math.floor(minutes / 60)}h ${minutes % 60}m`
+    : `${minutes % 60}m`;
+};
+
 export {
   getRandomInteger,
   getRandomArrayItem,
   getArrayWithRandomItems,
   pressEnter,
   pressEscape,
-  pressLeftMouseButton
+  pressLeftMouseButton,
+  getFormatTime
 };
