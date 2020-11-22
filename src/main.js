@@ -6,6 +6,7 @@ import {createFilmsTemplate} from "./view/film.js";
 import {createButtonTemplate} from "./view/button.js";
 import {createStatisticsTemplate} from "./view/stats.js";
 import {createPopupTemplate} from "./view/popup.js";
+import {createFooterStatisticsTemplate} from "./view/footer-statistics.js";
 import {generateFilm} from "./mock/film.js";
 import {pressEnter, pressEscape, pressLeftMouseButton} from "./utils.js";
 
@@ -22,6 +23,7 @@ let closePopupButton;
 const body = document.querySelector(`body`);
 const header = body.querySelector(`.header`);
 const main = body.querySelector(`.main`);
+const footerStatistics = body.querySelector(`.footer__statistics`);
 const films = new Array(TOTAL_FILMS).fill().map(generateFilm);
 
 const render = (container, template, place) => {
@@ -115,6 +117,7 @@ render(header, createProfileTemplate(), `beforeend`);
 render(main, createFilterTemplate(), `beforeend`);
 render(main, createSortingTemplate(), `beforeend`);
 render(main, createFilmsContainerTemplate(), `beforeend`);
+render(footerStatistics, createFooterStatisticsTemplate(TOTAL_FILMS), `beforeend`);
 
 const filmList = main.querySelector(`.films-list`);
 const filmsContainer = filmList.querySelector(`.films-list__container`);
