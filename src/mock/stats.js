@@ -16,13 +16,24 @@ const RATING = {
 const getFilmsStats = (films) => {
   let filmsStats = {
     count: 0,
-    minutes: 0
+    minutes: 0,
+    genres: new Map()
   };
 
   films.forEach((film) => {
     if (film.isWatched) {
       filmsStats.count++;
       filmsStats.minutes += film.runtime;
+
+      for (const genre of film.genres) {
+        if (filmsStats.genres.get(genre) === undefined) {
+          filmsStats.genres.set(genre, 1);
+        } else {
+          const currentValue = filmsStats.genres.get(genre);
+
+          filmsStats.genres.set(genre, currentValue + 1);
+        }
+      }
     }
   });
 
@@ -43,6 +54,22 @@ const getRank = (count) => {
   return rank;
 };
 
+const getFavoriteGenre = (genresData) => {
+  let favoriteGenre;
+
+  for (const [key, value] of genresData) {
+    if (!favoriteGenre) {
+      favoriteGenre = [key, value];
+    } else {
+      if (favoriteGenre[1] < value) {
+        favoriteGenre = [key, value];
+      }
+    }
+  }
+
+  return favoriteGenre[0];
+};
+
 const generateStats = (films) => {
   const filmsStats = getFilmsStats(films);
 
@@ -50,7 +77,7 @@ const generateStats = (films) => {
     watched: filmsStats.count,
     rank: getRank(filmsStats.count),
     totalDuration: filmsStats.minutes,
-    favoriteGenre: ``,
+    favoriteGenre: getFavoriteGenre(filmsStats.genres),
   };
 };
 

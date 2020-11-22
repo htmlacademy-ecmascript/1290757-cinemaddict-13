@@ -14,7 +14,7 @@ import {pressEnter, pressEscape, pressLeftMouseButton} from "./utils.js";
 const MOVIES_PER_STEP = 5;
 const MOVIES_TOP_RATED = 2;
 const MOVIES_MOST_COMMENTED = 2;
-const TOTAL_FILMS = 18;
+const TOTAL_FILMS = 48;
 
 let renderedTaskCount = MOVIES_PER_STEP;
 let loadMoreButton;
@@ -124,7 +124,7 @@ const showStats = () => {
   main.innerHTML = ``;
 
   render(main, createFilterTemplate(), `beforeend`);
-  render(main, createStatisticsTemplate(), `beforeend`);
+  render(main, createStatisticsTemplate(stats), `beforeend`);
 };
 
 const onStatsShow = (evt) => {

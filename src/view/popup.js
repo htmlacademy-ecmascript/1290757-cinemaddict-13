@@ -18,18 +18,17 @@ const createCommentsTemplate = (comments) => {
   </ul>`;
 };
 
+const createGenresTemplate = (genres) => {
+  return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
+};
+
 const createPopupTemplate = (filmData) => {
   const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country, age} = filmData;
 
   const commentCount = comments.length;
   const genreTitle = genres.length > 1 ? `Genres` : `Genre`;
   const duration = getFormatTime(runtime);
-
-  const createGenresTemplate = () => {
-    return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
-  };
-
-  const genresTemplate = createGenresTemplate();
+  const genresTemplate = createGenresTemplate(genres);
   const writersTemplate = writers.join(`, `);
   const actorsTemplate = actors.join(`, `);
   const commentsTemplate = createCommentsTemplate(comments);
