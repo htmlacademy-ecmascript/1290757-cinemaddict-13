@@ -1,10 +1,12 @@
 import dayjs from "dayjs";
 import {getRandomInteger, getRandomArrayItem, getArrayWithRandomItems} from "../utils.js";
-import {PROPOSALS, ACTORS} from "../const";
+import {PROPOSALS, ACTORS, MAX_DAYS} from "../const";
 import {generateComment} from "./comment.js";
 
 const MAX_COMMENT = 5;
 const MAX_RATING = 10;
+const MIN_RUNTIME = 1;
+const MAX_RUNTIME = 120;
 const MAX_ID = 999999;
 const NAMES = [
   `The Dance of Life`,
@@ -67,6 +69,8 @@ const AGE_RATING = [
   `18`
 ];
 
+let isWatched = false;
+
 const generateRating = (a = 1, b = 0) => {
   const lower = Math.min(a, b);
   const upper = Math.max(a, b);
@@ -81,32 +85,48 @@ const generateDescription = () => {
 };
 
 const generateDate = () => {
-  return dayjs().startOf(`year`).add(getRandomInteger(0, 300), `day`).format(`D MMMM YYYY`);
+  return dayjs().startOf(`year`).add(getRandomInteger(MAX_DAYS), `day`).format(`D MMMM YYYY`);
 };
 
 const getComments = () => {
-  const commentCount = getRandomInteger(0, MAX_COMMENT);
+  const commentCount = getRandomInteger(MAX_COMMENT);
 
   return new Array(commentCount).fill().map(generateComment);
 };
 
+const getWatchedStatus = () => {
+  isWatched = Boolean(getRandomInteger());
+};
+
+const getWatchlistStatus = () => {
+  return isWatched ? false : Boolean(getRandomInteger());
+};
+
+const getFavoritesStatus = () => {
+  return isWatched ? Boolean(getRandomInteger()) : false;
+};
+
 const generateFilm = () => {
+  getWatchedStatus();
+
   return {
-    id: getRandomInteger(0, MAX_ID),
+    id: getRandomInteger(MAX_ID),
     name: getRandomArrayItem(NAMES),
     poster: getRandomArrayItem(POSTERS),
     description: generateDescription(),
     comments: getComments(),
     rating: generateRating(MAX_RATING),
     releaseDate: generateDate(),
-    runtime: getRandomInteger(1, 120),
+    runtime: getRandomInteger(MAX_RUNTIME, MIN_RUNTIME),
     genres: getArrayWithRandomItems(GENRES),
     director: getRandomArrayItem(DIRECTORS),
     writers: getArrayWithRandomItems(WRITERS),
     actors: getArrayWithRandomItems(ACTORS),
     country: getRandomArrayItem(COUNTRIES),
     age: getRandomArrayItem(AGE_RATING),
-    isWatched: Boolean(getRandomInteger()),
+    watched: isWatched,
+    watchlist: getWatchlistStatus(),
+    favorite: getFavoritesStatus()
   };
 };
 

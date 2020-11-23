@@ -9,12 +9,13 @@ import {createPopupTemplate} from "./view/popup.js";
 import {createFooterStatisticsTemplate} from "./view/footer-statistics.js";
 import {generateFilm} from "./mock/film.js";
 import {generateStats} from "./mock/stats.js";
+import {generateFilterData} from "./mock/filter.js";
 import {pressEnter, pressEscape, pressLeftMouseButton} from "./utils.js";
 
 const MOVIES_PER_STEP = 5;
 const MOVIES_TOP_RATED = 2;
 const MOVIES_MOST_COMMENTED = 2;
-const TOTAL_FILMS = 48;
+const TOTAL_FILMS = 31;
 
 let renderedTaskCount = MOVIES_PER_STEP;
 let loadMoreButton;
@@ -28,6 +29,7 @@ const main = body.querySelector(`.main`);
 const footerStatistics = body.querySelector(`.footer__statistics`);
 const films = new Array(TOTAL_FILMS).fill().map(generateFilm);
 const stats = generateStats(films);
+const filterData = generateFilterData(films);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -123,7 +125,7 @@ const onDetailFilmShow = (evt) => {
 const showStats = () => {
   main.innerHTML = ``;
 
-  render(main, createFilterTemplate(), `beforeend`);
+  render(main, createFilterTemplate(filterData), `beforeend`);
   render(main, createStatisticsTemplate(stats), `beforeend`);
 };
 
@@ -136,7 +138,7 @@ const onStatsShow = (evt) => {
 };
 
 render(header, createProfileTemplate(stats), `beforeend`);
-render(main, createFilterTemplate(), `beforeend`);
+render(main, createFilterTemplate(filterData), `beforeend`);
 render(main, createSortingTemplate(), `beforeend`);
 render(main, createFilmsContainerTemplate(), `beforeend`);
 render(footerStatistics, createFooterStatisticsTemplate(TOTAL_FILMS), `beforeend`);
@@ -163,7 +165,9 @@ for (let i = 0; i < Math.min(films.length, MOVIES_PER_STEP); i++) {
 
 if (TOTAL_FILMS > MOVIES_PER_STEP) {
   render(filmList, createButtonTemplate(), `beforeend`);
+
   loadMoreButton = filmList.querySelector(`.films-list__show-more`);
+
   loadMoreButton.addEventListener(`mousedown`, onMoreFilmShow);
 }
 

@@ -1,7 +1,7 @@
 const ENTER_BUTTON_KYE = `Enter`;
 const ESCAPE_BUTTON_KYE = `Escape`;
 
-const getRandomInteger = (a = 0, b = 1) => {
+const getRandomInteger = (b = 1, a = 0) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
 
@@ -9,7 +9,7 @@ const getRandomInteger = (a = 0, b = 1) => {
 };
 
 const getRandomArrayItem = (arr) => {
-  const randomIndex = getRandomInteger(0, arr.length - 1);
+  const randomIndex = getRandomInteger(arr.length - 1);
 
   return arr[randomIndex];
 };

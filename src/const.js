@@ -1,3 +1,4 @@
+const MAX_DAYS = 300;
 const PROPOSALS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
@@ -20,4 +21,4 @@ const ACTORS = [
   `Angelina Jolie`
 ];
 
-export {PROPOSALS, ACTORS};
+export {PROPOSALS, ACTORS, MAX_DAYS};

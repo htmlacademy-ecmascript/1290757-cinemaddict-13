@@ -1,5 +1,5 @@
 import {getRandomArrayItem, getRandomInteger} from "../utils";
-import {PROPOSALS, ACTORS} from "../const";
+import {PROPOSALS, ACTORS, MAX_DAYS} from "../const";
 import dayjs from "dayjs";
 
 const EMOTIONS = [
@@ -10,7 +10,7 @@ const EMOTIONS = [
 ];
 
 const generateDate = () => {
-  return dayjs().startOf(`year`).add(getRandomInteger(0, 300), `day`).format(`YYYY/M/D H:mm`);
+  return dayjs().startOf(`year`).add(getRandomInteger(MAX_DAYS), `day`).format(`YYYY/M/D H:mm`);
 };
 
 const generateComment = () => {

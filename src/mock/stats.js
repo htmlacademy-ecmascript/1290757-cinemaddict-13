@@ -21,7 +21,7 @@ const getFilmsStats = (films) => {
   };
 
   films.forEach((film) => {
-    if (film.isWatched) {
+    if (film.watched) {
       filmsStats.count++;
       filmsStats.minutes += film.runtime;
 
