@@ -10,12 +10,16 @@ import {generateFilm} from "./mock/film.js";
 import {generateStats} from "./mock/stats.js";
 import {generateFilterData} from "./mock/filter.js";
 import {checkButtonPress} from "./utils.js";
-import {BUTTONS} from "./const";
 
 const MOVIES_PER_STEP = 5;
 const MOVIES_TOP_RATED = 2;
 const MOVIES_MOST_COMMENTED = 2;
 const TOTAL_FILMS = 31;
+const BUTTONS = {
+  enter: `Enter`,
+  escape: `Escape`,
+  mainMouse: 0
+};
 
 let renderedTaskCount = MOVIES_PER_STEP;
 let loadMoreButton;
@@ -98,11 +102,7 @@ const showDetailFilm = () => {
   document.addEventListener(`keydown`, onPopupClose);
 };
 
-const getDetailData = (evt) => {
-  const dataId = evt.target.parentElement.id;
-
-  return films.filter((film) => film.id === Number(dataId))[0];
-};
+const getDetailData = (evt) => films.filter((film) => film.id === Number(evt.target.parentElement.id))[0];
 
 const onDetailFilmShow = (evt) => {
   if (evt.target.classList.contains(`film-card__poster`)

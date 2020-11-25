@@ -78,26 +78,15 @@ const generateRating = (a = 1, b = 0) => {
   return Number(lower + Math.random() * (upper - lower)).toFixed(1);
 };
 
-const generateDescription = () => {
-  const descriptionArr = getArrayWithRandomItems(PROPOSALS);
-
-  return typeof descriptionArr === `string` ? descriptionArr : descriptionArr.join(` `);
-};
-
+const generateDescription = () => getArrayWithRandomItems(PROPOSALS).join(` `);
 const generateDate = () => dayjs().startOf(`year`).add(getRandomInteger(MAX_DAYS), `day`).format(`D MMMM YYYY`);
-
-const getComments = () => {
-  const commentCount = getRandomInteger(MAX_COMMENT);
-
-  return new Array(commentCount).fill().map(generateComment);
-};
+const getComments = () => new Array(getRandomInteger(MAX_COMMENT)).fill().map(generateComment);
+const getWatchlistStatus = () => isWatched ? false : Boolean(getRandomInteger());
+const getFavoritesStatus = () => isWatched ? Boolean(getRandomInteger()) : false;
 
 const getWatchedStatus = () => {
   isWatched = Boolean(getRandomInteger());
 };
-
-const getWatchlistStatus = () => isWatched ? false : Boolean(getRandomInteger());
-const getFavoritesStatus = () => isWatched ? Boolean(getRandomInteger()) : false;
 
 const generateFilm = () => {
   getWatchedStatus();

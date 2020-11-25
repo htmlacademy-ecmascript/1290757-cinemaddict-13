@@ -20,10 +20,5 @@ const ACTORS = [
   `Tom Cruise`,
   `Angelina Jolie`
 ];
-const BUTTONS = {
-  enter: `Enter`,
-  escape: `Escape`,
-  mainMouse: 0
-};
 
-export {PROPOSALS, ACTORS, MAX_DAYS, BUTTONS};
+export {PROPOSALS, ACTORS, MAX_DAYS};
