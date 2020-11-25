@@ -1,6 +1,3 @@
-const ENTER_BUTTON_KYE = `Enter`;
-const ESCAPE_BUTTON_KYE = `Escape`;
-
 const getRandomInteger = (b = 1, a = 0) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -20,22 +17,8 @@ const getArrayWithRandomItems = (arr) => {
   return randomItems.length === 0 ? arr[0] : randomItems;
 };
 
-const pressEnter = (evt, action) => {
-  if (evt.key === ENTER_BUTTON_KYE) {
-    evt.preventDefault();
-    action(evt);
-  }
-};
-
-const pressEscape = (evt, action) => {
-  if (evt.key === ESCAPE_BUTTON_KYE) {
-    evt.preventDefault();
-    action();
-  }
-};
-
-const pressLeftMouseButton = (evt, action) => {
-  if (evt.button === 0) {
+const checkButtonPress = (evt, action, button) => {
+  if (evt.key === button || evt.button === button) {
     evt.preventDefault();
     action(evt);
   }
@@ -49,8 +32,6 @@ export {
   getRandomInteger,
   getRandomArrayItem,
   getArrayWithRandomItems,
-  pressEnter,
-  pressEscape,
-  pressLeftMouseButton,
+  checkButtonPress,
   getFormatTime
 };

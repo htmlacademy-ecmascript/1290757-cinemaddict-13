@@ -10,7 +10,8 @@ import {createFooterStatisticsTemplate} from "./view/footer-statistics.js";
 import {generateFilm} from "./mock/film.js";
 import {generateStats} from "./mock/stats.js";
 import {generateFilterData} from "./mock/filter.js";
-import {pressEnter, pressEscape, pressLeftMouseButton} from "./utils.js";
+import {checkButtonPress} from "./utils.js";
+import {BUTTONS} from "./const";
 
 const MOVIES_PER_STEP = 5;
 const MOVIES_TOP_RATED = 2;
@@ -79,12 +80,12 @@ const popupClose = () => {
 const onPopupClose = (evt) => {
   if (evt.type === `keydown`) {
     if (evt.target.className === `film-details__close-btn`) {
-      pressEnter(evt, popupClose);
+      checkButtonPress(evt, popupClose, BUTTONS.enter);
     } else {
-      pressEscape(evt, popupClose);
+      checkButtonPress(evt, popupClose, BUTTONS.escape);
     }
   } else if (evt.type === `mousedown`) {
-    pressLeftMouseButton(evt, popupClose);
+    checkButtonPress(evt, popupClose, BUTTONS.mainMouse);
   }
 };
 
@@ -113,9 +114,9 @@ const onDetailFilmShow = (evt) => {
     filmData = getDetailData(evt);
 
     if (evt.type === `keydown`) {
-      pressEnter(evt, showDetailFilm);
+      checkButtonPress(evt, showDetailFilm, BUTTONS.enter);
     } else if (evt.type === `mousedown`) {
-      pressLeftMouseButton(evt, showDetailFilm);
+      checkButtonPress(evt, showDetailFilm, BUTTONS.mainMouse);
     }
   }
 };
@@ -129,9 +130,9 @@ const showStats = () => {
 
 const onStatsShow = (evt) => {
   if (evt.type === `keydown`) {
-    pressEnter(evt, showStats);
+    checkButtonPress(evt, showStats, BUTTONS.enter);
   } else if (evt.type === `mousedown`) {
-    pressLeftMouseButton(evt, showStats);
+    checkButtonPress(evt, showStats, BUTTONS.mainMouse);
   }
 };
 
