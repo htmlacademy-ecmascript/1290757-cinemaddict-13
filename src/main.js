@@ -4,7 +4,6 @@ import {createSortingTemplate} from "./view/sorting.js";
 import {createFilmsContainerTemplate} from "./view/films-container.js";
 import {createFilmsTemplate} from "./view/film.js";
 import {createButtonTemplate} from "./view/button.js";
-import {createStatisticsTemplate} from "./view/stats.js";
 import {createPopupTemplate} from "./view/popup.js";
 import {createFooterStatisticsTemplate} from "./view/footer-statistics.js";
 import {generateFilm} from "./mock/film.js";
@@ -121,31 +120,11 @@ const onDetailFilmShow = (evt) => {
   }
 };
 
-const showStats = () => {
-  main.innerHTML = ``;
-
-  render(main, createFilterTemplate(filterData), `beforeend`);
-  render(main, createStatisticsTemplate(stats), `beforeend`);
-};
-
-const onStatsShow = (evt) => {
-  if (evt.type === `keydown`) {
-    checkButtonPress(evt, showStats, BUTTONS.enter);
-  } else if (evt.type === `mousedown`) {
-    checkButtonPress(evt, showStats, BUTTONS.mainMouse);
-  }
-};
-
 render(header, createProfileTemplate(stats), `beforeend`);
 render(main, createFilterTemplate(filterData), `beforeend`);
 render(main, createSortingTemplate(), `beforeend`);
 render(main, createFilmsContainerTemplate(), `beforeend`);
 render(footerStatistics, createFooterStatisticsTemplate(TOTAL_FILMS), `beforeend`);
-
-const statsButton = main.querySelector(`.main-navigation__additional`);
-
-statsButton.addEventListener(`mousedown`, onStatsShow);
-statsButton.addEventListener(`keydown`, onStatsShow);
 
 const filmList = main.querySelector(`.films-list`);
 const filmsContainer = filmList.querySelector(`.films-list__container`);
