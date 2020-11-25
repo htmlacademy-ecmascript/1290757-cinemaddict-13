@@ -153,14 +153,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_films_container_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./view/films-container.js */ "./src/view/films-container.js");
 /* harmony import */ var _view_film_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./view/film.js */ "./src/view/film.js");
 /* harmony import */ var _view_button_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./view/button.js */ "./src/view/button.js");
-/* harmony import */ var _view_stats_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./view/stats.js */ "./src/view/stats.js");
-/* harmony import */ var _view_popup_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./view/popup.js */ "./src/view/popup.js");
-/* harmony import */ var _view_footer_statistics_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./view/footer-statistics.js */ "./src/view/footer-statistics.js");
-/* harmony import */ var _mock_film_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./mock/film.js */ "./src/mock/film.js");
-/* harmony import */ var _mock_stats_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./mock/stats.js */ "./src/mock/stats.js");
-/* harmony import */ var _mock_filter_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./mock/filter.js */ "./src/mock/filter.js");
-/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
-
+/* harmony import */ var _view_popup_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./view/popup.js */ "./src/view/popup.js");
+/* harmony import */ var _view_footer_statistics_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./view/footer-statistics.js */ "./src/view/footer-statistics.js");
+/* harmony import */ var _mock_film_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./mock/film.js */ "./src/mock/film.js");
+/* harmony import */ var _mock_stats_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./mock/stats.js */ "./src/mock/stats.js");
+/* harmony import */ var _mock_filter_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./mock/filter.js */ "./src/mock/filter.js");
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
 
 
 
@@ -178,6 +176,11 @@ const MOVIES_PER_STEP = 5;
 const MOVIES_TOP_RATED = 2;
 const MOVIES_MOST_COMMENTED = 2;
 const TOTAL_FILMS = 31;
+const BUTTONS = {
+  enter: `Enter`,
+  escape: `Escape`,
+  mainMouse: 0
+};
 
 let renderedTaskCount = MOVIES_PER_STEP;
 let loadMoreButton;
@@ -189,9 +192,9 @@ const body = document.querySelector(`body`);
 const header = body.querySelector(`.header`);
 const main = body.querySelector(`.main`);
 const footerStatistics = body.querySelector(`.footer__statistics`);
-const films = new Array(TOTAL_FILMS).fill().map(_mock_film_js__WEBPACK_IMPORTED_MODULE_9__["generateFilm"]);
-const stats = Object(_mock_stats_js__WEBPACK_IMPORTED_MODULE_10__["generateStats"])(films);
-const filterData = Object(_mock_filter_js__WEBPACK_IMPORTED_MODULE_11__["generateFilterData"])(films);
+const films = new Array(TOTAL_FILMS).fill().map(_mock_film_js__WEBPACK_IMPORTED_MODULE_8__["generateFilm"]);
+const stats = Object(_mock_stats_js__WEBPACK_IMPORTED_MODULE_9__["generateStats"])(films);
+const filterData = Object(_mock_filter_js__WEBPACK_IMPORTED_MODULE_10__["generateFilterData"])(films);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -241,17 +244,17 @@ const popupClose = () => {
 const onPopupClose = (evt) => {
   if (evt.type === `keydown`) {
     if (evt.target.className === `film-details__close-btn`) {
-      Object(_utils_js__WEBPACK_IMPORTED_MODULE_12__["pressEnter"])(evt, popupClose);
+      Object(_utils_js__WEBPACK_IMPORTED_MODULE_11__["checkButtonPress"])(evt, popupClose, BUTTONS.enter);
     } else {
-      Object(_utils_js__WEBPACK_IMPORTED_MODULE_12__["pressEscape"])(evt, popupClose);
+      Object(_utils_js__WEBPACK_IMPORTED_MODULE_11__["checkButtonPress"])(evt, popupClose, BUTTONS.escape);
     }
   } else if (evt.type === `mousedown`) {
-    Object(_utils_js__WEBPACK_IMPORTED_MODULE_12__["pressLeftMouseButton"])(evt, popupClose);
+    Object(_utils_js__WEBPACK_IMPORTED_MODULE_11__["checkButtonPress"])(evt, popupClose, BUTTONS.mainMouse);
   }
 };
 
 const showDetailFilm = () => {
-  render(body, Object(_view_popup_js__WEBPACK_IMPORTED_MODULE_7__["createPopupTemplate"])(filmData), `beforeend`);
+  render(body, Object(_view_popup_js__WEBPACK_IMPORTED_MODULE_6__["createPopupTemplate"])(filmData), `beforeend`);
 
   closePopupButton = body.querySelector(`.film-details__close-btn`);
 
@@ -260,13 +263,7 @@ const showDetailFilm = () => {
   document.addEventListener(`keydown`, onPopupClose);
 };
 
-const getDetailData = (evt) => {
-  const dataId = evt.target.parentElement.id;
-
-  return films.filter((film) => {
-    return film.id === Number(dataId);
-  })[0];
-};
+const getDetailData = (evt) => films.filter((film) => film.id === Number(evt.target.parentElement.id))[0];
 
 const onDetailFilmShow = (evt) => {
   if (evt.target.classList.contains(`film-card__poster`)
@@ -277,25 +274,10 @@ const onDetailFilmShow = (evt) => {
     filmData = getDetailData(evt);
 
     if (evt.type === `keydown`) {
-      Object(_utils_js__WEBPACK_IMPORTED_MODULE_12__["pressEnter"])(evt, showDetailFilm);
+      Object(_utils_js__WEBPACK_IMPORTED_MODULE_11__["checkButtonPress"])(evt, showDetailFilm, BUTTONS.enter);
     } else if (evt.type === `mousedown`) {
-      Object(_utils_js__WEBPACK_IMPORTED_MODULE_12__["pressLeftMouseButton"])(evt, showDetailFilm);
+      Object(_utils_js__WEBPACK_IMPORTED_MODULE_11__["checkButtonPress"])(evt, showDetailFilm, BUTTONS.mainMouse);
     }
-  }
-};
-
-const showStats = () => {
-  main.innerHTML = ``;
-
-  render(main, Object(_view_filter_js__WEBPACK_IMPORTED_MODULE_1__["createFilterTemplate"])(filterData), `beforeend`);
-  render(main, Object(_view_stats_js__WEBPACK_IMPORTED_MODULE_6__["createStatisticsTemplate"])(stats), `beforeend`);
-};
-
-const onStatsShow = (evt) => {
-  if (evt.type === `keydown`) {
-    Object(_utils_js__WEBPACK_IMPORTED_MODULE_12__["pressEnter"])(evt, showStats);
-  } else if (evt.type === `mousedown`) {
-    Object(_utils_js__WEBPACK_IMPORTED_MODULE_12__["pressLeftMouseButton"])(evt, showStats);
   }
 };
 
@@ -303,12 +285,7 @@ render(header, Object(_view_profile_js__WEBPACK_IMPORTED_MODULE_0__["createProfi
 render(main, Object(_view_filter_js__WEBPACK_IMPORTED_MODULE_1__["createFilterTemplate"])(filterData), `beforeend`);
 render(main, Object(_view_sorting_js__WEBPACK_IMPORTED_MODULE_2__["createSortingTemplate"])(), `beforeend`);
 render(main, Object(_view_films_container_js__WEBPACK_IMPORTED_MODULE_3__["createFilmsContainerTemplate"])(), `beforeend`);
-render(footerStatistics, Object(_view_footer_statistics_js__WEBPACK_IMPORTED_MODULE_8__["createFooterStatisticsTemplate"])(TOTAL_FILMS), `beforeend`);
-
-const statsButton = main.querySelector(`.main-navigation__additional`);
-
-statsButton.addEventListener(`mousedown`, onStatsShow);
-statsButton.addEventListener(`keydown`, onStatsShow);
+render(footerStatistics, Object(_view_footer_statistics_js__WEBPACK_IMPORTED_MODULE_7__["createFooterStatisticsTemplate"])(TOTAL_FILMS), `beforeend`);
 
 const filmList = main.querySelector(`.films-list`);
 const filmsContainer = filmList.querySelector(`.films-list__container`);
@@ -338,9 +315,7 @@ if (filmListExtra[0]) {
 
   const topRatedFilms = [...films];
 
-  topRatedFilms.sort((a, b) => {
-    return b.rating - a.rating;
-  });
+  topRatedFilms.sort((a, b) => b.rating - a.rating);
 
   for (let i = 0; i < MOVIES_TOP_RATED; i++) {
     render(topRatedFilmsContainer, Object(_view_film_js__WEBPACK_IMPORTED_MODULE_4__["createFilmsTemplate"])(topRatedFilms[i]), `beforeend`);
@@ -359,9 +334,7 @@ if (filmListExtra[1]) {
 
   const mostCommentedFilms = [...films];
 
-  mostCommentedFilms.sort((a, b) => {
-    return b.comments.length - a.comments.length;
-  });
+  mostCommentedFilms.sort((a, b) => b.comments.length - a.comments.length);
 
   for (let i = 0; i < MOVIES_MOST_COMMENTED; i++) {
     render(mostCommentedFilmsContainer, Object(_view_film_js__WEBPACK_IMPORTED_MODULE_4__["createFilmsTemplate"])(mostCommentedFilms[i]), `beforeend`);
@@ -403,9 +376,7 @@ const EMOTIONS = [
   `angry`
 ];
 
-const generateDate = () => {
-  return dayjs__WEBPACK_IMPORTED_MODULE_2___default()().startOf(`year`).add(Object(_utils__WEBPACK_IMPORTED_MODULE_0__["getRandomInteger"])(_const__WEBPACK_IMPORTED_MODULE_1__["MAX_DAYS"]), `day`).format(`YYYY/M/D H:mm`);
-};
+const generateDate = () => dayjs__WEBPACK_IMPORTED_MODULE_2___default()().startOf(`year`).add(Object(_utils__WEBPACK_IMPORTED_MODULE_0__["getRandomInteger"])(_const__WEBPACK_IMPORTED_MODULE_1__["MAX_DAYS"]), `day`).format(`YYYY/M/D H:mm`);
 
 const generateComment = () => {
   return {
@@ -516,32 +487,14 @@ const generateRating = (a = 1, b = 0) => {
   return Number(lower + Math.random() * (upper - lower)).toFixed(1);
 };
 
-const generateDescription = () => {
-  const descriptionArr = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getArrayWithRandomItems"])(_const__WEBPACK_IMPORTED_MODULE_2__["PROPOSALS"]);
-
-  return typeof descriptionArr === `string` ? descriptionArr : descriptionArr.join(` `);
-};
-
-const generateDate = () => {
-  return dayjs__WEBPACK_IMPORTED_MODULE_0___default()().startOf(`year`).add(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getRandomInteger"])(_const__WEBPACK_IMPORTED_MODULE_2__["MAX_DAYS"]), `day`).format(`D MMMM YYYY`);
-};
-
-const getComments = () => {
-  const commentCount = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getRandomInteger"])(MAX_COMMENT);
-
-  return new Array(commentCount).fill().map(_comment_js__WEBPACK_IMPORTED_MODULE_3__["generateComment"]);
-};
+const generateDescription = () => Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getArrayWithRandomItems"])(_const__WEBPACK_IMPORTED_MODULE_2__["PROPOSALS"]).join(` `);
+const generateDate = () => dayjs__WEBPACK_IMPORTED_MODULE_0___default()().startOf(`year`).add(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getRandomInteger"])(_const__WEBPACK_IMPORTED_MODULE_2__["MAX_DAYS"]), `day`).format(`D MMMM YYYY`);
+const getComments = () => new Array(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getRandomInteger"])(MAX_COMMENT)).fill().map(_comment_js__WEBPACK_IMPORTED_MODULE_3__["generateComment"]);
+const getWatchlistStatus = () => isWatched ? false : Boolean(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getRandomInteger"])());
+const getFavoritesStatus = () => isWatched ? Boolean(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getRandomInteger"])()) : false;
 
 const getWatchedStatus = () => {
   isWatched = Boolean(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getRandomInteger"])());
-};
-
-const getWatchlistStatus = () => {
-  return isWatched ? false : Boolean(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getRandomInteger"])());
-};
-
-const getFavoritesStatus = () => {
-  return isWatched ? Boolean(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getRandomInteger"])()) : false;
 };
 
 const generateFilm = () => {
@@ -583,23 +536,9 @@ const generateFilm = () => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "generateFilterData", function() { return generateFilterData; });
-const getWatchedFilms = (films) => {
-  return films.filter((film) => {
-    return film.watched;
-  });
-};
-
-const getWatchlistFilms = (films) => {
-  return films.filter((film) => {
-    return film.watchlist;
-  });
-};
-
-const getFavoriteFilms = (films) => {
-  return films.filter((film) => {
-    return film.watchlist;
-  });
-};
+const getWatchedFilms = (films) => films.filter((film) => film.watched);
+const getWatchlistFilms = (films) => films.filter((film) => film.watchlist);
+const getFavoriteFilms = (films) => films.filter((film) => film.favorite);
 
 const generateFilterData = (films) => {
   return {
@@ -716,7 +655,7 @@ const generateStats = (films) => {
 /*!**********************!*\
   !*** ./src/utils.js ***!
   \**********************/
-/*! exports provided: getRandomInteger, getRandomArrayItem, getArrayWithRandomItems, pressEnter, pressEscape, pressLeftMouseButton, getFormatTime */
+/*! exports provided: getRandomInteger, getRandomArrayItem, getArrayWithRandomItems, checkButtonPress, getFormatTime */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -724,13 +663,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRandomInteger", function() { return getRandomInteger; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRandomArrayItem", function() { return getRandomArrayItem; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getArrayWithRandomItems", function() { return getArrayWithRandomItems; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pressEnter", function() { return pressEnter; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pressEscape", function() { return pressEscape; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pressLeftMouseButton", function() { return pressLeftMouseButton; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "checkButtonPress", function() { return checkButtonPress; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFormatTime", function() { return getFormatTime; });
-const ENTER_BUTTON_KYE = `Enter`;
-const ESCAPE_BUTTON_KYE = `Escape`;
-
 const getRandomInteger = (b = 1, a = 0) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -745,39 +679,21 @@ const getRandomArrayItem = (arr) => {
 };
 
 const getArrayWithRandomItems = (arr) => {
-  const randomItems = arr.filter(() => {
-    return Boolean(getRandomInteger());
-  });
+  const randomItems = arr.filter(() => Boolean(getRandomInteger()));
 
-  return randomItems.length === 0 ? arr[0] : randomItems;
+  return randomItems.length === 0 ? Array(arr[0]) : randomItems;
 };
 
-const pressEnter = (evt, action) => {
-  if (evt.key === ENTER_BUTTON_KYE) {
+const checkButtonPress = (evt, action, button) => {
+  if (evt.key === button || evt.button === button) {
     evt.preventDefault();
     action(evt);
   }
 };
 
-const pressEscape = (evt, action) => {
-  if (evt.key === ESCAPE_BUTTON_KYE) {
-    evt.preventDefault();
-    action();
-  }
-};
-
-const pressLeftMouseButton = (evt, action) => {
-  if (evt.button === 0) {
-    evt.preventDefault();
-    action(evt);
-  }
-};
-
-const getFormatTime = (minutes) => {
-  return Math.floor(minutes / 60)
-    ? `${Math.floor(minutes / 60)}h ${Math.floor(minutes % 60)}m`
-    : `${Math.floor(minutes % 60)}m`;
-};
+const getFormatTime = (minutes) => Math.floor(minutes / 60)
+  ? `${Math.floor(minutes / 60)}h ${Math.floor(minutes % 60)}m`
+  : `${Math.floor(minutes % 60)}m`;
 
 
 
@@ -794,9 +710,7 @@ const getFormatTime = (minutes) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createButtonTemplate", function() { return createButtonTemplate; });
-const createButtonTemplate = () => {
-  return `<button class="films-list__show-more">Show more</button>`;
-};
+const createButtonTemplate = () => `<button class="films-list__show-more">Show more</button>`;
 
 
 
@@ -865,8 +779,8 @@ const createFilmsTemplate = (film) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createFilmsContainerTemplate", function() { return createFilmsContainerTemplate; });
-const createFilmsContainerTemplate = () => {
-  return `<section class="films">
+const createFilmsContainerTemplate = () =>
+  `<section class="films">
     <section class="films-list">
       <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
       <div class="films-list__container"></div>
@@ -880,7 +794,6 @@ const createFilmsContainerTemplate = () => {
       <div class="films-list__container"></div>
     </section>
   </section>`;
-};
 
 
 
@@ -926,9 +839,7 @@ const createFilterTemplate = (filter) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createFooterStatisticsTemplate", function() { return createFooterStatisticsTemplate; });
-const createFooterStatisticsTemplate = (totalFilms) => {
-  return `<p>${totalFilms} movies inside</p>`;
-};
+const createFooterStatisticsTemplate = (totalFilms) => `<p>${totalFilms} movies inside</p>`;
 
 
 
@@ -948,8 +859,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
 
 
-const createCommentsTemplate = (comments) => {
-  return comments.length === 0 ? `` : `<ul class="film-details__comments-list">
+const createCommentsTemplate = (comments) => comments.length === 0 ? ``
+  : `<ul class="film-details__comments-list">
     ${comments.map((comment) => `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
@@ -964,11 +875,8 @@ const createCommentsTemplate = (comments) => {
       </div>
     </li>`).join(``)}
   </ul>`;
-};
 
-const createGenresTemplate = (genres) => {
-  return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
-};
+const createGenresTemplate = (genres) => genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 
 const createPopupTemplate = (filmData) => {
   const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country, age} = filmData;
@@ -1109,9 +1017,7 @@ const createPopupTemplate = (filmData) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createProfileTemplate", function() { return createProfileTemplate; });
-const createRankTemplate = (rank) => {
-  return rank !== `` ? `<p class="profile__rating">${rank}</p>` : ``;
-};
+const createRankTemplate = (rank) => rank !== `` ? `<p class="profile__rating">${rank}</p>` : ``;
 
 const createProfileTemplate = (stats) => {
   const rankTemplate = createRankTemplate(stats.rank);
@@ -1137,90 +1043,12 @@ const createProfileTemplate = (stats) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSortingTemplate", function() { return createSortingTemplate; });
-const createSortingTemplate = () => {
-  return `<ul class="sort">
+const createSortingTemplate = () =>
+  `<ul class="sort">
     <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
     <li><a href="#" class="sort__button">Sort by date</a></li>
     <li><a href="#" class="sort__button">Sort by rating</a></li>
   </ul>`;
-};
-
-
-
-
-/***/ }),
-
-/***/ "./src/view/stats.js":
-/*!***************************!*\
-  !*** ./src/view/stats.js ***!
-  \***************************/
-/*! exports provided: createStatisticsTemplate */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createStatisticsTemplate", function() { return createStatisticsTemplate; });
-const createDurationTemplate = (duration) => {
-  const hours = Math.floor(duration / 60);
-  const minutes = Math.floor(duration % 60);
-
-  return hours > 0
-    ? `<p class="statistic__item-text">${hours} <span class="statistic__item-description">h</span> ${minutes} <span class="statistic__item-description">m</span></p>`
-    : `<p class="statistic__item-text">${minutes} <span class="statistic__item-description">m</span></p>`;
-};
-
-const createStatisticsTemplate = (stats) => {
-  const {watched, rank, totalDuration, favoriteGenre} = stats;
-
-  const durationTemplate = createDurationTemplate(totalDuration);
-
-  return `<section class="statistic">
-    <p class="statistic__rank">
-      Your rank
-      <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">${rank}</span>
-    </p>
-
-    <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
-      <p class="statistic__filters-description">Show stats:</p>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-      <label for="statistic-all-time" class="statistic__filters-label">All time</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
-      <label for="statistic-today" class="statistic__filters-label">Today</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
-      <label for="statistic-week" class="statistic__filters-label">Week</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
-      <label for="statistic-month" class="statistic__filters-label">Month</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
-      <label for="statistic-year" class="statistic__filters-label">Year</label>
-    </form>
-
-    <ul class="statistic__text-list">
-      <li class="statistic__text-item">
-        <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${watched} <span class="statistic__item-description">movies</span></p>
-      </li>
-      <li class="statistic__text-item">
-        <h4 class="statistic__item-title">Total duration</h4>
-        ${durationTemplate}
-      </li>
-      <li class="statistic__text-item">
-        <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">${favoriteGenre}</p>
-      </li>
-    </ul>
-
-    <div class="statistic__chart-wrap">
-      <canvas class="statistic__chart" width="1000"></canvas>
-    </div>
-
-  </section>`;
-};
 
 
 
