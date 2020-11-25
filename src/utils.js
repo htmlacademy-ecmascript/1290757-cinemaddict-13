@@ -15,9 +15,7 @@ const getRandomArrayItem = (arr) => {
 };
 
 const getArrayWithRandomItems = (arr) => {
-  const randomItems = arr.filter(() => {
-    return Boolean(getRandomInteger());
-  });
+  const randomItems = arr.filter(() => Boolean(getRandomInteger()));
 
   return randomItems.length === 0 ? arr[0] : randomItems;
 };
@@ -43,11 +41,9 @@ const pressLeftMouseButton = (evt, action) => {
   }
 };
 
-const getFormatTime = (minutes) => {
-  return Math.floor(minutes / 60)
-    ? `${Math.floor(minutes / 60)}h ${Math.floor(minutes % 60)}m`
-    : `${Math.floor(minutes % 60)}m`;
-};
+const getFormatTime = (minutes) => Math.floor(minutes / 60)
+  ? `${Math.floor(minutes / 60)}h ${Math.floor(minutes % 60)}m`
+  : `${Math.floor(minutes % 60)}m`;
 
 export {
   getRandomInteger,

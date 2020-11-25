@@ -101,9 +101,7 @@ const showDetailFilm = () => {
 const getDetailData = (evt) => {
   const dataId = evt.target.parentElement.id;
 
-  return films.filter((film) => {
-    return film.id === Number(dataId);
-  })[0];
+  return films.filter((film) => film.id === Number(dataId))[0];
 };
 
 const onDetailFilmShow = (evt) => {
@@ -176,9 +174,7 @@ if (filmListExtra[0]) {
 
   const topRatedFilms = [...films];
 
-  topRatedFilms.sort((a, b) => {
-    return b.rating - a.rating;
-  });
+  topRatedFilms.sort((a, b) => b.rating - a.rating);
 
   for (let i = 0; i < MOVIES_TOP_RATED; i++) {
     render(topRatedFilmsContainer, createFilmsTemplate(topRatedFilms[i]), `beforeend`);
@@ -197,9 +193,7 @@ if (filmListExtra[1]) {
 
   const mostCommentedFilms = [...films];
 
-  mostCommentedFilms.sort((a, b) => {
-    return b.comments.length - a.comments.length;
-  });
+  mostCommentedFilms.sort((a, b) => b.comments.length - a.comments.length);
 
   for (let i = 0; i < MOVIES_MOST_COMMENTED; i++) {
     render(mostCommentedFilmsContainer, createFilmsTemplate(mostCommentedFilms[i]), `beforeend`);

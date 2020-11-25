@@ -1,6 +1,4 @@
-const createRankTemplate = (rank) => {
-  return rank !== `` ? `<p class="profile__rating">${rank}</p>` : ``;
-};
+const createRankTemplate = (rank) => rank !== `` ? `<p class="profile__rating">${rank}</p>` : ``;
 
 const createProfileTemplate = (stats) => {
   const rankTemplate = createRankTemplate(stats.rank);

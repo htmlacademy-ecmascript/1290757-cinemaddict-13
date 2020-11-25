@@ -1,7 +1,7 @@
 import {getFormatTime} from "../utils";
 
-const createCommentsTemplate = (comments) => {
-  return comments.length === 0 ? `` : `<ul class="film-details__comments-list">
+const createCommentsTemplate = (comments) => comments.length === 0 ? ``
+  : `<ul class="film-details__comments-list">
     ${comments.map((comment) => `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
@@ -16,11 +16,8 @@ const createCommentsTemplate = (comments) => {
       </div>
     </li>`).join(``)}
   </ul>`;
-};
 
-const createGenresTemplate = (genres) => {
-  return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
-};
+const createGenresTemplate = (genres) => genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 
 const createPopupTemplate = (filmData) => {
   const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country, age} = filmData;

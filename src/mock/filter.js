@@ -1,20 +1,6 @@
-const getWatchedFilms = (films) => {
-  return films.filter((film) => {
-    return film.watched;
-  });
-};
-
-const getWatchlistFilms = (films) => {
-  return films.filter((film) => {
-    return film.watchlist;
-  });
-};
-
-const getFavoriteFilms = (films) => {
-  return films.filter((film) => {
-    return film.watchlist;
-  });
-};
+const getWatchedFilms = (films) => films.filter((film) => film.watched);
+const getWatchlistFilms = (films) => films.filter((film) => film.watchlist);
+const getFavoriteFilms = (films) => films.filter((film) => film.favorite);
 
 const generateFilterData = (films) => {
   return {

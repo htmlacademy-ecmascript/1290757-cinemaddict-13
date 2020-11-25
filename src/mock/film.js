@@ -84,9 +84,7 @@ const generateDescription = () => {
   return typeof descriptionArr === `string` ? descriptionArr : descriptionArr.join(` `);
 };
 
-const generateDate = () => {
-  return dayjs().startOf(`year`).add(getRandomInteger(MAX_DAYS), `day`).format(`D MMMM YYYY`);
-};
+const generateDate = () => dayjs().startOf(`year`).add(getRandomInteger(MAX_DAYS), `day`).format(`D MMMM YYYY`);
 
 const getComments = () => {
   const commentCount = getRandomInteger(MAX_COMMENT);
@@ -98,13 +96,8 @@ const getWatchedStatus = () => {
   isWatched = Boolean(getRandomInteger());
 };
 
-const getWatchlistStatus = () => {
-  return isWatched ? false : Boolean(getRandomInteger());
-};
-
-const getFavoritesStatus = () => {
-  return isWatched ? Boolean(getRandomInteger()) : false;
-};
+const getWatchlistStatus = () => isWatched ? false : Boolean(getRandomInteger());
+const getFavoritesStatus = () => isWatched ? Boolean(getRandomInteger()) : false;
 
 const generateFilm = () => {
   getWatchedStatus();

@@ -9,9 +9,7 @@ const EMOTIONS = [
   `angry`
 ];
 
-const generateDate = () => {
-  return dayjs().startOf(`year`).add(getRandomInteger(MAX_DAYS), `day`).format(`YYYY/M/D H:mm`);
-};
+const generateDate = () => dayjs().startOf(`year`).add(getRandomInteger(MAX_DAYS), `day`).format(`YYYY/M/D H:mm`);
 
 const generateComment = () => {
   return {
