@@ -1,15 +1,29 @@
-const createFilmsTemplate = () => {
-  return `<article class="film-card">
-    <h3 class="film-card__title">Made for Each Other</h3>
-    <p class="film-card__rating">5.8</p>
+import dayjs from "dayjs";
+import {getFormatTime} from "../utils";
+
+const SHORT_DESCRIPTION_LENGTH = 139;
+
+const createFilmsTemplate = (film) => {
+  const {id, name, poster, description, comments, rating, releaseDate, runtime, genres} = film;
+
+  const commentCount = comments.length;
+  const year = dayjs(releaseDate).format(`YYYY`);
+  const duration = getFormatTime(runtime);
+  const shortDescription = description.length > SHORT_DESCRIPTION_LENGTH
+    ? `${description.substr(0, SHORT_DESCRIPTION_LENGTH)}&hellip;`
+    : description;
+
+  return `<article id="${id}" class="film-card">
+    <h3 class="film-card__title">${name}</h3>
+    <p class="film-card__rating">${rating}</p>
     <p class="film-card__info">
-      <span class="film-card__year">1939</span>
-      <span class="film-card__duration">1h 32m</span>
-      <span class="film-card__genre">Comedy</span>
+      <span class="film-card__year">${year}</span>
+      <span class="film-card__duration">${duration}</span>
+      <span class="film-card__genre">${genres[0]}</span>
     </p>
-    <img src="./images/posters/made-for-each-other.png" alt="" class="film-card__poster">
-    <p class="film-card__description">John Mason (James Stewart) is a young, somewhat timid attorney in New York City. He has been doing his job well, and he has a chance of bei…</p>
-    <a class="film-card__comments">56 comments</a>
+    <img src="./images/posters/${poster}" alt="${name}" class="film-card__poster">
+    <p class="film-card__description">${shortDescription}</p>
+    <a class="film-card__comments">${commentCount} comments</a>
     <div class="film-card__controls">
       <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
       <button class="film-card__controls-item button film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
