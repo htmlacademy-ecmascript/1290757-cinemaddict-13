@@ -1,9 +1,9 @@
-import {SECOND_IN_MINUTE} from "../const.js";
+import {SECONDS_IN_MINUTE} from "../const.js";
 import {createElement} from "../utils";
 
 const createDurationTemplate = (duration) => {
-  const hours = Math.floor(duration / SECOND_IN_MINUTE);
-  const minutes = Math.floor(duration % SECOND_IN_MINUTE);
+  const hours = Math.floor(duration / SECONDS_IN_MINUTE);
+  const minutes = Math.floor(duration % SECONDS_IN_MINUTE);
 
   return hours > 0
     ? `<p class="statistic__item-text">${hours} <span class="statistic__item-description">h</span> ${minutes} <span class="statistic__item-description">m</span></p>`

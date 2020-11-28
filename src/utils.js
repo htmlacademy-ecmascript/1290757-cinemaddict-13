@@ -1,6 +1,6 @@
-import {RenderPosition, SECOND_IN_MINUTE} from "./const.js";
+import {RenderPosition, SECONDS_IN_MINUTE} from "./const.js";
 
-const renderElement = (container, element, place) => {
+const render = (container, element, place) => {
   switch (place) {
     case RenderPosition.AFTER_BEGIN:
       container.prepend(element);
@@ -44,9 +44,9 @@ const checkButtonPress = (evt, action, button) => {
   }
 };
 
-const getFormatTime = (minutes) => Math.floor(minutes / SECOND_IN_MINUTE)
-  ? `${Math.floor(minutes / SECOND_IN_MINUTE)}h ${Math.floor(minutes % SECOND_IN_MINUTE)}m`
-  : `${Math.floor(minutes % SECOND_IN_MINUTE)}m`;
+const getFormatTime = (minutes) => Math.floor(minutes / SECONDS_IN_MINUTE)
+  ? `${Math.floor(minutes / SECONDS_IN_MINUTE)}h ${Math.floor(minutes % SECONDS_IN_MINUTE)}m`
+  : `${Math.floor(minutes % SECONDS_IN_MINUTE)}m`;
 
 export {
   getRandomInteger,
@@ -54,6 +54,6 @@ export {
   getArrayWithRandomItems,
   checkButtonPress,
   getFormatTime,
-  renderElement,
+  render,
   createElement
 };

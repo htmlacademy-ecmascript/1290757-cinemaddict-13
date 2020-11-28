@@ -1,5 +1,5 @@
 const MAX_DAYS = 300;
-const SECOND_IN_MINUTE = 60;
+const SECONDS_IN_MINUTE = 60;
 const PROPOSALS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
@@ -26,4 +26,4 @@ const RenderPosition = {
   BEFORE_END: `beforeend`
 };
 
-export {PROPOSALS, ACTORS, MAX_DAYS, SECOND_IN_MINUTE, RenderPosition};
+export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition};

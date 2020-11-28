@@ -9,7 +9,7 @@ import FooterStatistics from "./view/footer-statistics.js";
 import {generateFilm} from "./mock/film.js";
 import {generateStats} from "./mock/stats.js";
 import {generateFilterData} from "./mock/filter.js";
-import {checkButtonPress, renderElement} from "./utils.js";
+import {checkButtonPress, render} from "./utils.js";
 import {RenderPosition} from "./const.js";
 
 const MOVIES_PER_STEP = 5;
@@ -51,7 +51,7 @@ const showMoreFilm = () => {
   films
     .slice(renderedTaskCount, renderedTaskCount + MOVIES_PER_STEP)
     .forEach((film) => {
-      renderElement(filmsContainer, new Film(film).element, RenderPosition.BEFORE_END);
+      render(filmsContainer, new Film(film).element, RenderPosition.BEFORE_END);
     });
 
   renderedTaskCount += MOVIES_PER_STEP;
@@ -79,6 +79,7 @@ const popupClose = () => {
   const filmDetails = body.querySelector(`.film-details`);
 
   body.removeChild(filmDetails);
+  body.classList.remove(`hide-overflow`);
   popupElement.removeElement();
 
   closePopupButton.removeEventListener(Event.MOUSE, onPopupClose);
@@ -101,7 +102,8 @@ const onPopupClose = (evt) => {
 const showDetailFilm = () => {
   popupElement = new Popup(filmData);
 
-  renderElement(body, popupElement.element, RenderPosition.BEFORE_END);
+  render(body, popupElement.element, RenderPosition.BEFORE_END);
+  body.classList.add(`hide-overflow`);
 
   closePopupButton = body.querySelector(`.film-details__close-btn`);
 
@@ -128,18 +130,18 @@ const onDetailFilmShow = (evt) => {
   }
 };
 
-renderElement(header, new Profile(stats).element, RenderPosition.BEFORE_END);
-renderElement(main, new Filter(filterData).element, RenderPosition.BEFORE_END);
-renderElement(main, new Sorting().element, RenderPosition.BEFORE_END);
-renderElement(main, new FilmsContainer().element, RenderPosition.BEFORE_END);
-renderElement(footerStatistics, new FooterStatistics(TOTAL_FILMS).element, RenderPosition.BEFORE_END);
+render(header, new Profile(stats).element, RenderPosition.BEFORE_END);
+render(main, new Filter(filterData).element, RenderPosition.BEFORE_END);
+render(main, new Sorting().element, RenderPosition.BEFORE_END);
+render(main, new FilmsContainer().element, RenderPosition.BEFORE_END);
+render(footerStatistics, new FooterStatistics(TOTAL_FILMS).element, RenderPosition.BEFORE_END);
 
 const filmList = main.querySelector(`.films-list`);
 const filmsContainer = filmList.querySelector(`.films-list__container`);
 const filmListExtra = main.querySelectorAll(`.films-list.films-list--extra`);
 
 for (let i = 0; i < Math.min(films.length, MOVIES_PER_STEP); i++) {
-  renderElement(filmsContainer, new Film(films[i]).element, RenderPosition.BEFORE_END);
+  render(filmsContainer, new Film(films[i]).element, RenderPosition.BEFORE_END);
 
   filmCards = filmsContainer.querySelectorAll(`.film-card`);
 
@@ -150,7 +152,7 @@ for (let i = 0; i < Math.min(films.length, MOVIES_PER_STEP); i++) {
 }
 
 if (TOTAL_FILMS > MOVIES_PER_STEP) {
-  renderElement(filmList, loadMoreButtonElement.element, RenderPosition.BEFORE_END);
+  render(filmList, loadMoreButtonElement.element, RenderPosition.BEFORE_END);
 
   loadMoreButton = filmList.querySelector(`.films-list__show-more`);
 
@@ -165,7 +167,7 @@ if (filmListExtra[0]) {
   topRatedFilms.sort((a, b) => b.rating - a.rating);
 
   for (let i = 0; i < MOVIES_TOP_RATED; i++) {
-    renderElement(topRatedFilmsContainer, new Film(topRatedFilms[i]).element, RenderPosition.BEFORE_END);
+    render(topRatedFilmsContainer, new Film(topRatedFilms[i]).element, RenderPosition.BEFORE_END);
   }
 
   const topRatedFilmCards = topRatedFilmsContainer.querySelectorAll(`.film-card`);
@@ -184,7 +186,7 @@ if (filmListExtra[1]) {
   mostCommentedFilms.sort((a, b) => b.comments.length - a.comments.length);
 
   for (let i = 0; i < MOVIES_MOST_COMMENTED; i++) {
-    renderElement(mostCommentedFilmsContainer, new Film(mostCommentedFilms[i]).element, RenderPosition.BEFORE_END);
+    render(mostCommentedFilmsContainer, new Film(mostCommentedFilms[i]).element, RenderPosition.BEFORE_END);
   }
 
   const mostCommentedFilmCards = mostCommentedFilmsContainer.querySelectorAll(`.film-card`);
