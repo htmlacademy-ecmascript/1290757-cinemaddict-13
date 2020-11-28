@@ -1,3 +1,5 @@
+import {createElement} from "../utils";
+
 const createRankTemplate = (rank) => rank !== `` ? `<p class="profile__rating">${rank}</p>` : ``;
 
 const createProfileTemplate = (stats) => {
@@ -9,4 +11,25 @@ const createProfileTemplate = (stats) => {
   </section>`;
 };
 
-export {createProfileTemplate};
+export default class Profile {
+  constructor(stats) {
+    this._element = null;
+    this._stats = stats;
+  }
+
+  _getTemplate() {
+    return createProfileTemplate(this._stats);
+  }
+
+  get element() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

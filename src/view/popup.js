@@ -1,4 +1,4 @@
-import {getFormatTime} from "../utils";
+import {createElement, getFormatTime} from "../utils";
 
 const createCommentsTemplate = (comments) => comments.length === 0 ? ``
   : `<ul class="film-details__comments-list">
@@ -143,4 +143,25 @@ const createPopupTemplate = (filmData) => {
   </section>`;
 };
 
-export {createPopupTemplate};
+export default class Popup {
+  constructor(filmData) {
+    this._element = null;
+    this._filmData = filmData;
+  }
+
+  _getTemplate() {
+    return createPopupTemplate(this._filmData);
+  }
+
+  get element() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

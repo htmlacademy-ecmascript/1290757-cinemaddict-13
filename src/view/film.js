@@ -38,13 +38,13 @@ export default class Film {
     this._film = film;
   }
 
-  getTemplate() {
+  _getTemplate() {
     return createFilmTemplate(this._film);
   }
 
-  getElement() {
+  get element() {
     if (!this._element) {
-      this._element = createElement(this.getTemplate());
+      this._element = createElement(this._getTemplate());
     }
 
     return this._element;

@@ -1,4 +1,5 @@
 import {SECOND_IN_MINUTE} from "../const.js";
+import {createElement} from "../utils";
 
 const createDurationTemplate = (duration) => {
   const hours = Math.floor(duration / SECOND_IN_MINUTE);
@@ -62,4 +63,25 @@ const createStatisticsTemplate = (stats) => {
   </section>`;
 };
 
-export {createStatisticsTemplate};
+export default class Statistics {
+  constructor(stats) {
+    this._element = null;
+    this._stats = stats;
+  }
+
+  _getTemplate() {
+    return createStatisticsTemplate(this._stats);
+  }
+
+  get element() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
