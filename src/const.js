@@ -1,4 +1,5 @@
 const MAX_DAYS = 300;
+const SECOND_IN_MINUTE = 60;
 const PROPOSALS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
@@ -20,5 +21,9 @@ const ACTORS = [
   `Tom Cruise`,
   `Angelina Jolie`
 ];
+const RenderPosition = {
+  AFTER_BEGIN: `afterbegin`,
+  BEFORE_END: `beforeend`
+};
 
-export {PROPOSALS, ACTORS, MAX_DAYS};
+export {PROPOSALS, ACTORS, MAX_DAYS, SECOND_IN_MINUTE, RenderPosition};
