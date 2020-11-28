@@ -2,14 +2,14 @@ import {createProfileTemplate} from "./view/profile.js";
 import {createFilterTemplate} from "./view/filter.js";
 import {createSortingTemplate} from "./view/sorting.js";
 import {createFilmsContainerTemplate} from "./view/films-container.js";
-import {createFilmsTemplate} from "./view/film.js";
+import Film from "./view/film.js";
 import {createButtonTemplate} from "./view/button.js";
 import {createPopupTemplate} from "./view/popup.js";
 import {createFooterStatisticsTemplate} from "./view/footer-statistics.js";
 import {generateFilm} from "./mock/film.js";
 import {generateStats} from "./mock/stats.js";
 import {generateFilterData} from "./mock/filter.js";
-import {checkButtonPress, renderTemplate} from "./utils.js";
+import {checkButtonPress, renderTemplate, renderElement} from "./utils.js";
 import {RenderPosition} from "./const.js";
 
 const MOVIES_PER_STEP = 5;
@@ -48,7 +48,7 @@ const showMoreFilm = () => {
   films
     .slice(renderedTaskCount, renderedTaskCount + MOVIES_PER_STEP)
     .forEach((film) => {
-      renderTemplate(filmsContainer, createFilmsTemplate(film), RenderPosition.BEFORE_END);
+      renderElement(filmsContainer, new Film(film).getElement(), RenderPosition.BEFORE_END);
     });
 
   renderedTaskCount += MOVIES_PER_STEP;
@@ -132,7 +132,7 @@ const filmsContainer = filmList.querySelector(`.films-list__container`);
 const filmListExtra = main.querySelectorAll(`.films-list.films-list--extra`);
 
 for (let i = 0; i < Math.min(films.length, MOVIES_PER_STEP); i++) {
-  renderTemplate(filmsContainer, createFilmsTemplate(films[i]), RenderPosition.BEFORE_END);
+  renderElement(filmsContainer, new Film(films[i]).getElement(), RenderPosition.BEFORE_END);
 
   filmCards = filmsContainer.querySelectorAll(`.film-card`);
 
@@ -158,7 +158,7 @@ if (filmListExtra[0]) {
   topRatedFilms.sort((a, b) => b.rating - a.rating);
 
   for (let i = 0; i < MOVIES_TOP_RATED; i++) {
-    renderTemplate(topRatedFilmsContainer, createFilmsTemplate(topRatedFilms[i]), RenderPosition.BEFORE_END);
+    renderElement(topRatedFilmsContainer, new Film(topRatedFilms[i]).getElement(), RenderPosition.BEFORE_END);
   }
 
   const topRatedFilmCards = topRatedFilmsContainer.querySelectorAll(`.film-card`);
@@ -177,7 +177,7 @@ if (filmListExtra[1]) {
   mostCommentedFilms.sort((a, b) => b.comments.length - a.comments.length);
 
   for (let i = 0; i < MOVIES_MOST_COMMENTED; i++) {
-    renderTemplate(mostCommentedFilmsContainer, createFilmsTemplate(mostCommentedFilms[i]), RenderPosition.BEFORE_END);
+    renderElement(mostCommentedFilmsContainer, new Film(mostCommentedFilms[i]).getElement(), RenderPosition.BEFORE_END);
   }
 
   const mostCommentedFilmCards = mostCommentedFilmsContainer.querySelectorAll(`.film-card`);
