@@ -6,6 +6,7 @@ import Film from "./view/film.js";
 import LoadMoreButton from "./view/button.js";
 import Popup from "./view/popup.js";
 import FooterStatistics from "./view/footer-statistics.js";
+import NoFilm from "./view/no-film";
 import {generateFilm} from "./mock/film.js";
 import {generateStats} from "./mock/stats.js";
 import {generateFilterData} from "./mock/filter.js";
@@ -13,8 +14,8 @@ import {checkButtonPress, render} from "./utils.js";
 import {RenderPosition} from "./const.js";
 
 const MOVIES_PER_STEP = 5;
-const ADDITIONAL_FILMS_COUNT = 2;
-const TOTAL_FILMS = 31;
+const TOTAL_FILMS = 1;
+const MAX_ADDITIONAL_FILMS = 2;
 const Button = {
   ENTER: `Enter`,
   ESCAPE: `Escape`,
@@ -137,7 +138,7 @@ const setFilmCardHandler = (cards) => {
 };
 
 const renderAdditionalFilmBlocks = (container, sortedFilms) => {
-  for (let i = 0; i < ADDITIONAL_FILMS_COUNT; i++) {
+  for (let i = 0; i < Math.min(sortedFilms.length, MAX_ADDITIONAL_FILMS); i++) {
     render(container, new Film(sortedFilms[i]).element, RenderPosition.BEFORE_END);
   }
 
@@ -149,8 +150,14 @@ const renderAdditionalFilmBlocks = (container, sortedFilms) => {
 
 render(header, new Profile(stats).element, RenderPosition.BEFORE_END);
 render(main, new Filter(filterData).element, RenderPosition.BEFORE_END);
-render(main, new Sorting().element, RenderPosition.BEFORE_END);
-render(main, new FilmsContainer().element, RenderPosition.BEFORE_END);
+
+if (films.length) {
+  render(main, new Sorting().element, RenderPosition.BEFORE_END);
+  render(main, new FilmsContainer().element, RenderPosition.BEFORE_END);
+} else {
+  render(main, new NoFilm().element, RenderPosition.BEFORE_END);
+}
+
 render(footerStatistics, new FooterStatistics(TOTAL_FILMS).element, RenderPosition.BEFORE_END);
 
 const filmList = main.querySelector(`.films-list`);
