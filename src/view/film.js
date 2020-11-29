@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
-import {getFormatTime} from "../utils";
+import {getFormatTime, createElement} from "../utils";
 
 const SHORT_DESCRIPTION_LENGTH = 139;
 
-const createFilmsTemplate = (film) => {
+const createFilmTemplate = (film) => {
   const {id, name, poster, description, comments, rating, releaseDate, runtime, genres} = film;
 
   const commentCount = comments.length;
@@ -32,4 +32,25 @@ const createFilmsTemplate = (film) => {
   </article>`;
 };
 
-export {createFilmsTemplate};
+export default class Film {
+  constructor(film) {
+    this._element = null;
+    this._film = film;
+  }
+
+  _getTemplate() {
+    return createFilmTemplate(this._film);
+  }
+
+  get element() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
