@@ -1,6 +1,6 @@
 import {createElement} from "../utils";
 
-const createFilmsContainerTemplate = () =>
+const createNoFilmsTemplate = () =>
   `<section class="films">
     <section class="films-list">
       <h2 class="films-list__title">There are no movies in our database</h2>
@@ -13,7 +13,7 @@ export default class NoFilm {
   }
 
   _getTemplate() {
-    return createFilmsContainerTemplate();
+    return createNoFilmsTemplate();
   }
 
   get element() {
