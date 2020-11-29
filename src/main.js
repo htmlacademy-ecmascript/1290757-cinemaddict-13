@@ -21,8 +21,8 @@ const Button = {
   MOUSE_MAIN: 0
 };
 const Event = {
-  MOUSE: `mousedown`,
-  KEYBOARD: `keydown`,
+  MOUSE_DOWN: `mousedown`,
+  KEY_DOWN: `keydown`,
 };
 
 let renderedTaskCount = MOVIES_PER_STEP;
@@ -44,7 +44,7 @@ const filterData = generateFilterData(films);
 
 const showMoreFilm = () => {
   filmCards.forEach((film) => {
-    film.removeEventListener(Event.MOUSE, onDetailFilmShow);
+    film.removeEventListener(Event.MOUSE_DOWN, onDetailFilmShow);
   });
 
   films
@@ -58,13 +58,13 @@ const showMoreFilm = () => {
   filmCards = filmsContainer.querySelectorAll(`.film-card`);
 
   filmCards.forEach((film) => {
-    film.addEventListener(Event.MOUSE, onDetailFilmShow);
+    film.addEventListener(Event.MOUSE_DOWN, onDetailFilmShow);
   });
 
   if (renderedTaskCount >= films.length) {
     loadMoreButton.remove();
     loadMoreButtonElement.removeElement();
-    loadMoreButton.removeEventListener(Event.MOUSE, onMoreFilmShow);
+    loadMoreButton.removeEventListener(Event.MOUSE_DOWN, onMoreFilmShow);
   }
 };
 
@@ -81,19 +81,19 @@ const popupClose = () => {
   body.classList.remove(`hide-overflow`);
   popupElement.removeElement();
 
-  closePopupButton.removeEventListener(Event.MOUSE, onPopupClose);
-  closePopupButton.removeEventListener(Event.KEYBOARD, onPopupClose);
-  document.removeEventListener(Event.KEYBOARD, onPopupClose);
+  closePopupButton.removeEventListener(Event.MOUSE_DOWN, onPopupClose);
+  closePopupButton.removeEventListener(Event.KEY_DOWN, onPopupClose);
+  document.removeEventListener(Event.KEY_DOWN, onPopupClose);
 };
 
 const onPopupClose = (evt) => {
-  if (evt.type === Event.KEYBOARD) {
+  if (evt.type === Event.KEY_DOWN) {
     if (evt.target.className === `film-details__close-btn`) {
       checkButtonPress(evt, popupClose, Button.ENTER);
     } else {
       checkButtonPress(evt, popupClose, Button.ESCAPE);
     }
-  } else if (evt.type === Event.MOUSE) {
+  } else if (evt.type === Event.MOUSE_DOWN) {
     checkButtonPress(evt, popupClose, Button.MOUSE_MAIN);
   }
 };
@@ -106,9 +106,9 @@ const showDetailFilm = () => {
 
   closePopupButton = body.querySelector(`.film-details__close-btn`);
 
-  closePopupButton.addEventListener(Event.MOUSE, onPopupClose);
-  closePopupButton.addEventListener(Event.KEYBOARD, onPopupClose);
-  document.addEventListener(Event.KEYBOARD, onPopupClose);
+  closePopupButton.addEventListener(Event.MOUSE_DOWN, onPopupClose);
+  closePopupButton.addEventListener(Event.KEY_DOWN, onPopupClose);
+  document.addEventListener(Event.KEY_DOWN, onPopupClose);
 };
 
 const getDetailData = (evt) => films.filter((film) => film.id === Number(evt.target.parentElement.id))[0];
@@ -121,9 +121,9 @@ const onDetailFilmShow = (evt) => {
 
     filmData = getDetailData(evt);
 
-    if (evt.type === Event.KEYBOARD) {
+    if (evt.type === Event.KEY_DOWN) {
       checkButtonPress(evt, showDetailFilm, Button.ENTER);
-    } else if (evt.type === Event.MOUSE) {
+    } else if (evt.type === Event.MOUSE_DOWN) {
       checkButtonPress(evt, showDetailFilm, Button.MOUSE_MAIN);
     }
   }
@@ -131,8 +131,8 @@ const onDetailFilmShow = (evt) => {
 
 const setFilmCardHandler = (cards) => {
   cards.forEach((film) => {
-    film.addEventListener(Event.MOUSE, onDetailFilmShow);
-    film.addEventListener(Event.KEYBOARD, onDetailFilmShow);
+    film.addEventListener(Event.MOUSE_DOWN, onDetailFilmShow);
+    film.addEventListener(Event.KEY_DOWN, onDetailFilmShow);
   });
 };
 
@@ -170,7 +170,7 @@ if (TOTAL_FILMS > MOVIES_PER_STEP) {
 
   loadMoreButton = filmList.querySelector(`.films-list__show-more`);
 
-  loadMoreButton.addEventListener(Event.MOUSE, onMoreFilmShow);
+  loadMoreButton.addEventListener(Event.MOUSE_DOWN, onMoreFilmShow);
 }
 
 if (filmListExtra[0]) {
