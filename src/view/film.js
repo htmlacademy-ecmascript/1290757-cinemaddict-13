@@ -3,8 +3,10 @@ import {getFormatTime, createElement} from "../utils";
 
 const SHORT_DESCRIPTION_LENGTH = 139;
 
+const checkFlagStatus = (value) => value ? `film-card__controls-item--active` : ``;
+
 const createFilmTemplate = (film) => {
-  const {id, name, poster, description, comments, rating, releaseDate, runtime, genres} = film;
+  const {id, name, poster, description, comments, rating, releaseDate, runtime, genres, watched, watchlist, favorite} = film;
 
   const commentCount = comments.length;
   const year = dayjs(releaseDate).format(`YYYY`);
@@ -12,6 +14,9 @@ const createFilmTemplate = (film) => {
   const shortDescription = description.length > SHORT_DESCRIPTION_LENGTH
     ? `${description.substr(0, SHORT_DESCRIPTION_LENGTH)}&hellip;`
     : description;
+  const watchedStatus = checkFlagStatus(watched);
+  const watchlistStatus = checkFlagStatus(watchlist);
+  const favoriteStatus = checkFlagStatus(favorite);
 
   return `<article id="${id}" class="film-card">
     <h3 class="film-card__title">${name}</h3>
@@ -25,9 +30,9 @@ const createFilmTemplate = (film) => {
     <p class="film-card__description">${shortDescription}</p>
     <a class="film-card__comments">${commentCount} comments</a>
     <div class="film-card__controls">
-      <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-      <button class="film-card__controls-item button film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-      <button class="film-card__controls-item button film-card__controls-item--favorite" type="button">Mark as favorite</button>
+      <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${watchlistStatus}" type="button">Add to watchlist</button>
+      <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${watchedStatus}" type="button">Mark as watched</button>
+      <button class="film-card__controls-item button film-card__controls-item--favorite ${favoriteStatus}" type="button">Mark as favorite</button>
     </div>
   </article>`;
 };

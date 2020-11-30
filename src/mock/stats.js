@@ -55,6 +55,10 @@ const getRank = (count) => {
 };
 
 const getFavoriteGenre = (genresData) => {
+  if (!genresData.size) {
+    return ``;
+  }
+
   let favoriteGenre;
 
   for (const [key, value] of genresData) {
