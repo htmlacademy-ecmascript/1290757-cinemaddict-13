@@ -1018,7 +1018,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
 
 
-const createFilmsContainerTemplate = () =>
+const createNoFilmsTemplate = () =>
   `<section class="films">
     <section class="films-list">
       <h2 class="films-list__title">There are no movies in our database</h2>
@@ -1031,7 +1031,7 @@ class NoFilm {
   }
 
   _getTemplate() {
-    return createFilmsContainerTemplate();
+    return createNoFilmsTemplate();
   }
 
   get element() {
