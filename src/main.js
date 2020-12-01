@@ -3,7 +3,7 @@ import Filter from "./view/filter.js";
 import Sorting from "./view/sorting.js";
 import FilmsContainer from "./view/films-container.js";
 import Film from "./view/film.js";
-import LoadMoreButton from "./view/button.js";
+import LoadMoreButton from "./view/button-load.js";
 import Popup from "./view/popup.js";
 import FooterStatistics from "./view/footer-statistics.js";
 import NoFilm from "./view/no-film";
@@ -11,7 +11,7 @@ import {generateFilm} from "./mock/film.js";
 import {generateStats} from "./mock/stats.js";
 import {generateFilterData} from "./mock/filter.js";
 import {checkButtonPress, render} from "./utils.js";
-import {RenderPosition} from "./const.js";
+import {RenderPosition, Event} from "./const.js";
 
 const MOVIES_PER_STEP = 5;
 const TOTAL_FILMS = 31;
@@ -20,10 +20,6 @@ const Button = {
   ENTER: `Enter`,
   ESCAPE: `Escape`,
   MOUSE_MAIN: 0
-};
-const Event = {
-  MOUSE_DOWN: `mousedown`,
-  KEY_DOWN: `keydown`,
 };
 
 let renderedTaskCount = MOVIES_PER_STEP;
@@ -69,10 +65,8 @@ const showMoreFilm = () => {
   }
 };
 
-const onMoreFilmShow = (evt) => {
-  evt.preventDefault();
-
-  showMoreFilm(evt);
+const onMoreFilmShow = () => {
+  showMoreFilm();
 };
 
 const popupClose = () => {
@@ -175,9 +169,7 @@ for (let i = 0; i < Math.min(films.length, MOVIES_PER_STEP); i++) {
 if (TOTAL_FILMS > MOVIES_PER_STEP) {
   render(filmList, loadMoreButtonElement.element, RenderPosition.BEFORE_END);
 
-  loadMoreButton = filmList.querySelector(`.films-list__show-more`);
-
-  loadMoreButton.addEventListener(Event.MOUSE_DOWN, onMoreFilmShow);
+  loadMoreButtonElement.setMouseDownHandler(onMoreFilmShow);
 }
 
 if (filmListExtra[0]) {
