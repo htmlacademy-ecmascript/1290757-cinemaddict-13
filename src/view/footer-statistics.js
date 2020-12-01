@@ -1,8 +1,8 @@
-import Abstract from "./abstract";
+import AbstractView from "./abstract";
 
 const createFooterStatisticsTemplate = (totalFilms) => `<p>${totalFilms} movies inside</p>`;
 
-export default class FooterStatistics extends Abstract {
+export default class FooterStatistics extends AbstractView {
   constructor(totalFilms) {
     super();
     this._totalFilms = totalFilms;

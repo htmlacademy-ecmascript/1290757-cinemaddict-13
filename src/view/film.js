@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import {getFormatTime} from "../utils";
-import Abstract from "./abstract";
+import AbstractView from "./abstract";
 
 const SHORT_DESCRIPTION_LENGTH = 139;
 
@@ -38,7 +38,7 @@ const createFilmTemplate = (film) => {
   </article>`;
 };
 
-export default class Film extends Abstract {
+export default class Film extends AbstractView {
   constructor(film) {
     super();
     this._film = film;

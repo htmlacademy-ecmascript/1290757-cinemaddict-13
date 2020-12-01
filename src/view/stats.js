@@ -1,5 +1,5 @@
 import {SECONDS_IN_MINUTE} from "../const.js";
-import Abstract from "./abstract";
+import AbstractView from "./abstract";
 
 const createDurationTemplate = (duration) => {
   const hours = Math.floor(duration / SECONDS_IN_MINUTE);
@@ -63,7 +63,7 @@ const createStatisticsTemplate = (stats) => {
   </section>`;
 };
 
-export default class Statistics extends Abstract {
+export default class Statistics extends AbstractView {
   constructor(stats) {
     super();
     this._stats = stats;

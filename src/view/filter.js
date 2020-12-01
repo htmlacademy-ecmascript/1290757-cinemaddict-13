@@ -1,4 +1,4 @@
-import Abstract from "./abstract";
+import AbstractView from "./abstract";
 
 const createFilterTemplate = (filter) => {
   const {watched, watchlist, favorite} = filter;
@@ -14,7 +14,7 @@ const createFilterTemplate = (filter) => {
   </nav>`;
 };
 
-export default class Filter extends Abstract {
+export default class Filter extends AbstractView {
   constructor(filter) {
     super();
     this._filter = filter;

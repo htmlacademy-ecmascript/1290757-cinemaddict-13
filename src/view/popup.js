@@ -1,5 +1,5 @@
 import {getFormatTime} from "../utils";
-import Abstract from "./abstract";
+import AbstractView from "./abstract";
 
 const createCommentsTemplate = (comments) => comments.length === 0 ? ``
   : `<ul class="film-details__comments-list">
@@ -148,7 +148,7 @@ const createPopupTemplate = (filmData) => {
   </section>`;
 };
 
-export default class Popup extends Abstract {
+export default class Popup extends AbstractView {
   constructor(filmData) {
     super();
     this._filmData = filmData;

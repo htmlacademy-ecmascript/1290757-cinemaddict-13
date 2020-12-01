@@ -1,4 +1,4 @@
-import Abstract from "./abstract";
+import AbstractView from "./abstract";
 
 const createRankTemplate = (rank) => rank !== `` ? `<p class="profile__rating">${rank}</p>` : ``;
 
@@ -11,7 +11,7 @@ const createProfileTemplate = (stats) => {
   </section>`;
 };
 
-export default class Profile extends Abstract {
+export default class Profile extends AbstractView {
   constructor(stats) {
     super();
     this._stats = stats;

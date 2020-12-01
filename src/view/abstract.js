@@ -1,16 +1,17 @@
 import {createElement} from "../utils.js";
 
-export default class Abstract {
+export default class AbstractView {
   constructor() {
-    if (new.target === Abstract) {
-      throw new Error(`Can't instantiate Abstract, only concrete one.`);
+    if (new.target === AbstractView) {
+      throw new Error(`Can't instantiate AbstractView, only concrete one.`);
     }
 
     this._element = null;
+    this._callback = {};
   }
 
   _getTemplate() {
-    throw new Error(`Abstract method not implemented: getTemplate`);
+    throw new Error(`AbstractView method not implemented: getTemplate`);
   }
 
   get element() {
