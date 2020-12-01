@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import Abstract from "./abstract";
 
 const createFilterTemplate = (filter) => {
   const {watched, watchlist, favorite} = filter;
@@ -14,21 +14,13 @@ const createFilterTemplate = (filter) => {
   </nav>`;
 };
 
-export default class Filter {
+export default class Filter extends Abstract {
   constructor(filter) {
-    this._element = null;
+    super();
     this._filter = filter;
   }
 
   _getTemplate() {
     return createFilterTemplate(this._filter);
-  }
-
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
   }
 }

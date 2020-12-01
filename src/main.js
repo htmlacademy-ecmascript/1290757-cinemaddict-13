@@ -14,7 +14,7 @@ import {checkButtonPress, render} from "./utils.js";
 import {RenderPosition} from "./const.js";
 
 const MOVIES_PER_STEP = 5;
-const TOTAL_FILMS = 1;
+const TOTAL_FILMS = 31;
 const MAX_ADDITIONAL_FILMS = 2;
 const Button = {
   ENTER: `Enter`,

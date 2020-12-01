@@ -1,4 +1,5 @@
-import {createElement, getFormatTime} from "../utils";
+import {getFormatTime} from "../utils";
+import Abstract from "./abstract";
 
 const createCommentsTemplate = (comments) => comments.length === 0 ? ``
   : `<ul class="film-details__comments-list">
@@ -147,25 +148,13 @@ const createPopupTemplate = (filmData) => {
   </section>`;
 };
 
-export default class Popup {
+export default class Popup extends Abstract {
   constructor(filmData) {
-    this._element = null;
+    super();
     this._filmData = filmData;
   }
 
   _getTemplate() {
     return createPopupTemplate(this._filmData);
-  }
-
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

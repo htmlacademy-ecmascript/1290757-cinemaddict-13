@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
-import {getFormatTime, createElement} from "../utils";
+import {getFormatTime} from "../utils";
+import Abstract from "./abstract";
 
 const SHORT_DESCRIPTION_LENGTH = 139;
 
@@ -37,25 +38,13 @@ const createFilmTemplate = (film) => {
   </article>`;
 };
 
-export default class Film {
+export default class Film extends Abstract {
   constructor(film) {
-    this._element = null;
+    super();
     this._film = film;
   }
 
   _getTemplate() {
     return createFilmTemplate(this._film);
-  }
-
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
