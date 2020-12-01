@@ -1,4 +1,4 @@
-import {getRandomArrayItem, getRandomInteger} from "../utils";
+import {getRandomArrayItem, getRandomInteger} from "../utils/common.js";
 import {PROPOSALS, ACTORS, MAX_DAYS} from "../const";
 import dayjs from "dayjs";
 

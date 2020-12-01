@@ -1,4 +1,4 @@
-import {getFormatTime} from "../utils";
+import {getFormatTime} from "../utils/render.js";
 import AbstractView from "./abstract";
 
 const createCommentsTemplate = (comments) => comments.length === 0 ? ``

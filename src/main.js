@@ -10,7 +10,8 @@ import NoFilm from "./view/no-film";
 import {generateFilm} from "./mock/film.js";
 import {generateStats} from "./mock/stats.js";
 import {generateFilterData} from "./mock/filter.js";
-import {checkButtonPress, render} from "./utils.js";
+import {render} from "./utils/render.js";
+import {checkButtonPress} from "./utils/common.js";
 import {RenderPosition, Event} from "./const.js";
 
 const MOVIES_PER_STEP = 5;

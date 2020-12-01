@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {getFormatTime} from "../utils";
+import {getFormatTime} from "../utils/render.js";
 import AbstractView from "./abstract";
 
 const SHORT_DESCRIPTION_LENGTH = 139;
