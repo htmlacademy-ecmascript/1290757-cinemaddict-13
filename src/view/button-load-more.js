@@ -25,4 +25,10 @@ export default class LoadMoreButton extends AbstractView {
 
     this.element.addEventListener(Event.MOUSE_DOWN, this._clickHandler);
   }
+
+  removeMouseDownHandler(callback) {
+    this._callback.click = callback;
+
+    this.element.removeEventListener(Event.MOUSE_DOWN, this._clickHandler);
+  }
 }

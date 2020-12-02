@@ -3,14 +3,14 @@ import Filter from "./view/filter.js";
 import Sorting from "./view/sorting.js";
 import FilmsContainer from "./view/films-container.js";
 import Film from "./view/film.js";
-import LoadMoreButton from "./view/button-load.js";
+import LoadMoreButton from "./view/button-load-more.js";
 import Popup from "./view/popup.js";
 import FooterStatistics from "./view/footer-statistics.js";
 import NoFilm from "./view/no-film";
 import {generateFilm} from "./mock/film.js";
 import {generateStats} from "./mock/stats.js";
 import {generateFilterData} from "./mock/filter.js";
-import {render} from "./utils/render.js";
+import {render, remove} from "./utils/render.js";
 import {checkButtonPress} from "./utils/common.js";
 import {RenderPosition, Event} from "./const.js";
 
@@ -24,7 +24,6 @@ const Button = {
 };
 
 let renderedTaskCount = MOVIES_PER_STEP;
-let loadMoreButton;
 let filmCards;
 let filmData;
 let closePopupButton;
@@ -60,9 +59,8 @@ const showMoreFilm = () => {
   });
 
   if (renderedTaskCount >= films.length) {
-    loadMoreButton.remove();
-    loadMoreButtonElement.removeElement();
-    loadMoreButton.removeEventListener(Event.MOUSE_DOWN, onMoreFilmShow);
+    loadMoreButtonElement.removeMouseDownHandler(onMoreFilmShow);
+    remove(loadMoreButtonElement);
   }
 };
 
