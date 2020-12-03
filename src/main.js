@@ -12,16 +12,11 @@ import {generateStats} from "./mock/stats.js";
 import {generateFilterData} from "./mock/filter.js";
 import {render, remove} from "./utils/render.js";
 import {checkButtonPress} from "./utils/common.js";
-import {RenderPosition, Event} from "./const.js";
+import {RenderPosition, Event, Button} from "./const.js";
 
 const MOVIES_PER_STEP = 5;
 const TOTAL_FILMS = 31;
 const MAX_ADDITIONAL_FILMS = 2;
-const Button = {
-  ENTER: `Enter`,
-  ESCAPE: `Escape`,
-  MOUSE_MAIN: 0
-};
 
 let renderedTaskCount = MOVIES_PER_STEP;
 let filmCards;
@@ -59,7 +54,7 @@ const showMoreFilm = () => {
   });
 
   if (renderedTaskCount >= films.length) {
-    loadMoreButtonElement.removeMouseDownHandler(onMoreFilmShow);
+    loadMoreButtonElement.removeLoadMoreButtonHandler(onMoreFilmShow);
     remove(loadMoreButtonElement);
   }
 };
@@ -168,7 +163,7 @@ for (let i = 0; i < Math.min(films.length, MOVIES_PER_STEP); i++) {
 if (TOTAL_FILMS > MOVIES_PER_STEP) {
   render(filmList, loadMoreButtonElement.element, RenderPosition.BEFORE_END);
 
-  loadMoreButtonElement.setMouseDownHandler(onMoreFilmShow);
+  loadMoreButtonElement.setLoadMoreButtonHandler(onMoreFilmShow);
 }
 
 if (filmListExtra[0]) {
