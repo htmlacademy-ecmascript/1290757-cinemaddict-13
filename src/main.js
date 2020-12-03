@@ -11,15 +11,13 @@ import {generateFilm} from "./mock/film.js";
 import {generateStats} from "./mock/stats.js";
 import {generateFilterData} from "./mock/filter.js";
 import {render, remove} from "./utils/render.js";
-import {checkButtonPress} from "./utils/common.js";
-import {RenderPosition, Event, Button} from "./const.js";
+import {RenderPosition} from "./const.js";
 
 const MOVIES_PER_STEP = 5;
 const TOTAL_FILMS = 31;
 const MAX_ADDITIONAL_FILMS = 2;
 
 let renderedTaskCount = MOVIES_PER_STEP;
-let closePopupButton;
 let popupElement;
 
 const loadMoreButtonElement = new LoadMoreButton();
@@ -70,37 +68,21 @@ const popupClose = () => {
   body.removeChild(filmDetails);
   body.classList.remove(`hide-overflow`);
   popupElement.removeElement();
-
-  closePopupButton.removeEventListener(Event.MOUSE_DOWN, onPopupClose);
-  closePopupButton.removeEventListener(Event.KEY_DOWN, onPopupClose);
-  document.removeEventListener(Event.KEY_DOWN, onPopupClose);
+  popupElement.removePopupHandler(onPopupClose);
 };
 
-const onPopupClose = (evt) => {
-  if (evt.type === Event.KEY_DOWN) {
-    if (evt.target.className === `film-details__close-btn`) {
-      checkButtonPress(evt, popupClose, Button.ENTER);
-    } else {
-      checkButtonPress(evt, popupClose, Button.ESCAPE);
-    }
-  } else if (evt.type === Event.MOUSE_DOWN) {
-    checkButtonPress(evt, popupClose, Button.MOUSE_MAIN);
-  }
+const onPopupClose = () => {
+  popupClose();
 };
 
 const getDetailData = (evt) => films.filter((film) => film.id === Number(evt.target.parentElement.id))[0];
 
 const showDetailFilm = (evt) => {
-  popupElement = new Popup(getDetailData(evt));
+  popupElement = new Popup(getDetailData(evt, body));
 
   render(body, popupElement.element, RenderPosition.BEFORE_END);
+  popupElement.setPopupHandler(onPopupClose);
   body.classList.add(`hide-overflow`);
-
-  closePopupButton = body.querySelector(`.film-details__close-btn`);
-
-  closePopupButton.addEventListener(Event.MOUSE_DOWN, onPopupClose);
-  closePopupButton.addEventListener(Event.KEY_DOWN, onPopupClose);
-  document.addEventListener(Event.KEY_DOWN, onPopupClose);
 };
 
 const onDetailFilmShow = (evt) => {
@@ -128,7 +110,6 @@ renderFilmsBlock(filmsContainer, films, MOVIES_PER_STEP);
 
 if (TOTAL_FILMS > MOVIES_PER_STEP) {
   render(filmList, loadMoreButtonElement.element, RenderPosition.BEFORE_END);
-
   loadMoreButtonElement.setLoadMoreButtonHandler(onMoreFilmShow);
 }
 
