@@ -19,7 +19,8 @@ const getArrayWithRandomItems = (arr) => {
 
 const checkButtonPress = (evt, action, button) => {
   if (evt.key === button || evt.button === button) {
-    action();
+    evt.preventDefault();
+    action(evt);
   }
 };
 

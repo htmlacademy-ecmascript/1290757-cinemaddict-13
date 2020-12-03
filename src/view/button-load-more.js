@@ -16,8 +16,6 @@ export default class LoadMoreButton extends AbstractView {
   }
 
   _loadMoreButtonHandler(evt) {
-    evt.preventDefault();
-
     if (evt.type === Event.KEY_DOWN) {
       checkButtonPress(evt, this._callback.loadMore, Button.ENTER);
     } else if (evt.type === Event.MOUSE_DOWN) {

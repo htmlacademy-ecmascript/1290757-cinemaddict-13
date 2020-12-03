@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import {getFormatTime} from "../utils/render.js";
 import AbstractView from "./abstract";
+import {Button, Event} from "../const";
+import {checkButtonPress} from "../utils/common";
 
 const SHORT_DESCRIPTION_LENGTH = 139;
 
@@ -41,10 +43,39 @@ const createFilmTemplate = (film) => {
 export default class Film extends AbstractView {
   constructor(film) {
     super();
+
     this._film = film;
+    this._filmHandler = this._filmHandler.bind(this);
   }
 
   _getTemplate() {
     return createFilmTemplate(this._film);
+  }
+
+  _filmHandler(evt) {
+    if (evt.target.classList.contains(`film-card__poster`)
+      || evt.target.classList.contains(`film-card__title`)
+      || evt.target.classList.contains(`film-card__comments`)) {
+
+      if (evt.type === Event.KEY_DOWN) {
+        checkButtonPress(evt, this._callback.showDetail, Button.ENTER);
+      } else if (evt.type === Event.MOUSE_DOWN) {
+        checkButtonPress(evt, this._callback.showDetail, Button.MOUSE_MAIN);
+      }
+    }
+  }
+
+  setFilmHandler(callback) {
+    this._callback.showDetail = callback;
+
+    this.element.addEventListener(Event.MOUSE_DOWN, this._filmHandler);
+    this.element.addEventListener(Event.KEY_DOWN, this._filmHandler);
+  }
+
+  removeFilmHandler(callback) {
+    this._callback.showDetail = callback;
+
+    this.element.removeEventListener(Event.MOUSE_DOWN, this._filmHandler);
+    this.element.removeEventListener(Event.KEY_DOWN, this._filmHandler);
   }
 }
