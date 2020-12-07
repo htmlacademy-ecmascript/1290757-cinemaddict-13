@@ -25,5 +25,14 @@ const RenderPosition = {
   AFTER_BEGIN: `afterbegin`,
   BEFORE_END: `beforeend`
 };
+const Event = {
+  MOUSE_DOWN: `mousedown`,
+  KEY_DOWN: `keydown`,
+};
+const Button = {
+  ENTER: `Enter`,
+  ESCAPE: `Escape`,
+  MOUSE_MAIN: 0
+};
 
-export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition};
+export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button};

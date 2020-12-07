@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {getRandomInteger, getRandomArrayItem, getArrayWithRandomItems} from "../utils.js";
+import {getRandomInteger, getRandomArrayItem, getArrayWithRandomItems} from "../utils/common.js";
 import {PROPOSALS, ACTORS, MAX_DAYS} from "../const";
 import {generateComment} from "./comment.js";
 

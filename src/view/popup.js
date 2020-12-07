@@ -1,4 +1,7 @@
-import {createElement, getFormatTime} from "../utils";
+import {getFormatTime} from "../utils/render.js";
+import AbstractView from "./abstract";
+import {Button, Event} from "../const";
+import {checkButtonPress} from "../utils/common";
 
 const createCommentsTemplate = (comments) => comments.length === 0 ? ``
   : `<ul class="film-details__comments-list">
@@ -19,6 +22,7 @@ const createCommentsTemplate = (comments) => comments.length === 0 ? ``
 
 const createGenresTemplate = (genres) => genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 const checkFlagStatus = (value) => value ? `checked` : ``;
+const getCloseButton = () => document.querySelector(`.film-details__close-btn`);
 
 const createPopupTemplate = (filmData) => {
   const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country, age, watched, watchlist, favorite} = filmData;
@@ -147,25 +151,45 @@ const createPopupTemplate = (filmData) => {
   </section>`;
 };
 
-export default class Popup {
+export default class Popup extends AbstractView {
   constructor(filmData) {
-    this._element = null;
+    super();
+
     this._filmData = filmData;
+    this._popupHandler = this._popupHandler.bind(this);
+    this._closeButton = null;
   }
 
   _getTemplate() {
     return createPopupTemplate(this._filmData);
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
+  _popupHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      if (evt.target.className === `film-details__close-btn`) {
+        checkButtonPress(evt, this._callback.closePopup, Button.ENTER);
+      } else {
+        checkButtonPress(evt, this._callback.closePopup, Button.ESCAPE);
+      }
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.closePopup, Button.MOUSE_MAIN);
     }
-
-    return this._element;
   }
 
-  removeElement() {
-    this._element = null;
+  setPopupHandler(callback) {
+    this._callback.closePopup = callback;
+    this._closeButton = getCloseButton();
+
+    this._closeButton.addEventListener(Event.MOUSE_DOWN, this._popupHandler);
+    this._closeButton.addEventListener(Event.KEY_DOWN, this._popupHandler);
+    document.addEventListener(Event.KEY_DOWN, this._popupHandler);
+  }
+
+  removePopupHandler(callback) {
+    this._callback.closePopup = callback;
+
+    this._closeButton.addEventListener(Event.MOUSE_DOWN, this._popupHandler);
+    this._closeButton.addEventListener(Event.KEY_DOWN, this._popupHandler);
+    document.addEventListener(Event.KEY_DOWN, this._popupHandler);
   }
 }

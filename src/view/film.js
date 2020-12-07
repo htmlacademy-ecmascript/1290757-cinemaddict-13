@@ -1,5 +1,8 @@
 import dayjs from "dayjs";
-import {getFormatTime, createElement} from "../utils";
+import {getFormatTime} from "../utils/render.js";
+import AbstractView from "./abstract";
+import {Button, Event} from "../const";
+import {checkButtonPress} from "../utils/common";
 
 const SHORT_DESCRIPTION_LENGTH = 139;
 
@@ -37,25 +40,42 @@ const createFilmTemplate = (film) => {
   </article>`;
 };
 
-export default class Film {
+export default class Film extends AbstractView {
   constructor(film) {
-    this._element = null;
+    super();
+
     this._film = film;
+    this._filmHandler = this._filmHandler.bind(this);
   }
 
   _getTemplate() {
     return createFilmTemplate(this._film);
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
+  _filmHandler(evt) {
+    if (evt.target.classList.contains(`film-card__poster`)
+      || evt.target.classList.contains(`film-card__title`)
+      || evt.target.classList.contains(`film-card__comments`)) {
 
-    return this._element;
+      if (evt.type === Event.KEY_DOWN) {
+        checkButtonPress(evt, this._callback.showDetail, Button.ENTER);
+      } else if (evt.type === Event.MOUSE_DOWN) {
+        checkButtonPress(evt, this._callback.showDetail, Button.MOUSE_MAIN);
+      }
+    }
   }
 
-  removeElement() {
-    this._element = null;
+  setFilmHandler(callback) {
+    this._callback.showDetail = callback;
+
+    this.element.addEventListener(Event.MOUSE_DOWN, this._filmHandler);
+    this.element.addEventListener(Event.KEY_DOWN, this._filmHandler);
+  }
+
+  removeFilmHandler(callback) {
+    this._callback.showDetail = callback;
+
+    this.element.removeEventListener(Event.MOUSE_DOWN, this._filmHandler);
+    this.element.removeEventListener(Event.KEY_DOWN, this._filmHandler);
   }
 }
