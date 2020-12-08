@@ -1,4 +1,4 @@
-import {getFormatTime} from "../utils/render.js";
+import {createElement, getFormatTime} from "../utils/render.js";
 import AbstractView from "./abstract";
 import {Button, Event} from "../const";
 import {checkButtonPress} from "../utils/common";
@@ -22,7 +22,6 @@ const createCommentsTemplate = (comments) => comments.length === 0 ? ``
 
 const createGenresTemplate = (genres) => genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 const checkFlagStatus = (value) => value ? `checked` : ``;
-const getCloseButton = () => document.querySelector(`.film-details__close-btn`);
 
 const createPopupTemplate = (filmData) => {
   const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country, age, watched, watchlist, favorite} = filmData;
@@ -176,9 +175,17 @@ export default class Popup extends AbstractView {
     }
   }
 
+  get element() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+      this._closeButton = this._element.querySelector(`.film-details__close-btn`);
+    }
+
+    return this._element;
+  }
+
   setPopupHandler(callback) {
     this._callback.closePopup = callback;
-    this._closeButton = getCloseButton();
 
     this._closeButton.addEventListener(Event.MOUSE_DOWN, this._popupHandler);
     this._closeButton.addEventListener(Event.KEY_DOWN, this._popupHandler);
@@ -188,8 +195,13 @@ export default class Popup extends AbstractView {
   removePopupHandler(callback) {
     this._callback.closePopup = callback;
 
-    this._closeButton.addEventListener(Event.MOUSE_DOWN, this._popupHandler);
-    this._closeButton.addEventListener(Event.KEY_DOWN, this._popupHandler);
-    document.addEventListener(Event.KEY_DOWN, this._popupHandler);
+    this._closeButton.removeEventListener(Event.MOUSE_DOWN, this._popupHandler);
+    this._closeButton.removeEventListener(Event.KEY_DOWN, this._popupHandler);
+    document.removeEventListener(Event.KEY_DOWN, this._popupHandler);
+  }
+
+  removeElement() {
+    this._element = null;
+    this._closeButton = null;
   }
 }

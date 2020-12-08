@@ -1,7 +1,7 @@
 import Profile from "./view/profile.js";
 import Filter from "./view/filter.js";
 import Sorting from "./view/sorting.js";
-import FilmsContainer from "./view/films-container.js";
+import FilmsList from "./view/films-list.js";
 import Film from "./view/film.js";
 import LoadMoreButton from "./view/button-load-more.js";
 import Popup from "./view/popup.js";
@@ -65,10 +65,10 @@ const onMoreFilmShow = () => {
 const popupClose = () => {
   const filmDetails = body.querySelector(`.film-details`);
 
+  popupElement.removePopupHandler(onPopupClose);
   body.removeChild(filmDetails);
   body.classList.remove(`hide-overflow`);
   popupElement.removeElement();
-  popupElement.removePopupHandler(onPopupClose);
 };
 
 const onPopupClose = () => {
@@ -95,7 +95,7 @@ render(main, new Filter(filterData).element, RenderPosition.BEFORE_END);
 
 if (films.length) {
   render(main, new Sorting().element, RenderPosition.BEFORE_END);
-  render(main, new FilmsContainer().element, RenderPosition.BEFORE_END);
+  render(main, new FilmsList().element, RenderPosition.BEFORE_END);
 } else {
   render(main, new NoFilm().element, RenderPosition.BEFORE_END);
 }
