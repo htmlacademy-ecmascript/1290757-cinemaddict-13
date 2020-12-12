@@ -1,10 +1,9 @@
 import FilterView from "../view/filter.js";
 import SortingView from "../view/sorting.js";
 import FilmsContainerView from "../view/films-container.js";
-import FilmView from "../view/film.js";
 import NoFilmView from "../view/no-film";
 import LoadMoreButtonView from "../view/button-load-more.js";
-import PopupView from "../view/popup.js";
+import FilmPresenter from "./film.js";
 import {remove, render} from "../utils/render.js";
 import {RenderPosition, TOTAL_FILMS} from "../const.js";
 
@@ -15,7 +14,6 @@ export default class PageMainContent {
   constructor(bodyContainer) {
     this._films = null;
     this._filterData = null;
-
     this._bodyContainer = bodyContainer;
     this._mainContainer = bodyContainer.querySelector(`.main`);
     this._filmList = null;
@@ -44,10 +42,10 @@ export default class PageMainContent {
     this._filmList = this._mainContainer.querySelector(`.films-list`);
     this._filmsContainer = this._filmList.querySelector(`.films-list__container`);
     this._filmListExtra = this._mainContainer.querySelectorAll(`.films-list.films-list--extra`);
-    this._renderFilmsList(this._filmsContainer, this._films, MOVIES_PER_STEP);
+    this._renderFilmsList();
 
     if (TOTAL_FILMS > MOVIES_PER_STEP) {
-      this._renderLoadMoreButton(this._filmList, this._films, this._filmsContainer);
+      this._renderLoadMoreButton();
     }
 
     this._renderTopRatedFilms();
@@ -70,46 +68,15 @@ export default class PageMainContent {
     render(this._mainContainer, this._noFilmView.element, RenderPosition.BEFORE_END);
   }
 
-  _renderFilmsList(container, filmsList, limit) {
+  _renderFilmsList(container = this._filmsContainer, filmsList = this._films, limit = MOVIES_PER_STEP) {
     for (let i = 0; i < Math.min(filmsList.length, limit); i++) {
       this._renderFilm(container, filmsList[i]);
     }
   }
 
   _renderFilm(container, filmData) {
-    const filmElement = new FilmView(filmData);
-
-    let popupElement;
-
-    const popupClose = () => {
-      const filmDetails = this._bodyContainer.querySelector(`.film-details`);
-
-      popupElement.removePopupHandler(onPopupClose);
-      this._bodyContainer.removeChild(filmDetails);
-      this._bodyContainer.classList.remove(`hide-overflow`);
-      popupElement.removeElement();
-    };
-
-    const onPopupClose = () => {
-      popupClose();
-    };
-
-    const getDetailData = (evt) => this._films.filter((film) => film.id === Number(evt.target.parentElement.id))[0];
-
-    const showDetailFilm = (evt) => {
-      popupElement = new PopupView(getDetailData(evt, this._bodyContainer));
-
-      render(this._bodyContainer, popupElement.element, RenderPosition.BEFORE_END);
-      popupElement.setPopupHandler(onPopupClose);
-      this._bodyContainer.classList.add(`hide-overflow`);
-    };
-
-    const onDetailFilmShow = (evt) => {
-      showDetailFilm(evt);
-    };
-
-    render(container, filmElement.element, RenderPosition.BEFORE_END);
-    filmElement.setFilmHandler(onDetailFilmShow);
+    const filmPresenter = new FilmPresenter(container, this._bodyContainer);
+    filmPresenter.init(filmData);
   }
 
   _renderTopRatedFilms() {
@@ -130,19 +97,19 @@ export default class PageMainContent {
     this._renderFilmsList(mostCommentedFilmsContainer, mostCommentedFilms, MAX_ADDITIONAL_FILMS);
   }
 
-  _renderLoadMoreButton(filmList, films, filmsContainer) {
+  _renderLoadMoreButton() {
     let renderedTaskCount = MOVIES_PER_STEP;
 
     const showMoreFilm = () => {
-      films
+      this._films
         .slice(renderedTaskCount, renderedTaskCount + MOVIES_PER_STEP)
         .forEach((film) => {
-          this._renderFilm(filmsContainer, film);
+          this._renderFilm(this._filmsContainer, film);
         });
 
       renderedTaskCount += MOVIES_PER_STEP;
 
-      if (renderedTaskCount >= films.length) {
+      if (renderedTaskCount >= this._films.length) {
         this._loadMoreButtonView.removeLoadMoreButtonHandler(onMoreFilmShow);
         remove(this._loadMoreButtonView);
       }
@@ -152,7 +119,7 @@ export default class PageMainContent {
       showMoreFilm();
     };
 
-    render(filmList, this._loadMoreButtonView.element, RenderPosition.BEFORE_END);
+    render(this._filmList, this._loadMoreButtonView.element, RenderPosition.BEFORE_END);
     this._loadMoreButtonView.setLoadMoreButtonHandler(onMoreFilmShow);
   }
 }
