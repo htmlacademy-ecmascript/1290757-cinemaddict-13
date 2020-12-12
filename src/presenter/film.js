@@ -26,12 +26,15 @@ export default class Film {
     const prevPopupView = this._popupView;
 
     this._filmView = new FilmView(film);
-    this._popupView = new PopupView(this._film);
+    this._popupView = new PopupView(film);
 
     this._filmView.setFilmHandler(this._onDetailFilmShow);
     this._filmView.setWatchedClickHandler(this._handleWatchedClick);
     this._filmView.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmView.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupView.setWatchedClickHandler(this._handleWatchedClick);
+    this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
 
     if (prevFilmView === null || prevPopupView === null) {
       render(this._filmContainer, this._filmView, RenderPosition.BEFORE_END);
@@ -44,6 +47,7 @@ export default class Film {
 
     if (this._bodyContainer.contains(prevPopupView.element)) {
       replace(this._popupView, prevPopupView);
+      this._popupView.setPopupHandler(this._onPopupClose);
     }
 
     remove(prevFilmView);

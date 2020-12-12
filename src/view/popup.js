@@ -156,7 +156,14 @@ export default class Popup extends AbstractView {
 
     this._filmData = filmData;
     this._popupHandler = this._popupHandler.bind(this);
+    this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    this._watchlistClickClickHandler = this._watchlistClickClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+
     this._closeButton = null;
+    this._watchedButton = null;
+    this._watchlistButton = null;
+    this._favoriteButton = null;
   }
 
   _getTemplate() {
@@ -172,6 +179,30 @@ export default class Popup extends AbstractView {
       }
     } else if (evt.type === Event.MOUSE_DOWN) {
       checkButtonPress(evt, this._callback.closePopup, Button.MOUSE_MAIN);
+    }
+  }
+
+  _watchedClickHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, this._callback.watchedClick, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.watchedClick, Button.MOUSE_MAIN);
+    }
+  }
+
+  _watchlistClickClickHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, this._callback.watchlistClick, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.watchlistClick, Button.MOUSE_MAIN);
+    }
+  }
+
+  _favoriteClickHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, this._callback.favoriteClick, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.favoriteClick, Button.MOUSE_MAIN);
     }
   }
 
@@ -198,6 +229,54 @@ export default class Popup extends AbstractView {
     this._closeButton.removeEventListener(Event.MOUSE_DOWN, this._popupHandler);
     this._closeButton.removeEventListener(Event.KEY_DOWN, this._popupHandler);
     document.removeEventListener(Event.KEY_DOWN, this._popupHandler);
+  }
+
+  setWatchedClickHandler(callback) {
+    this._callback.watchedClick = callback;
+
+    this._watchedButton = this.element.querySelector(`.film-details__control-label--watched`);
+
+    this._watchedButton.addEventListener(Event.MOUSE_DOWN, this._watchedClickHandler);
+    this._watchedButton.addEventListener(Event.KEY_DOWN, this._watchedClickHandler);
+  }
+
+  removeWatchedClickHandler(callback) {
+    this._callback.watchedClick = callback;
+
+    this._watchedButton.removeEventListener(Event.MOUSE_DOWN, this._watchedClickHandler);
+    this._watchedButton.removeEventListener(Event.KEY_DOWN, this._watchedClickHandler);
+  }
+
+  setWatchlistClickHandler(callback) {
+    this._callback.watchlistClick = callback;
+
+    this._watchlistButton = this.element.querySelector(`.film-details__control-label--watchlist`);
+
+    this._watchlistButton.addEventListener(Event.MOUSE_DOWN, this._watchlistClickClickHandler);
+    this._watchlistButton.addEventListener(Event.KEY_DOWN, this._watchlistClickClickHandler);
+  }
+
+  removeWatchlistClickHandler(callback) {
+    this._callback.watchlistClick = callback;
+
+    this._watchlistButton.removeEventListener(Event.MOUSE_DOWN, this._watchlistClickClickHandler);
+    this._watchlistButton.removeEventListener(Event.KEY_DOWN, this._watchlistClickClickHandler);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+
+    this._favoriteButton = this.element.querySelector(`.film-details__control-label--favorite`);
+
+    this._favoriteButton.addEventListener(Event.MOUSE_DOWN, this._favoriteClickHandler);
+    this._favoriteButton.addEventListener(Event.KEY_DOWN, this._favoriteClickHandler);
+  }
+
+  removeFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+
+    this._favoriteButton.removeEventListener(Event.MOUSE_DOWN, this._favoriteClickHandler);
+    this._favoriteButton.removeEventListener(Event.KEY_DOWN, this._favoriteClickHandler);
   }
 
   removeElement() {
