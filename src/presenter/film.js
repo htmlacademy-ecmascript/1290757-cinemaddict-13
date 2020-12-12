@@ -80,7 +80,14 @@ export default class Film {
   _popupClose() {
     const filmDetails = this._bodyContainer.querySelector(`.film-details`);
 
+    if (!filmDetails) {
+      return;
+    }
+
     this._popupView.removePopupHandler(this._onPopupClose);
+    this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
+    this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
+    this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
     this._bodyContainer.removeChild(filmDetails);
     this._bodyContainer.classList.remove(`hide-overflow`);
     this._popupView.removeElement();
@@ -91,6 +98,8 @@ export default class Film {
   }
 
   _showDetailFilm() {
+    this._popupClose();
+
     render(this._bodyContainer, this._popupView.element, RenderPosition.BEFORE_END);
     this._popupView.setPopupHandler(this._onPopupClose);
     this._bodyContainer.classList.add(`hide-overflow`);
