@@ -4,15 +4,19 @@ import {render, remove, replace} from "../utils/render.js";
 import {RenderPosition} from "../const.js";
 
 export default class Film {
-  constructor(filmContainer, bodyContainer) {
+  constructor(filmContainer, bodyContainer, updateData) {
     this._filmContainer = filmContainer;
     this._bodyContainer = bodyContainer;
+    this._updateData = updateData;
 
     this._filmView = null;
     this._popupView = null;
 
     this._onDetailFilmShow = this._onDetailFilmShow.bind(this);
     this._onPopupClose = this._onPopupClose.bind(this);
+    this._handleWatchedClick = this._handleWatchedClick.bind(this);
+    this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
   }
 
   init(film) {
@@ -25,6 +29,9 @@ export default class Film {
     this._popupView = new PopupView(this._film);
 
     this._filmView.setFilmHandler(this._onDetailFilmShow);
+    this._filmView.setWatchedClickHandler(this._handleWatchedClick);
+    this._filmView.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._filmView.setFavoriteClickHandler(this._handleFavoriteClick);
 
     if (prevFilmView === null || prevPopupView === null) {
       render(this._filmContainer, this._filmView, RenderPosition.BEFORE_END);
@@ -46,6 +53,24 @@ export default class Film {
   _destroy() {
     remove(this._filmView);
     remove(this._popupView);
+  }
+
+  _handleWatchedClick() {
+    this._updateData(Object.assign({}, this._film, {
+      watched: !this._film.watched
+    }));
+  }
+
+  _handleWatchlistClick() {
+    this._updateData(Object.assign({}, this._film, {
+      watchlist: !this._film.watchlist
+    }));
+  }
+
+  _handleFavoriteClick() {
+    this._updateData(Object.assign({}, this._film, {
+      favorite: !this._film.favorite
+    }));
   }
 
   _popupClose() {

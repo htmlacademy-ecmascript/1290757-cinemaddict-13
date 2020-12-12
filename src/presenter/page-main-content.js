@@ -19,11 +19,15 @@ export default class PageMainContent {
     this._filmList = null;
     this._filmsContainer = null;
     this._filmListExtra = null;
+    this._renderedFilmCount = MOVIES_PER_STEP;
+    this._filmPresenter = {};
 
     this._sortingView = new SortingView();
     this._filmsContainerView = new FilmsContainerView();
     this._noFilmView = new NoFilmView();
     this._loadMoreButtonView = new LoadMoreButtonView();
+
+    this._handleFilmChange = this._handleFilmChange.bind(this);
   }
 
   init(films, filterData) {
@@ -74,9 +78,10 @@ export default class PageMainContent {
     }
   }
 
-  _renderFilm(container, filmData) {
-    const filmPresenter = new FilmPresenter(container, this._bodyContainer);
-    filmPresenter.init(filmData);
+  _renderFilm(container, film) {
+    const filmPresenter = new FilmPresenter(container, this._bodyContainer, this._handleFilmChange);
+    filmPresenter.init(film);
+    this._filmPresenter[film.id] = filmPresenter;
   }
 
   _renderTopRatedFilms() {
@@ -97,19 +102,45 @@ export default class PageMainContent {
     this._renderFilmsList(mostCommentedFilmsContainer, mostCommentedFilms, MAX_ADDITIONAL_FILMS);
   }
 
-  _renderLoadMoreButton() {
-    let renderedTaskCount = MOVIES_PER_STEP;
+  _clearFilmList() {
+    Object
+      .values(this._filmPresenter)
+      .forEach((filmPresenter) => filmPresenter.destroy());
+    this._filmPresenter = {};
+    this._renderedFilmCount = MOVIES_PER_STEP;
+    remove(this._loadMoreButtonView);
+  }
 
+  _updateFilm(items, updatedFilm) {
+    const index = items.findIndex((item) => item.id === updatedFilm.id);
+
+    if (index === -1) {
+      return items;
+    }
+
+    return [
+      ...items.slice(0, index),
+      updatedFilm,
+      ...items.slice(index + 1)
+    ];
+  }
+
+  _handleFilmChange(updateFilm) {
+    this._films = this._updateFilm(this._films, updateFilm);
+    this._filmPresenter[updateFilm.id].init(updateFilm);
+  }
+
+  _renderLoadMoreButton() {
     const showMoreFilm = () => {
       this._films
-        .slice(renderedTaskCount, renderedTaskCount + MOVIES_PER_STEP)
+        .slice(this._renderedFilmCount, this._renderedFilmCount + MOVIES_PER_STEP)
         .forEach((film) => {
           this._renderFilm(this._filmsContainer, film);
         });
 
-      renderedTaskCount += MOVIES_PER_STEP;
+      this._renderedFilmCount += MOVIES_PER_STEP;
 
-      if (renderedTaskCount >= this._films.length) {
+      if (this._renderedFilmCount >= this._films.length) {
         this._loadMoreButtonView.removeLoadMoreButtonHandler(onMoreFilmShow);
         remove(this._loadMoreButtonView);
       }
