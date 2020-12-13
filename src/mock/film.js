@@ -88,7 +88,7 @@ const getWatchedStatus = () => {
   isWatched = Boolean(getRandomInteger());
 };
 
-const generateId = () => Date.now() + getRandomInteger(MAX_ID);
+const generateId = () => Number(Date.now()) + getRandomInteger(MAX_ID);
 
 const generateFilm = () => {
   getWatchedStatus();

@@ -1,6 +1,6 @@
 import AbstractView from "./abstract";
 
-const createNoFilmsTemplate = () =>
+const createTemplate = () =>
   `<section class="films">
     <section class="films-list">
       <h2 class="films-list__title">There are no movies in our database</h2>
@@ -9,6 +9,6 @@ const createNoFilmsTemplate = () =>
 
 export default class NoFilm extends AbstractView {
   _getTemplate() {
-    return createNoFilmsTemplate();
+    return createTemplate();
   }
 }

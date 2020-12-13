@@ -5,15 +5,15 @@ import {RenderPosition} from "../const.js";
 
 export default class Film {
   constructor(filmContainer, bodyContainer, updateData) {
-    this._filmContainer = filmContainer;
+    this._container = filmContainer;
     this._bodyContainer = bodyContainer;
     this._updateData = updateData;
 
-    this._filmView = null;
+    this._view = null;
     this._popupView = null;
 
-    this._onDetailFilmShow = this._onDetailFilmShow.bind(this);
-    this._onPopupClose = this._onPopupClose.bind(this);
+    this._popupShowHandler = this._popupShowHandler.bind(this);
+    this._popupCloseHandler = this._popupCloseHandler.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
@@ -22,32 +22,32 @@ export default class Film {
   init(film) {
     this._film = film;
 
-    const prevFilmView = this._filmView;
+    const prevFilmView = this._view;
     const prevPopupView = this._popupView;
 
-    this._filmView = new FilmView(film);
+    this._view = new FilmView(film);
     this._popupView = new PopupView(film);
 
-    this._filmView.setFilmHandler(this._onDetailFilmShow);
-    this._filmView.setWatchedClickHandler(this._handleWatchedClick);
-    this._filmView.setWatchlistClickHandler(this._handleWatchlistClick);
-    this._filmView.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._view.setShowDetailHandler(this._popupShowHandler);
+    this._view.setWatchedClickHandler(this._handleWatchedClick);
+    this._view.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._view.setFavoriteClickHandler(this._handleFavoriteClick);
     this._popupView.setWatchedClickHandler(this._handleWatchedClick);
     this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
     this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
 
     if (prevFilmView === null || prevPopupView === null) {
-      render(this._filmContainer, this._filmView, RenderPosition.BEFORE_END);
+      render(this._container, this._view, RenderPosition.BEFORE_END);
       return;
     }
 
-    if (this._filmContainer.contains(prevFilmView.element)) {
-      replace(this._filmView, prevFilmView);
+    if (this._container.contains(prevFilmView.element)) {
+      replace(this._view, prevFilmView);
     }
 
     if (this._bodyContainer.contains(prevPopupView.element)) {
       replace(this._popupView, prevPopupView);
-      this._popupView.setPopupHandler(this._onPopupClose);
+      this._popupView.setClosePopupHandler(this._popupCloseHandler);
     }
 
     remove(prevFilmView);
@@ -55,7 +55,7 @@ export default class Film {
   }
 
   _destroy() {
-    remove(this._filmView);
+    remove(this._view);
     remove(this._popupView);
   }
 
@@ -84,7 +84,7 @@ export default class Film {
       return;
     }
 
-    this._popupView.removePopupHandler(this._onPopupClose);
+    this._popupView.removeClosePopupHandler(this._popupCloseHandler);
     this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
     this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
     this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
@@ -93,19 +93,19 @@ export default class Film {
     this._popupView.removeElement();
   }
 
-  _onPopupClose() {
+  _popupCloseHandler() {
     this._popupClose();
   }
 
-  _showDetailFilm() {
+  _popupShow() {
     this._popupClose();
 
     render(this._bodyContainer, this._popupView.element, RenderPosition.BEFORE_END);
-    this._popupView.setPopupHandler(this._onPopupClose);
+    this._popupView.setClosePopupHandler(this._popupCloseHandler);
     this._bodyContainer.classList.add(`hide-overflow`);
   }
 
-  _onDetailFilmShow(evt) {
-    this._showDetailFilm(evt);
+  _popupShowHandler(evt) {
+    this._popupShow(evt);
   }
 }

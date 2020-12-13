@@ -8,7 +8,7 @@ const SHORT_DESCRIPTION_LENGTH = 139;
 
 const checkFlagStatus = (value) => value ? `film-card__controls-item--active` : ``;
 
-const createFilmTemplate = (film) => {
+const createTemplate = (film) => {
   const {id, name, poster, description, comments, rating, releaseDate, runtime, genres, watched, watchlist, favorite} = film;
 
   const commentCount = comments.length;
@@ -45,7 +45,7 @@ export default class Film extends AbstractView {
     super();
 
     this._film = film;
-    this._filmHandler = this._filmHandler.bind(this);
+    this._callHandler = this._callHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._watchlistClickClickHandler = this._watchlistClickClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
@@ -56,10 +56,10 @@ export default class Film extends AbstractView {
   }
 
   _getTemplate() {
-    return createFilmTemplate(this._film);
+    return createTemplate(this._film);
   }
 
-  _filmHandler(evt) {
+  _callHandler(evt) {
     if (evt.target.classList.contains(`film-card__poster`)
       || evt.target.classList.contains(`film-card__title`)
       || evt.target.classList.contains(`film-card__comments`)) {
@@ -96,18 +96,18 @@ export default class Film extends AbstractView {
     }
   }
 
-  setFilmHandler(callback) {
+  setShowDetailHandler(callback) {
     this._callback.showDetail = callback;
 
-    this.element.addEventListener(Event.MOUSE_DOWN, this._filmHandler);
-    this.element.addEventListener(Event.KEY_DOWN, this._filmHandler);
+    this.element.addEventListener(Event.MOUSE_DOWN, this._callHandler);
+    this.element.addEventListener(Event.KEY_DOWN, this._callHandler);
   }
 
-  removeFilmHandler(callback) {
+  removeShowDetailHandler(callback) {
     this._callback.showDetail = callback;
 
-    this.element.removeEventListener(Event.MOUSE_DOWN, this._filmHandler);
-    this.element.removeEventListener(Event.KEY_DOWN, this._filmHandler);
+    this.element.removeEventListener(Event.MOUSE_DOWN, this._callHandler);
+    this.element.removeEventListener(Event.KEY_DOWN, this._callHandler);
   }
 
   setWatchedClickHandler(callback) {

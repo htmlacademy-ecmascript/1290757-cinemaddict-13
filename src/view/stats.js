@@ -10,7 +10,7 @@ const createDurationTemplate = (duration) => {
     : `<p class="statistic__item-text">${minutes} <span class="statistic__item-description">m</span></p>`;
 };
 
-const createStatisticsTemplate = (stats) => {
+const createTemplate = (stats) => {
   const {watched, rank, totalDuration, favoriteGenre} = stats;
 
   const durationTemplate = createDurationTemplate(totalDuration);
@@ -70,6 +70,6 @@ export default class Statistics extends AbstractView {
   }
 
   _getTemplate() {
-    return createStatisticsTemplate(this._stats);
+    return createTemplate(this._stats);
   }
 }

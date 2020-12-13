@@ -79,33 +79,33 @@ export default class PageMainContent {
   }
 
   _renderFilm(container, film) {
-    const filmPresenter = new FilmPresenter(container, this._bodyContainer, this._handleFilmChange);
-    filmPresenter.init(film);
-    this._filmPresenter[film.id] = filmPresenter;
+    const presenter = new FilmPresenter(container, this._bodyContainer, this._handleFilmChange);
+    presenter.init(film);
+    this._filmPresenter[film.id] = presenter;
   }
 
   _renderTopRatedFilms() {
-    const topRatedFilmsContainer = this._filmListExtra[0].querySelector(`.films-list__container`);
-    const topRatedFilms = [...this._films];
+    const container = this._filmListExtra[0].querySelector(`.films-list__container`);
+    const films = [...this._films];
 
-    topRatedFilms.sort((a, b) => b.rating - a.rating);
+    films.sort((a, b) => b.rating - a.rating);
 
-    this._renderFilmsList(topRatedFilmsContainer, topRatedFilms, MAX_ADDITIONAL_FILMS);
+    this._renderFilmsList(container, films, MAX_ADDITIONAL_FILMS);
   }
 
   _renderMostCommentedFilms() {
-    const mostCommentedFilmsContainer = this._filmListExtra[1].querySelector(`.films-list__container`);
-    const mostCommentedFilms = [...this._films];
+    const container = this._filmListExtra[1].querySelector(`.films-list__container`);
+    const films = [...this._films];
 
-    mostCommentedFilms.sort((a, b) => b.comments.length - a.comments.length);
+    films.sort((a, b) => b.comments.length - a.comments.length);
 
-    this._renderFilmsList(mostCommentedFilmsContainer, mostCommentedFilms, MAX_ADDITIONAL_FILMS);
+    this._renderFilmsList(container, films, MAX_ADDITIONAL_FILMS);
   }
 
   _clearFilmList() {
     Object
       .values(this._filmPresenter)
-      .forEach((filmPresenter) => filmPresenter.destroy());
+      .forEach((presenter) => presenter.destroy());
     this._filmPresenter = {};
     this._renderedFilmCount = MOVIES_PER_STEP;
     remove(this._loadMoreButtonView);
@@ -141,16 +141,16 @@ export default class PageMainContent {
       this._renderedFilmCount += MOVIES_PER_STEP;
 
       if (this._renderedFilmCount >= this._films.length) {
-        this._loadMoreButtonView.removeLoadMoreButtonHandler(onMoreFilmShow);
+        this._loadMoreButtonView.removeLoadMoreHandler(moreFilmShowHandler);
         remove(this._loadMoreButtonView);
       }
     };
 
-    const onMoreFilmShow = () => {
+    const moreFilmShowHandler = () => {
       showMoreFilm();
     };
 
     render(this._filmList, this._loadMoreButtonView.element, RenderPosition.BEFORE_END);
-    this._loadMoreButtonView.setLoadMoreButtonHandler(onMoreFilmShow);
+    this._loadMoreButtonView.setLoadMoreHandler(moreFilmShowHandler);
   }
 }

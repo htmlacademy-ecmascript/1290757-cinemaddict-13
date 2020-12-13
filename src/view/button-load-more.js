@@ -8,32 +8,32 @@ export default class LoadMoreButton extends AbstractView {
   constructor() {
     super();
 
-    this._loadMoreButtonHandler = this._loadMoreButtonHandler.bind(this);
+    this._callHandler = this._callHandler.bind(this);
   }
 
   _getTemplate() {
     return createButtonTemplate();
   }
 
-  _loadMoreButtonHandler(evt) {
+  setLoadMoreHandler(callback) {
+    this._callback.loadMore = callback;
+
+    this.element.addEventListener(Event.MOUSE_DOWN, this._callHandler);
+    this.element.addEventListener(Event.KEY_DOWN, this._callHandler);
+  }
+
+  removeLoadMoreHandler(callback) {
+    this._callback.loadMore = callback;
+
+    this.element.removeEventListener(Event.MOUSE_DOWN, this._callHandler);
+    this.element.removeEventListener(Event.KEY_DOWN, this._callHandler);
+  }
+
+  _callHandler(evt) {
     if (evt.type === Event.KEY_DOWN) {
       checkButtonPress(evt, this._callback.loadMore, Button.ENTER);
     } else if (evt.type === Event.MOUSE_DOWN) {
       checkButtonPress(evt, this._callback.loadMore, Button.MOUSE_MAIN);
     }
-  }
-
-  setLoadMoreButtonHandler(callback) {
-    this._callback.loadMore = callback;
-
-    this.element.addEventListener(Event.MOUSE_DOWN, this._loadMoreButtonHandler);
-    this.element.addEventListener(Event.KEY_DOWN, this._loadMoreButtonHandler);
-  }
-
-  removeLoadMoreButtonHandler(callback) {
-    this._callback.loadMore = callback;
-
-    this.element.removeEventListener(Event.MOUSE_DOWN, this._loadMoreButtonHandler);
-    this.element.removeEventListener(Event.KEY_DOWN, this._loadMoreButtonHandler);
   }
 }

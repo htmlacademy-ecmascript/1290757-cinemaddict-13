@@ -1,6 +1,6 @@
 import AbstractView from "./abstract";
 
-const createFilmsContainerTemplate = () =>
+const createTemplate = () =>
   `<section class="films">
     <section class="films-list">
       <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
@@ -18,6 +18,6 @@ const createFilmsContainerTemplate = () =>
 
 export default class FilmsContainer extends AbstractView {
   _getTemplate() {
-    return createFilmsContainerTemplate();
+    return createTemplate();
   }
 }
