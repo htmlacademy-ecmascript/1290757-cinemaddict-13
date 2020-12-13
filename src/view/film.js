@@ -9,7 +9,8 @@ const SHORT_DESCRIPTION_LENGTH = 139;
 const checkFlagStatus = (value) => value ? `film-card__controls-item--active` : ``;
 
 const createTemplate = (film) => {
-  const {id, name, poster, description, comments, rating, releaseDate, runtime, genres, watched, watchlist, favorite} = film;
+  const {id, name, poster, description, comments, rating, releaseDate, runtime, genres, watched, watchlist,
+    favorite} = film;
 
   const commentCount = comments.length;
   const year = dayjs(releaseDate).format(`YYYY`);
@@ -33,9 +34,12 @@ const createTemplate = (film) => {
     <p class="film-card__description">${shortDescription}</p>
     <a class="film-card__comments">${commentCount} comments</a>
     <div class="film-card__controls">
-      <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${watchlistStatus}" type="button">Add to watchlist</button>
-      <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${watchedStatus}" type="button">Mark as watched</button>
-      <button class="film-card__controls-item button film-card__controls-item--favorite ${favoriteStatus}" type="button">Mark as favorite</button>
+      <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${watchlistStatus}"
+       type="button">Add to watchlist</button>
+      <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${watchedStatus}"
+       type="button">Mark as watched</button>
+      <button class="film-card__controls-item button film-card__controls-item--favorite ${favoriteStatus}"
+       type="button">Mark as favorite</button>
     </div>
   </article>`;
 };

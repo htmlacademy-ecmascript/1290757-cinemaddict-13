@@ -28,6 +28,7 @@ export default class PageMainContent {
     this._loadMoreButtonView = new LoadMoreButtonView();
 
     this._handleFilmChange = this._handleFilmChange.bind(this);
+    this._showMoreFilmsHandler = this._showMoreFilmsHandler.bind(this);
   }
 
   init(films, filterData) {
@@ -131,26 +132,26 @@ export default class PageMainContent {
   }
 
   _renderLoadMoreButton() {
-    const showMoreFilm = () => {
-      this._films
-        .slice(this._renderedFilmCount, this._renderedFilmCount + MOVIES_PER_STEP)
-        .forEach((film) => {
-          this._renderFilm(this._filmsContainer, film);
-        });
-
-      this._renderedFilmCount += MOVIES_PER_STEP;
-
-      if (this._renderedFilmCount >= this._films.length) {
-        this._loadMoreButtonView.removeLoadMoreHandler(moreFilmShowHandler);
-        remove(this._loadMoreButtonView);
-      }
-    };
-
-    const moreFilmShowHandler = () => {
-      showMoreFilm();
-    };
-
     render(this._filmList, this._loadMoreButtonView.element, RenderPosition.BEFORE_END);
-    this._loadMoreButtonView.setLoadMoreHandler(moreFilmShowHandler);
+    this._loadMoreButtonView.setLoadMoreHandler(this._showMoreFilmsHandler);
+  }
+
+  _showMoreFilms() {
+    this._films
+      .slice(this._renderedFilmCount, this._renderedFilmCount + MOVIES_PER_STEP)
+      .forEach((film) => {
+        this._renderFilm(this._filmsContainer, film);
+      });
+
+    this._renderedFilmCount += MOVIES_PER_STEP;
+
+    if (this._renderedFilmCount >= this._films.length) {
+      this._loadMoreButtonView.removeLoadMoreHandler(this._showMoreFilmsHandler);
+      remove(this._loadMoreButtonView);
+    }
+  }
+
+  _showMoreFilmsHandler() {
+    this._showMoreFilms();
   }
 }
