@@ -206,22 +206,18 @@ export default class Popup extends AbstractView {
     }
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-      this._closeButton = this._element.querySelector(`.film-details__close-btn`);
-    }
-
-    return this._element;
-  }
-
   removeElement() {
     this._element = null;
     this._closeButton = null;
+    this._watchedButton = null;
+    this._watchlistButton = null;
+    this._favoriteButton = null;
   }
 
   setClosePopupHandler(callback) {
     this._callback.closePopup = callback;
+
+    this._closeButton = this._element.querySelector(`.film-details__close-btn`);
 
     this._closeButton.addEventListener(Event.MOUSE_DOWN, this._closePopupHandler);
     this._closeButton.addEventListener(Event.KEY_DOWN, this._closePopupHandler);
@@ -239,7 +235,7 @@ export default class Popup extends AbstractView {
   setWatchedClickHandler(callback) {
     this._callback.watchedClick = callback;
 
-    this._watchedButton = this.element.querySelector(`.film-details__control-label--watched`);
+    this._watchedButton = this._element.querySelector(`.film-details__control-label--watched`);
 
     this._watchedButton.addEventListener(Event.MOUSE_DOWN, this._watchedClickHandler);
     this._watchedButton.addEventListener(Event.KEY_DOWN, this._watchedClickHandler);
@@ -255,7 +251,7 @@ export default class Popup extends AbstractView {
   setWatchlistClickHandler(callback) {
     this._callback.watchlistClick = callback;
 
-    this._watchlistButton = this.element.querySelector(`.film-details__control-label--watchlist`);
+    this._watchlistButton = this._element.querySelector(`.film-details__control-label--watchlist`);
 
     this._watchlistButton.addEventListener(Event.MOUSE_DOWN, this._watchlistClickHandler);
     this._watchlistButton.addEventListener(Event.KEY_DOWN, this._watchlistClickHandler);
@@ -271,7 +267,7 @@ export default class Popup extends AbstractView {
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClick = callback;
 
-    this._favoriteButton = this.element.querySelector(`.film-details__control-label--favorite`);
+    this._favoriteButton = this._element.querySelector(`.film-details__control-label--favorite`);
 
     this._favoriteButton.addEventListener(Event.MOUSE_DOWN, this._favoriteClickHandler);
     this._favoriteButton.addEventListener(Event.KEY_DOWN, this._favoriteClickHandler);
