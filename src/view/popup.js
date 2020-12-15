@@ -23,7 +23,7 @@ const createCommentsTemplate = (comments) => comments.length === 0 ? ``
 const createGenresTemplate = (genres) => genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 const checkFlagStatus = (value) => value ? `checked` : ``;
 
-const createTemplate = (filmData) => {
+const createPopupTemplate = (filmData) => {
   const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country, age, watched, watchlist, favorite} = filmData;
 
   const commentCount = comments.length;
@@ -155,9 +155,9 @@ export default class Popup extends AbstractView {
     super();
 
     this._filmData = filmData;
-    this._callHandler = this._callHandler.bind(this);
+    this._closePopupHandler = this._closePopupHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
-    this._watchlistClickClickHandler = this._watchlistClickClickHandler.bind(this);
+    this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
 
     this._closeButton = null;
@@ -167,10 +167,10 @@ export default class Popup extends AbstractView {
   }
 
   _getTemplate() {
-    return createTemplate(this._filmData);
+    return createPopupTemplate(this._filmData);
   }
 
-  _callHandler(evt) {
+  _closePopupHandler(evt) {
     if (evt.type === Event.KEY_DOWN) {
       if (evt.target.className === `film-details__close-btn`) {
         checkButtonPress(evt, this._callback.closePopup, Button.ENTER);
@@ -190,7 +190,7 @@ export default class Popup extends AbstractView {
     }
   }
 
-  _watchlistClickClickHandler(evt) {
+  _watchlistClickHandler(evt) {
     if (evt.type === Event.KEY_DOWN) {
       checkButtonPress(evt, this._callback.watchlistClick, Button.ENTER);
     } else if (evt.type === Event.MOUSE_DOWN) {
@@ -223,17 +223,17 @@ export default class Popup extends AbstractView {
   setClosePopupHandler(callback) {
     this._callback.closePopup = callback;
 
-    this._closeButton.addEventListener(Event.MOUSE_DOWN, this._callHandler);
-    this._closeButton.addEventListener(Event.KEY_DOWN, this._callHandler);
-    document.addEventListener(Event.KEY_DOWN, this._callHandler);
+    this._closeButton.addEventListener(Event.MOUSE_DOWN, this._closePopupHandler);
+    this._closeButton.addEventListener(Event.KEY_DOWN, this._closePopupHandler);
+    document.addEventListener(Event.KEY_DOWN, this._closePopupHandler);
   }
 
   removeClosePopupHandler(callback) {
     this._callback.closePopup = callback;
 
-    this._closeButton.removeEventListener(Event.MOUSE_DOWN, this._callHandler);
-    this._closeButton.removeEventListener(Event.KEY_DOWN, this._callHandler);
-    document.removeEventListener(Event.KEY_DOWN, this._callHandler);
+    this._closeButton.removeEventListener(Event.MOUSE_DOWN, this._closePopupHandler);
+    this._closeButton.removeEventListener(Event.KEY_DOWN, this._closePopupHandler);
+    document.removeEventListener(Event.KEY_DOWN, this._closePopupHandler);
   }
 
   setWatchedClickHandler(callback) {
@@ -257,15 +257,15 @@ export default class Popup extends AbstractView {
 
     this._watchlistButton = this.element.querySelector(`.film-details__control-label--watchlist`);
 
-    this._watchlistButton.addEventListener(Event.MOUSE_DOWN, this._watchlistClickClickHandler);
-    this._watchlistButton.addEventListener(Event.KEY_DOWN, this._watchlistClickClickHandler);
+    this._watchlistButton.addEventListener(Event.MOUSE_DOWN, this._watchlistClickHandler);
+    this._watchlistButton.addEventListener(Event.KEY_DOWN, this._watchlistClickHandler);
   }
 
   removeWatchlistClickHandler(callback) {
     this._callback.watchlistClick = callback;
 
-    this._watchlistButton.removeEventListener(Event.MOUSE_DOWN, this._watchlistClickClickHandler);
-    this._watchlistButton.removeEventListener(Event.KEY_DOWN, this._watchlistClickClickHandler);
+    this._watchlistButton.removeEventListener(Event.MOUSE_DOWN, this._watchlistClickHandler);
+    this._watchlistButton.removeEventListener(Event.KEY_DOWN, this._watchlistClickHandler);
   }
 
   setFavoriteClickHandler(callback) {

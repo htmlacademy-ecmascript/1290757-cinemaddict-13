@@ -8,7 +8,7 @@ const SHORT_DESCRIPTION_LENGTH = 139;
 
 const checkFlagStatus = (value) => value ? `film-card__controls-item--active` : ``;
 
-const createTemplate = (film) => {
+const createFilmTemplate = (film) => {
   const {id, name, poster, description, comments, rating, releaseDate, runtime, genres, watched, watchlist,
     favorite} = film;
 
@@ -49,9 +49,9 @@ export default class Film extends AbstractView {
     super();
 
     this._film = film;
-    this._callHandler = this._callHandler.bind(this);
+    this._showDetailHandler = this._showDetailHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
-    this._watchlistClickClickHandler = this._watchlistClickClickHandler.bind(this);
+    this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
 
     this._watchedButton = null;
@@ -60,10 +60,10 @@ export default class Film extends AbstractView {
   }
 
   _getTemplate() {
-    return createTemplate(this._film);
+    return createFilmTemplate(this._film);
   }
 
-  _callHandler(evt) {
+  _showDetailHandler(evt) {
     if (evt.target.classList.contains(`film-card__poster`)
       || evt.target.classList.contains(`film-card__title`)
       || evt.target.classList.contains(`film-card__comments`)) {
@@ -84,7 +84,7 @@ export default class Film extends AbstractView {
     }
   }
 
-  _watchlistClickClickHandler(evt) {
+  _watchlistClickHandler(evt) {
     if (evt.type === Event.KEY_DOWN) {
       checkButtonPress(evt, this._callback.watchlistClick, Button.ENTER);
     } else if (evt.type === Event.MOUSE_DOWN) {
@@ -103,15 +103,15 @@ export default class Film extends AbstractView {
   setShowDetailHandler(callback) {
     this._callback.showDetail = callback;
 
-    this.element.addEventListener(Event.MOUSE_DOWN, this._callHandler);
-    this.element.addEventListener(Event.KEY_DOWN, this._callHandler);
+    this.element.addEventListener(Event.MOUSE_DOWN, this._showDetailHandler);
+    this.element.addEventListener(Event.KEY_DOWN, this._showDetailHandler);
   }
 
   removeShowDetailHandler(callback) {
     this._callback.showDetail = callback;
 
-    this.element.removeEventListener(Event.MOUSE_DOWN, this._callHandler);
-    this.element.removeEventListener(Event.KEY_DOWN, this._callHandler);
+    this.element.removeEventListener(Event.MOUSE_DOWN, this._showDetailHandler);
+    this.element.removeEventListener(Event.KEY_DOWN, this._showDetailHandler);
   }
 
   setWatchedClickHandler(callback) {
@@ -135,15 +135,15 @@ export default class Film extends AbstractView {
 
     this._watchlistButton = this.element.querySelector(`.film-card__controls-item--add-to-watchlist`);
 
-    this._watchlistButton.addEventListener(Event.MOUSE_DOWN, this._watchlistClickClickHandler);
-    this._watchlistButton.addEventListener(Event.KEY_DOWN, this._watchlistClickClickHandler);
+    this._watchlistButton.addEventListener(Event.MOUSE_DOWN, this._watchlistClickHandler);
+    this._watchlistButton.addEventListener(Event.KEY_DOWN, this._watchlistClickHandler);
   }
 
   removeWatchlistClickHandler(callback) {
     this._callback.watchlistClick = callback;
 
-    this._watchlistButton.removeEventListener(Event.MOUSE_DOWN, this._watchlistClickClickHandler);
-    this._watchlistButton.removeEventListener(Event.KEY_DOWN, this._watchlistClickClickHandler);
+    this._watchlistButton.removeEventListener(Event.MOUSE_DOWN, this._watchlistClickHandler);
+    this._watchlistButton.removeEventListener(Event.KEY_DOWN, this._watchlistClickHandler);
   }
 
   setFavoriteClickHandler(callback) {

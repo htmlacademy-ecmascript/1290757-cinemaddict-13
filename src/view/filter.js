@@ -1,6 +1,6 @@
 import AbstractView from "./abstract";
 
-const createTemplate = (filter) => {
+const createFilterTemplate = (filter) => {
   const {watched, watchlist, favorite} = filter;
 
   return `<nav class="main-navigation">
@@ -21,6 +21,6 @@ export default class Filter extends AbstractView {
   }
 
   _getTemplate() {
-    return createTemplate(this._filter);
+    return createFilterTemplate(this._filter);
   }
 }

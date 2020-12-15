@@ -2,7 +2,7 @@ import AbstractView from "./abstract";
 
 const createRankTemplate = (rank) => rank !== `` ? `<p class="profile__rating">${rank}</p>` : ``;
 
-const createTemplate = (stats) => {
+const createProfileTemplate = (stats) => {
   const rankTemplate = createRankTemplate(stats.rank);
 
   return `<section class="header__profile profile">
@@ -18,6 +18,6 @@ export default class Profile extends AbstractView {
   }
 
   _getTemplate() {
-    return createTemplate(this._stats);
+    return createProfileTemplate(this._stats);
   }
 }
