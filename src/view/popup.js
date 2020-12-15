@@ -1,4 +1,4 @@
-import {createElement, getFormatTime} from "../utils/render.js";
+import {getFormatTime} from "../utils/render.js";
 import AbstractView from "./abstract";
 import {Button, Event} from "../const";
 import {checkButtonPress} from "../utils/common";
