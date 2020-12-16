@@ -88,11 +88,13 @@ const getWatchedStatus = () => {
   isWatched = Boolean(getRandomInteger());
 };
 
+const generateId = () => Number(Date.now()) + getRandomInteger(MAX_ID);
+
 const generateFilm = () => {
   getWatchedStatus();
 
   return {
-    id: getRandomInteger(MAX_ID),
+    id: generateId(),
     name: getRandomArrayItem(NAMES),
     poster: getRandomArrayItem(POSTERS),
     description: generateDescription(),

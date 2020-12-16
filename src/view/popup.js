@@ -22,7 +22,6 @@ const createCommentsTemplate = (comments) => comments.length === 0 ? ``
 
 const createGenresTemplate = (genres) => genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 const checkFlagStatus = (value) => value ? `checked` : ``;
-const getCloseButton = () => document.querySelector(`.film-details__close-btn`);
 
 const createPopupTemplate = (filmData) => {
   const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country, age, watched, watchlist, favorite} = filmData;
@@ -156,15 +155,22 @@ export default class Popup extends AbstractView {
     super();
 
     this._filmData = filmData;
-    this._popupHandler = this._popupHandler.bind(this);
+    this._closePopupHandler = this._closePopupHandler.bind(this);
+    this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+
     this._closeButton = null;
+    this._watchedButton = null;
+    this._watchlistButton = null;
+    this._favoriteButton = null;
   }
 
   _getTemplate() {
     return createPopupTemplate(this._filmData);
   }
 
-  _popupHandler(evt) {
+  _closePopupHandler(evt) {
     if (evt.type === Event.KEY_DOWN) {
       if (evt.target.className === `film-details__close-btn`) {
         checkButtonPress(evt, this._callback.closePopup, Button.ENTER);
@@ -176,20 +182,101 @@ export default class Popup extends AbstractView {
     }
   }
 
-  setPopupHandler(callback) {
-    this._callback.closePopup = callback;
-    this._closeButton = getCloseButton();
-
-    this._closeButton.addEventListener(Event.MOUSE_DOWN, this._popupHandler);
-    this._closeButton.addEventListener(Event.KEY_DOWN, this._popupHandler);
-    document.addEventListener(Event.KEY_DOWN, this._popupHandler);
+  _watchedClickHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, this._callback.watchedClick, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.watchedClick, Button.MOUSE_MAIN);
+    }
   }
 
-  removePopupHandler(callback) {
+  _watchlistClickHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, this._callback.watchlistClick, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.watchlistClick, Button.MOUSE_MAIN);
+    }
+  }
+
+  _favoriteClickHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, this._callback.favoriteClick, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.favoriteClick, Button.MOUSE_MAIN);
+    }
+  }
+
+  removeElement() {
+    this._element = null;
+    this._closeButton = null;
+    this._watchedButton = null;
+    this._watchlistButton = null;
+    this._favoriteButton = null;
+  }
+
+  setClosePopupHandler(callback) {
     this._callback.closePopup = callback;
 
-    this._closeButton.addEventListener(Event.MOUSE_DOWN, this._popupHandler);
-    this._closeButton.addEventListener(Event.KEY_DOWN, this._popupHandler);
-    document.addEventListener(Event.KEY_DOWN, this._popupHandler);
+    this._closeButton = this._element.querySelector(`.film-details__close-btn`);
+
+    this._closeButton.addEventListener(Event.MOUSE_DOWN, this._closePopupHandler);
+    this._closeButton.addEventListener(Event.KEY_DOWN, this._closePopupHandler);
+    document.addEventListener(Event.KEY_DOWN, this._closePopupHandler);
+  }
+
+  removeClosePopupHandler(callback) {
+    this._callback.closePopup = callback;
+
+    this._closeButton.removeEventListener(Event.MOUSE_DOWN, this._closePopupHandler);
+    this._closeButton.removeEventListener(Event.KEY_DOWN, this._closePopupHandler);
+    document.removeEventListener(Event.KEY_DOWN, this._closePopupHandler);
+  }
+
+  setWatchedClickHandler(callback) {
+    this._callback.watchedClick = callback;
+
+    this._watchedButton = this._element.querySelector(`.film-details__control-label--watched`);
+
+    this._watchedButton.addEventListener(Event.MOUSE_DOWN, this._watchedClickHandler);
+    this._watchedButton.addEventListener(Event.KEY_DOWN, this._watchedClickHandler);
+  }
+
+  removeWatchedClickHandler(callback) {
+    this._callback.watchedClick = callback;
+
+    this._watchedButton.removeEventListener(Event.MOUSE_DOWN, this._watchedClickHandler);
+    this._watchedButton.removeEventListener(Event.KEY_DOWN, this._watchedClickHandler);
+  }
+
+  setWatchlistClickHandler(callback) {
+    this._callback.watchlistClick = callback;
+
+    this._watchlistButton = this._element.querySelector(`.film-details__control-label--watchlist`);
+
+    this._watchlistButton.addEventListener(Event.MOUSE_DOWN, this._watchlistClickHandler);
+    this._watchlistButton.addEventListener(Event.KEY_DOWN, this._watchlistClickHandler);
+  }
+
+  removeWatchlistClickHandler(callback) {
+    this._callback.watchlistClick = callback;
+
+    this._watchlistButton.removeEventListener(Event.MOUSE_DOWN, this._watchlistClickHandler);
+    this._watchlistButton.removeEventListener(Event.KEY_DOWN, this._watchlistClickHandler);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+
+    this._favoriteButton = this._element.querySelector(`.film-details__control-label--favorite`);
+
+    this._favoriteButton.addEventListener(Event.MOUSE_DOWN, this._favoriteClickHandler);
+    this._favoriteButton.addEventListener(Event.KEY_DOWN, this._favoriteClickHandler);
+  }
+
+  removeFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+
+    this._favoriteButton.removeEventListener(Event.MOUSE_DOWN, this._favoriteClickHandler);
+    this._favoriteButton.removeEventListener(Event.KEY_DOWN, this._favoriteClickHandler);
   }
 }

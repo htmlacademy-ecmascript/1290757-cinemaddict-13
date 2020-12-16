@@ -1,5 +1,6 @@
 const MAX_DAYS = 300;
 const SECONDS_IN_MINUTE = 60;
+const TOTAL_FILMS = 31;
 const PROPOSALS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
@@ -35,4 +36,4 @@ const Button = {
   MOUSE_MAIN: 0
 };
 
-export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button};
+export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button, TOTAL_FILMS};

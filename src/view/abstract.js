@@ -10,16 +10,16 @@ export default class AbstractView {
     this._callback = {};
   }
 
-  _getTemplate() {
-    throw new Error(`AbstractView method not implemented: getTemplate`);
-  }
-
   get element() {
     if (!this._element) {
       this._element = createElement(this._getTemplate());
     }
 
     return this._element;
+  }
+
+  _getTemplate() {
+    throw new Error(`AbstractView method not implemented: getTemplate`);
   }
 
   removeElement() {
