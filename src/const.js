@@ -30,7 +30,8 @@ const Event = {
   MOUSE_DOWN: `mousedown`,
   KEY_DOWN: `keydown`,
   SUBMIT: `submit`,
-  INPUT: `input`
+  INPUT: `input`,
+  CHANGE: `change`
 };
 const Button = {
   ENTER: `Enter`,
