@@ -203,13 +203,13 @@ export default class Popup extends AbstractView {
     const text = this._element.querySelector(`.film-details__comment-input`).value;
     const allEmotions = this._element.querySelectorAll(`.film-details__emoji-item`);
 
-    const emotion = Array.from(allEmotions).filter((item) => {
+    const checkedEmotion = Array.from(allEmotions).filter((item) => {
       return item.checked;
-    })[0].value;
+    });
 
-    return {
+    return checkedEmotion.length === 0 ? {} : {
       text,
-      emotion,
+      emotion: checkedEmotion[0].value,
       author: getRandomArrayItem(ACTORS),
       date: dayjs().format(`YYYY/M/D H:mm`)
     };
@@ -217,6 +217,10 @@ export default class Popup extends AbstractView {
 
   _addComment() {
     const newComment = this._getNewComment();
+
+    if (Object.keys(newComment).length === 0) {
+      return;
+    }
 
     this._filmData.comments.push(newComment);
     this._updateElement();
