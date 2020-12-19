@@ -25,7 +25,8 @@ const createGenresTemplate = (genres) => genres.map((genre) => `<span class="fil
 const checkFlagStatus = (value) => value ? `checked` : ``;
 
 const createPopupTemplate = (filmData) => {
-  const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country, age, watched, watchlist, favorite} = filmData;
+  const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country,
+    age, watched, watchlist, favorite, commentInput} = filmData;
 
   const commentCount = comments.length;
   const genreTitle = genres.length > 1 ? `Genres` : `Genre`;
@@ -37,6 +38,7 @@ const createPopupTemplate = (filmData) => {
   const watchedStatus = checkFlagStatus(watched);
   const watchlistStatus = checkFlagStatus(watchlist);
   const favoriteStatus = checkFlagStatus(favorite);
+  const commentInputValue = commentInput ? commentInput : ``;
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -120,7 +122,7 @@ const createPopupTemplate = (filmData) => {
             <div class="film-details__add-emoji-label"></div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentInputValue}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -156,11 +158,18 @@ export default class Popup extends AbstractView {
     super();
 
     this._filmData = filmData;
+    this._filmData.newComment = {
+      text: ``,
+      emotion: ``,
+      author: getRandomArrayItem(ACTORS),
+      date: dayjs().format(`YYYY/M/D H:mm`)
+    };
     this._closePopupHandler = this._closePopupHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._addCommentHandler = this._addCommentHandler.bind(this);
+    this._commentInputHandler = this._commentInputHandler.bind(this);
 
     this._closeButton = null;
     this._watchedButton = null;
@@ -178,6 +187,9 @@ export default class Popup extends AbstractView {
     this.element
       .querySelector(`.film-details__inner`)
       .addEventListener(Event.KEY_DOWN, this._addCommentHandler);
+    this.element
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(Event.INPUT, this._commentInputHandler);
   }
 
   _updateElement() {
@@ -199,7 +211,7 @@ export default class Popup extends AbstractView {
     this.setFavoriteClickHandler(this._callback.favoriteClick);
   }
 
-  _getNewComment() {
+  _updateNewComment() {
     const text = this._element.querySelector(`.film-details__comment-input`).value;
     const allEmotions = this._element.querySelectorAll(`.film-details__emoji-item`);
 
@@ -207,22 +219,22 @@ export default class Popup extends AbstractView {
       return item.checked;
     });
 
-    return checkedEmotion.length === 0 ? {} : {
+    this._filmData.newComment = {
       text,
-      emotion: checkedEmotion[0].value,
+      emotion: checkedEmotion.length === 0 ? `` : checkedEmotion[0].value,
       author: getRandomArrayItem(ACTORS),
       date: dayjs().format(`YYYY/M/D H:mm`)
     };
   }
 
   _addComment() {
-    const newComment = this._getNewComment();
+    this._updateNewComment();
 
-    if (Object.keys(newComment).length === 0) {
+    if (this._filmData.newComment.text === `` || this._filmData.newComment.emotion === ``) {
       return;
     }
 
-    this._filmData.comments.push(newComment);
+    this._filmData.comments.push(this._filmData.newComment);
     this._updateElement();
   }
 
@@ -231,6 +243,11 @@ export default class Popup extends AbstractView {
       evt.preventDefault();
       this._addComment();
     }
+  }
+
+  _commentInputHandler(evt) {
+    evt.preventDefault();
+    this._updateNewComment();
   }
 
   _closePopupHandler(evt) {
