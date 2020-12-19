@@ -1,5 +1,5 @@
 import {getFormatTime} from "../utils/render.js";
-import AbstractView from "./abstract";
+import SmartView from "./smart";
 import {ACTORS, Button, Event} from "../const";
 import {checkButtonPress, getRandomArrayItem} from "../utils/common";
 import dayjs from "dayjs";
@@ -157,7 +157,7 @@ const createPopupTemplate = (filmData, commentData) => {
   </section>`;
 };
 
-export default class Popup extends AbstractView {
+export default class Popup extends SmartView {
   constructor(filmData) {
     super();
 
@@ -203,31 +203,12 @@ export default class Popup extends AbstractView {
     });
   }
 
-  _updateElement() {
-    let prevElement = this._element;
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.element;
-
-    parent.replaceChild(newElement, prevElement);
-    this._restoreHandlers();
-  }
-
   _restoreHandlers() {
     this._setInnerHandlers();
     this.setClosePopupHandler(this._callback.closePopup);
     this.setWatchedClickHandler(this._callback.watchedClick);
     this.setWatchlistClickHandler(this._callback.watchlistClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
-  }
-
-  _updateData(update) {
-    if (!update) {
-      return;
-    }
-
-    this._data = Object.assign({}, this._data, update);
   }
 
   _addComment() {
