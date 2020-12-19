@@ -1,7 +1,8 @@
 import {getFormatTime} from "../utils/render.js";
 import AbstractView from "./abstract";
-import {Button, Event} from "../const";
-import {checkButtonPress} from "../utils/common";
+import {ACTORS, Button, Event} from "../const";
+import {checkButtonPress, getRandomArrayItem} from "../utils/common";
+import dayjs from "dayjs";
 
 const createCommentsTemplate = (comments) => comments.length === 0 ? ``
   : `<ul class="film-details__comments-list">
@@ -159,15 +160,73 @@ export default class Popup extends AbstractView {
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._addCommentHandler = this._addCommentHandler.bind(this);
 
     this._closeButton = null;
     this._watchedButton = null;
     this._watchlistButton = null;
     this._favoriteButton = null;
+
+    this._setInnerHandlers();
   }
 
   _getTemplate() {
     return createPopupTemplate(this._filmData);
+  }
+
+  _setInnerHandlers() {
+    this.element
+      .querySelector(`.film-details__inner`)
+      .addEventListener(Event.KEY_DOWN, this._addCommentHandler);
+  }
+
+  _updateElement() {
+    let prevElement = this._element;
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.element;
+
+    parent.replaceChild(newElement, prevElement);
+    this.restoreHandlers();
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setClosePopupHandler(this._callback.closePopup);
+    this.setWatchedClickHandler(this._callback.watchedClick);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+  }
+
+  _getNewComment() {
+    const text = this._element.querySelector(`.film-details__comment-input`).value;
+    const allEmotions = this._element.querySelectorAll(`.film-details__emoji-item`);
+
+    const emotion = Array.from(allEmotions).filter((item) => {
+      return item.checked;
+    })[0].value;
+
+    return {
+      text,
+      emotion,
+      author: getRandomArrayItem(ACTORS),
+      date: dayjs().format(`YYYY/M/D H:mm`)
+    };
+  }
+
+  _addComment() {
+    const newComment = this._getNewComment();
+
+    this._filmData.comments.push(newComment);
+    this._updateElement();
+  }
+
+  _addCommentHandler(evt) {
+    if (evt.key === Button.ENTER && evt.ctrlKey) {
+      evt.preventDefault();
+      this._addComment();
+    }
   }
 
   _closePopupHandler(evt) {
