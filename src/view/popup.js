@@ -212,11 +212,11 @@ export default class Popup extends SmartView {
       .querySelector(`.film-details__comment-input`)
       .addEventListener(Event.INPUT, this._commentTextInputHandler);
 
-    this._emotionInputs = this.element.querySelectorAll(`.film-details__emoji-item`);
-
-    this._emotionInputs.forEach((input) => {
-      input.addEventListener(Event.CHANGE, this._changeEmotionHandler);
-    });
+    this.element
+      .querySelectorAll(`.film-details__emoji-item`)
+      .forEach((input) => {
+        input.addEventListener(Event.CHANGE, this._changeEmotionHandler);
+      });
   }
 
   _restoreHandlers() {
