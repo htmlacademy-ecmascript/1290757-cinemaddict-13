@@ -186,7 +186,6 @@ export default class Popup extends SmartView {
     this._watchedButton = null;
     this._watchlistButton = null;
     this._favoriteButton = null;
-    this._emotionInputs = null;
 
     this._setInnerHandlers();
   }
