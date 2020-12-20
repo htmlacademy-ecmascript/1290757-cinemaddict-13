@@ -172,6 +172,8 @@ export default class Popup extends SmartView {
       author: getRandomArrayItem(ACTORS),
       date: dayjs().format(`YYYY/M/D H:mm`)
     };
+    this._scrollTop = 0;
+
     this._closePopupHandler = this._closePopupHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
@@ -191,6 +193,14 @@ export default class Popup extends SmartView {
 
   _getTemplate() {
     return createPopupTemplate(this._filmData, this._data);
+  }
+
+  _setScrollTop() {
+    this._scrollTop = this._element.scrollTop;
+  }
+
+  _restoreScrollTop() {
+    this._element.scrollTo({top: this._scrollTop});
   }
 
   _setInnerHandlers() {
@@ -227,7 +237,10 @@ export default class Popup extends SmartView {
       text: ``,
       emotion: ``
     });
+
+    this._setScrollTop();
     this._updateElement();
+    this._restoreScrollTop();
   }
 
   _addCommentHandler(evt) {
@@ -242,7 +255,9 @@ export default class Popup extends SmartView {
       emotion: emotion.value,
     });
 
+    this._setScrollTop();
     this._updateElement();
+    this._restoreScrollTop();
   }
 
   _changeEmotionHandler(evt) {
