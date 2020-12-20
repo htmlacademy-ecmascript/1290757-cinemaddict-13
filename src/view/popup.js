@@ -4,6 +4,9 @@ import {ACTORS, Button, Event} from "../const";
 import {checkButtonPress, getRandomArrayItem} from "../utils/common";
 import dayjs from "dayjs";
 
+const createChosenEmojiTemplate = (emotion) => emotion.length === 0 ? ``
+  : `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">`;
+
 const createCommentsTemplate = (comments) => comments.length === 0 ? ``
   : `<ul class="film-details__comments-list">
     ${comments.map((comment) => `<li class="film-details__comment">
@@ -43,6 +46,7 @@ const createPopupTemplate = (filmData, commentData) => {
   const emojiSleeping = checkFlagStatus(commentData.emotion === `sleeping`);
   const emojiPuke = checkFlagStatus(commentData.emotion === `puke`);
   const emojiAngry = checkFlagStatus(commentData.emotion === `angry`);
+  const chosenEmojiTemplate = createChosenEmojiTemplate(commentData.emotion);
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -123,7 +127,7 @@ const createPopupTemplate = (filmData, commentData) => {
           ${commentsTemplate}
 
           <div class="film-details__new-comment">
-            <div class="film-details__add-emoji-label"></div>
+            <div class="film-details__add-emoji-label">${chosenEmojiTemplate}</div>
 
             <label class="film-details__comment-label">
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentInput}</textarea>
@@ -180,7 +184,7 @@ export default class Popup extends SmartView {
     this._watchedButton = null;
     this._watchlistButton = null;
     this._favoriteButton = null;
-    this._emotionInputs = this.element.querySelectorAll(`.film-details__emoji-item`);
+    this._emotionInputs = null;
 
     this._setInnerHandlers();
   }
@@ -197,6 +201,8 @@ export default class Popup extends SmartView {
     this.element
       .querySelector(`.film-details__comment-input`)
       .addEventListener(Event.INPUT, this._commentTextInputHandler);
+
+    this._emotionInputs = this.element.querySelectorAll(`.film-details__emoji-item`);
 
     this._emotionInputs.forEach((input) => {
       input.addEventListener(Event.CHANGE, this._changeEmotionHandler);
@@ -235,6 +241,8 @@ export default class Popup extends SmartView {
     this._updateData({
       emotion: emotion.value,
     });
+
+    this._updateElement();
   }
 
   _changeEmotionHandler(evt) {
@@ -298,6 +306,7 @@ export default class Popup extends SmartView {
     this._watchedButton = null;
     this._watchlistButton = null;
     this._favoriteButton = null;
+    this._emotionInputs = null;
   }
 
   setClosePopupHandler(callback) {
