@@ -4,6 +4,24 @@ import {ACTORS, Button, Event} from "../const";
 import {checkButtonPress, getRandomArrayItem} from "../utils/common";
 import dayjs from "dayjs";
 
+const EMOJIS = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`
+];
+
+const checkFlagStatus = (value) => value ? `checked` : ``;
+
+const createEmojisTemplate = (emotion) => {
+  return `<div class="film-details__emoji-list">
+    ${EMOJIS.map((emoji) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${checkFlagStatus(emoji === emotion)}>
+      <label class="film-details__emoji-label" for="emoji-${emoji}">
+        <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
+      </label>`).join(``)}
+  </div>`;
+};
+
 const createChosenEmojiTemplate = (emotion) => emotion.length === 0 ? ``
   : `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">`;
 
@@ -25,7 +43,6 @@ const createCommentsTemplate = (comments) => comments.length === 0 ? ``
   </ul>`;
 
 const createGenresTemplate = (genres) => genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
-const checkFlagStatus = (value) => value ? `checked` : ``;
 
 const createPopupTemplate = (filmData, commentData) => {
   const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country,
@@ -42,10 +59,7 @@ const createPopupTemplate = (filmData, commentData) => {
   const watchlistStatus = checkFlagStatus(watchlist);
   const favoriteStatus = checkFlagStatus(favorite);
   const commentInput = commentData.text ? commentData.text : ``;
-  const emojiSmile = checkFlagStatus(commentData.emotion === `smile`);
-  const emojiSleeping = checkFlagStatus(commentData.emotion === `sleeping`);
-  const emojiPuke = checkFlagStatus(commentData.emotion === `puke`);
-  const emojiAngry = checkFlagStatus(commentData.emotion === `angry`);
+  const emojiTemplate = createEmojisTemplate(commentData.emotion);
   const chosenEmojiTemplate = createChosenEmojiTemplate(commentData.emotion);
 
   return `<section class="film-details">
@@ -133,27 +147,7 @@ const createPopupTemplate = (filmData, commentData) => {
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentInput}</textarea>
             </label>
 
-            <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emojiSmile}>
-              <label class="film-details__emoji-label" for="emoji-smile">
-                <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emojiSleeping}>
-              <label class="film-details__emoji-label" for="emoji-sleeping">
-                <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${emojiPuke}>
-              <label class="film-details__emoji-label" for="emoji-puke">
-                <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emojiAngry}>
-              <label class="film-details__emoji-label" for="emoji-angry">
-                <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-              </label>
-            </div>
+            ${emojiTemplate}
           </div>
         </section>
       </div>
@@ -320,7 +314,6 @@ export default class Popup extends SmartView {
     this._watchedButton = null;
     this._watchlistButton = null;
     this._favoriteButton = null;
-    this._emotionInputs = null;
   }
 
   setClosePopupHandler(callback) {
