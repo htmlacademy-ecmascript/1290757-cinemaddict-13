@@ -20,7 +20,7 @@ export default class PageMainContent {
     this._filmsContainer = null;
     this._filmListExtra = null;
     this._renderedFilmCount = MOVIES_PER_STEP;
-    this._filmPresenter = {};
+    this._filmPresenter = new Map();
 
     this._sortingView = new SortingView();
     this._filmsContainerView = new FilmsContainerView();
@@ -82,7 +82,7 @@ export default class PageMainContent {
   _renderFilm(container, film) {
     const presenter = new FilmPresenter(container, this._bodyContainer, this._handleFilmChange);
     presenter.init(film);
-    this._filmPresenter[film.id] = presenter;
+    this._filmPresenter.set(presenter, true);
   }
 
   _renderTopRatedFilms() {
@@ -104,10 +104,10 @@ export default class PageMainContent {
   }
 
   _clearFilmList() {
-    Object
-      .values(this._filmPresenter)
-      .forEach((presenter) => presenter.destroy());
-    this._filmPresenter = {};
+    this._filmPresenter.forEach((value, key) => {
+      key.destroy();
+    });
+    this._filmPresenter = new Map();
     this._renderedFilmCount = MOVIES_PER_STEP;
     remove(this._loadMoreButtonView);
   }
@@ -128,7 +128,11 @@ export default class PageMainContent {
 
   _handleFilmChange(updateFilm) {
     this._films = this._updateFilm(this._films, updateFilm);
-    this._filmPresenter[updateFilm.id].init(updateFilm);
+    this._filmPresenter.forEach((value, key) => {
+      if (key._film.id === updateFilm.id) {
+        key.init(updateFilm);
+      }
+    });
   }
 
   _renderLoadMoreButton() {
