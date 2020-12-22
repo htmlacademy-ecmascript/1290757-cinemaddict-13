@@ -697,7 +697,7 @@ class PageMainContent {
     this._filmsContainer = null;
     this._filmListExtra = null;
     this._renderedFilmCount = MOVIES_PER_STEP;
-    this._filmPresenter = {};
+    this._filmPresenter = new Map();
 
     this._sortingView = new _view_sorting_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
     this._filmsContainerView = new _view_films_container_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
@@ -759,7 +759,7 @@ class PageMainContent {
   _renderFilm(container, film) {
     const presenter = new _film_js__WEBPACK_IMPORTED_MODULE_5__["default"](container, this._bodyContainer, this._handleFilmChange);
     presenter.init(film);
-    this._filmPresenter[film.id] = presenter;
+    this._filmPresenter.set(presenter, true);
   }
 
   _renderTopRatedFilms() {
@@ -781,10 +781,10 @@ class PageMainContent {
   }
 
   _clearFilmList() {
-    Object
-      .values(this._filmPresenter)
-      .forEach((presenter) => presenter.destroy());
-    this._filmPresenter = {};
+    this._filmPresenter.forEach((value, key) => {
+      key.destroy();
+    });
+    this._filmPresenter = new Map();
     this._renderedFilmCount = MOVIES_PER_STEP;
     Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_6__["remove"])(this._loadMoreButtonView);
   }
@@ -805,7 +805,11 @@ class PageMainContent {
 
   _handleFilmChange(updateFilm) {
     this._films = this._updateFilm(this._films, updateFilm);
-    this._filmPresenter[updateFilm.id].init(updateFilm);
+    this._filmPresenter.forEach((value, key) => {
+      if (key._film.id === updateFilm.id) {
+        key.init(updateFilm);
+      }
+    });
   }
 
   _renderLoadMoreButton() {
@@ -1403,6 +1407,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const EMOJIS = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`
+];
+
+const checkFlagStatus = (value) => value ? `checked` : ``;
+
+const createEmojisTemplate = (emotion) => {
+  return `<div class="film-details__emoji-list">
+    ${EMOJIS.map((emoji) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${checkFlagStatus(emoji === emotion)}>
+      <label class="film-details__emoji-label" for="emoji-${emoji}">
+        <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
+      </label>`).join(``)}
+  </div>`;
+};
+
 const createChosenEmojiTemplate = (emotion) => emotion.length === 0 ? ``
   : `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">`;
 
@@ -1424,7 +1446,6 @@ const createCommentsTemplate = (comments) => comments.length === 0 ? ``
   </ul>`;
 
 const createGenresTemplate = (genres) => genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
-const checkFlagStatus = (value) => value ? `checked` : ``;
 
 const createPopupTemplate = (filmData, commentData) => {
   const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country,
@@ -1441,10 +1462,7 @@ const createPopupTemplate = (filmData, commentData) => {
   const watchlistStatus = checkFlagStatus(watchlist);
   const favoriteStatus = checkFlagStatus(favorite);
   const commentInput = commentData.text ? commentData.text : ``;
-  const emojiSmile = checkFlagStatus(commentData.emotion === `smile`);
-  const emojiSleeping = checkFlagStatus(commentData.emotion === `sleeping`);
-  const emojiPuke = checkFlagStatus(commentData.emotion === `puke`);
-  const emojiAngry = checkFlagStatus(commentData.emotion === `angry`);
+  const emojiTemplate = createEmojisTemplate(commentData.emotion);
   const chosenEmojiTemplate = createChosenEmojiTemplate(commentData.emotion);
 
   return `<section class="film-details">
@@ -1532,27 +1550,7 @@ const createPopupTemplate = (filmData, commentData) => {
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentInput}</textarea>
             </label>
 
-            <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emojiSmile}>
-              <label class="film-details__emoji-label" for="emoji-smile">
-                <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emojiSleeping}>
-              <label class="film-details__emoji-label" for="emoji-sleeping">
-                <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${emojiPuke}>
-              <label class="film-details__emoji-label" for="emoji-puke">
-                <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emojiAngry}>
-              <label class="film-details__emoji-label" for="emoji-angry">
-                <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-              </label>
-            </div>
+            ${emojiTemplate}
           </div>
         </section>
       </div>
@@ -1719,7 +1717,6 @@ class Popup extends _smart__WEBPACK_IMPORTED_MODULE_1__["default"] {
     this._watchedButton = null;
     this._watchlistButton = null;
     this._favoriteButton = null;
-    this._emotionInputs = null;
   }
 
   setClosePopupHandler(callback) {
