@@ -11,6 +11,7 @@ export default class Film {
 
     this._view = null;
     this._popupView = null;
+    this._isPopupOpen = false;
 
     this._popupShowHandler = this._popupShowHandler.bind(this);
     this._popupCloseHandler = this._popupCloseHandler.bind(this);
@@ -65,7 +66,9 @@ export default class Film {
       watched: !this._film.watched
     }));
 
-    this._updatePopup();
+    if (this._isPopupOpen) {
+      this._updatePopup();
+    }
   }
 
   _handleWatchlistClick() {
@@ -73,7 +76,9 @@ export default class Film {
       watchlist: !this._film.watchlist
     }));
 
-    this._updatePopup();
+    if (this._isPopupOpen) {
+      this._updatePopup();
+    }
   }
 
   _handleFavoriteClick() {
@@ -81,7 +86,9 @@ export default class Film {
       favorite: !this._film.favorite
     }));
 
-    this._updatePopup();
+    if (this._isPopupOpen) {
+      this._updatePopup();
+    }
   }
 
   _popupClose() {
@@ -94,6 +101,7 @@ export default class Film {
     this._bodyContainer.removeChild(filmDetails);
     this._bodyContainer.classList.remove(`hide-overflow`);
     this._popupView.removeElement();
+    this._isPopupOpen = false;
   }
 
   _popupCloseHandler() {
@@ -112,6 +120,7 @@ export default class Film {
     this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
     this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
     this._bodyContainer.classList.add(`hide-overflow`);
+    this._isPopupOpen = true;
   }
 
   _popupShowHandler(evt) {

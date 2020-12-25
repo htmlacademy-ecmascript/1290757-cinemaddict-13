@@ -29,6 +29,9 @@ const RenderPosition = {
 const Event = {
   MOUSE_DOWN: `mousedown`,
   KEY_DOWN: `keydown`,
+  SUBMIT: `submit`,
+  INPUT: `input`,
+  CHANGE: `change`
 };
 const Button = {
   ENTER: `Enter`,
