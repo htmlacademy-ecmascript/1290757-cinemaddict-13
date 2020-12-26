@@ -13,6 +13,7 @@ const PROPOSALS = [
   `Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.`,
   `In rutrum ac purus sit amet tempus.`
 ];
+
 const ACTORS = [
   `Erich von Stroheim`,
   `Mary Beth Hughes`,
@@ -22,10 +23,12 @@ const ACTORS = [
   `Tom Cruise`,
   `Angelina Jolie`
 ];
+
 const RenderPosition = {
   AFTER_BEGIN: `afterbegin`,
   BEFORE_END: `beforeend`
 };
+
 const Event = {
   MOUSE_DOWN: `mousedown`,
   KEY_DOWN: `keydown`,
@@ -33,10 +36,17 @@ const Event = {
   INPUT: `input`,
   CHANGE: `change`
 };
+
 const Button = {
   ENTER: `Enter`,
   ESCAPE: `Escape`,
   MOUSE_MAIN: 0
 };
 
-export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button, TOTAL_FILMS};
+const SortType = {
+  DEFAULT: `default`,
+  BY_DATE: `byDate`,
+  BY_RATING: `byRating`
+};
+
+export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button, TOTAL_FILMS, SortType};
