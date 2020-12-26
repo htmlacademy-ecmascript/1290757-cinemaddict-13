@@ -17,7 +17,7 @@ const filterData = generateFilterData(films);
 const filmsModel = new FilmModel();
 const pageMainContentPresenter = new PageMainContent(body, filmsModel);
 
-filmsModel.films(films);
+filmsModel.setFilms(films);
 render(header, new Profile(stats).element, RenderPosition.BEFORE_END);
 pageMainContentPresenter.init(filterData);
 render(footerStatistics, new FooterStatistics(TOTAL_FILMS).element, RenderPosition.BEFORE_END);

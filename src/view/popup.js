@@ -27,7 +27,7 @@ const createChosenEmojiTemplate = (emotion) => emotion.length === 0 ? ``
 
 const createCommentsTemplate = (comments) => comments.length === 0 ? ``
   : `<ul class="film-details__comments-list">
-    ${comments.map((comment) => `<li class="film-details__comment">
+    ${comments.map((comment, index) => `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
       </span>
@@ -36,7 +36,7 @@ const createCommentsTemplate = (comments) => comments.length === 0 ? ``
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
           <span class="film-details__comment-day">${comment.date}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-count="${index}">Delete</button>
         </p>
       </div>
     </li>`).join(``)}

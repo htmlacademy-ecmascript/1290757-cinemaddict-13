@@ -2,6 +2,7 @@ import FilmView from "../view/film.js";
 import PopupView from "../view/popup.js";
 import {render, remove, replace} from "../utils/render.js";
 import {RenderPosition} from "../const.js";
+import {UserAction, UpdateType} from "../const.js";
 
 export default class Film {
   constructor(filmContainer, bodyContainer, updateData) {
@@ -52,17 +53,19 @@ export default class Film {
     remove(prevPopupView);
   }
 
-  _destroy() {
-    this._popupView.removeClosePopupHandler(this._popupCloseHandler);
-    this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
-    this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
-    this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
+  destroy() {
+    if (this._isPopupOpen) {
+      this._popupView.removeClosePopupHandler(this._popupCloseHandler);
+      this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
+      this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
+      this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
+    }
     remove(this._view);
     remove(this._popupView);
   }
 
   _handleWatchedClick() {
-    this._updateData(Object.assign({}, this._film, {
+    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
       watched: !this._film.watched
     }));
 
@@ -72,7 +75,7 @@ export default class Film {
   }
 
   _handleWatchlistClick() {
-    this._updateData(Object.assign({}, this._film, {
+    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
       watchlist: !this._film.watchlist
     }));
 
@@ -82,7 +85,7 @@ export default class Film {
   }
 
   _handleFavoriteClick() {
-    this._updateData(Object.assign({}, this._film, {
+    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
       favorite: !this._film.favorite
     }));
 
