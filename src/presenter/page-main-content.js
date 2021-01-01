@@ -50,7 +50,7 @@ export default class PageMainContent {
   }
 
   _renderFilmsContent() {
-    if (!this._filmsModel.films.length) {
+    if (!this._getFilms().length) {
       this._renderNoFilms();
       return;
     }
@@ -62,7 +62,7 @@ export default class PageMainContent {
     this._filmListExtra = this._mainContainer.querySelectorAll(`.films-list.films-list--extra`);
     this._renderFilmsList();
 
-    if (this._filmsModel.films.length > this._renderedFilmCount) {
+    if (this._getFilms().length > this._renderedFilmCount) {
       this._renderLoadMoreButton();
     }
 
@@ -112,7 +112,7 @@ export default class PageMainContent {
     render(this._mainContainer, this._noFilmView.element, RenderPosition.BEFORE_END);
   }
 
-  _renderFilmsList(container = this._filmsContainer, filmsList = this._filmsModel.films, limit = MOVIES_PER_STEP, type = FilmCategory.COMMON) {
+  _renderFilmsList(container = this._filmsContainer, filmsList = this._getFilms(), limit = MOVIES_PER_STEP, type = FilmCategory.COMMON) {
     for (let i = 0; i < Math.min(filmsList.length, limit); i++) {
       this._renderFilm(container, filmsList[i], type);
     }
@@ -126,7 +126,7 @@ export default class PageMainContent {
 
   _renderTopRatedFilms() {
     const container = this._filmListExtra[0].querySelector(`.films-list__container`);
-    const films = [...this._filmsModel.films];
+    const films = [...this._getFilms()];
 
     films.sort((a, b) => b.rating - a.rating);
 
@@ -135,7 +135,7 @@ export default class PageMainContent {
 
   _renderMostCommentedFilms() {
     const container = this._filmListExtra[1].querySelector(`.films-list__container`);
-    const films = [...this._filmsModel.films];
+    const films = [...this._getFilms()];
 
     films.sort((a, b) => b.comments.length - a.comments.length);
 
@@ -155,7 +155,7 @@ export default class PageMainContent {
 
 
   _clearFilmList({resetRenderedTaskCount = false, resetSortType = false} = {}) {
-    const filmCount = this._filmsModel.films.length;
+    const filmCount = this._getFilms().length;
 
     this._filmPresenter.forEach((value) => {
       Object
@@ -228,7 +228,7 @@ export default class PageMainContent {
   }
 
   _showMoreFilms() {
-    this._filmsModel.films
+    this._getFilms()
       .slice(this._renderedFilmCount, this._renderedFilmCount + MOVIES_PER_STEP)
       .forEach((film) => {
         this._renderFilm(this._filmsContainer, film, FilmCategory.COMMON);
@@ -236,7 +236,7 @@ export default class PageMainContent {
 
     this._renderedFilmCount += MOVIES_PER_STEP;
 
-    if (this._renderedFilmCount >= this._filmsModel.films.length) {
+    if (this._renderedFilmCount >= this._getFilms().length) {
       this._loadMoreButtonView.removeLoadMoreHandler(this._showMoreFilmsHandler);
       remove(this._loadMoreButtonView);
     }
