@@ -45,9 +45,11 @@ export default class PageMainContent {
 
   init(filterData) {
     this._filterData = filterData;
-
     this._renderFilter();
+    this._renderFilmsContent();
+  }
 
+  _renderFilmsContent() {
     if (!this._filmsModel.films.length) {
       this._renderNoFilms();
       return;
@@ -155,16 +157,14 @@ export default class PageMainContent {
   _clearFilmList({resetRenderedTaskCount = false, resetSortType = false} = {}) {
     const filmCount = this._filmsModel.films.length;
 
-    Object
-      .values(this._filmPresenter.get(FilmCategory.COMMON))
-      .forEach((presenter) => presenter.destroy());
+    this._filmPresenter.forEach((value) => {
+      Object
+        .values(value)
+        .forEach((presenter) => presenter.destroy());
+    });
 
-    Object
-      .values(this._filmPresenter.get(FilmCategory.MOST_COMMENTED))
-      .forEach((presenter) => presenter.destroy());
-
-    this._filmPresenter.set(FilmCategory.COMMON, {});
-    this._filmPresenter.set(FilmCategory.MOST_COMMENTED, {});
+    this._filmPresenter = new Map();
+    this._setTypesForFilmPresenterCollection();
 
     remove(this._sortingView);
     remove(this._loadMoreButtonView);
@@ -199,7 +199,7 @@ export default class PageMainContent {
 
   _handleModelEvent(updateType, data) {
     switch (updateType) {
-      case UpdateType.PATCH:
+      case UpdateType.MINOR:
         this._filmPresenter.forEach((value) => {
           Object
             .values(value)
@@ -210,14 +210,9 @@ export default class PageMainContent {
             });
         });
         break;
-      case UpdateType.MINOR:
-        this._clearFilmList();
-        this._renderFilmsList();
-
-        break;
       case UpdateType.MAJOR:
         this._clearFilmList({resetRenderedTaskCount: true, resetSortType: true});
-        this._renderFilmsList();
+        this._renderFilmsContent();
         break;
     }
   }
@@ -229,7 +224,7 @@ export default class PageMainContent {
 
     this._currentSortType = sortType;
     this._clearFilmList({resetRenderedTaskCount: true});
-    this._renderFilmsList();
+    this._renderFilmsContent();
   }
 
   _showMoreFilms() {

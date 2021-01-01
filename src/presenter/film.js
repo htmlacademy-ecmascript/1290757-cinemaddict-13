@@ -65,7 +65,7 @@ export default class Film {
   }
 
   _handleWatchedClick() {
-    this._updateData(UserAction.CHANGE_STATUS, UpdateType.PATCH, Object.assign({}, this._film, {
+    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
       watched: !this._film.watched
     }));
 
@@ -75,7 +75,7 @@ export default class Film {
   }
 
   _handleWatchlistClick() {
-    this._updateData(UserAction.CHANGE_STATUS, UpdateType.PATCH, Object.assign({}, this._film, {
+    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
       watchlist: !this._film.watchlist
     }));
 
@@ -85,7 +85,7 @@ export default class Film {
   }
 
   _handleFavoriteClick() {
-    this._updateData(UserAction.CHANGE_STATUS, UpdateType.PATCH, Object.assign({}, this._film, {
+    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
       favorite: !this._film.favorite
     }));
 
