@@ -180,6 +180,7 @@ export default class Popup extends SmartView {
     this._watchedButton = null;
     this._watchlistButton = null;
     this._favoriteButton = null;
+    this._commentField = null;
 
     this._setInnerHandlers();
   }
@@ -198,10 +199,6 @@ export default class Popup extends SmartView {
 
   _setInnerHandlers() {
     this.element
-      .querySelector(`.film-details__inner`)
-      .addEventListener(Event.KEY_DOWN, this._addCommentHandler);
-
-    this.element
       .querySelector(`.film-details__comment-input`)
       .addEventListener(Event.INPUT, this._commentTextInputHandler);
 
@@ -218,6 +215,7 @@ export default class Popup extends SmartView {
     this.setWatchedClickHandler(this._callback.watchedClick);
     this.setWatchlistClickHandler(this._callback.watchlistClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
+    this.setCommentAddHandler(this._callback.addComment);
   }
 
   _addComment() {
@@ -234,13 +232,6 @@ export default class Popup extends SmartView {
     this._setScrollTop();
     this._updateElement();
     this._restoreScrollTop();
-  }
-
-  _addCommentHandler(evt) {
-    if (evt.key === Button.ENTER && evt.ctrlKey) {
-      evt.preventDefault();
-      this._addComment();
-    }
   }
 
   _changeEmotion(emotion) {
@@ -270,6 +261,14 @@ export default class Popup extends SmartView {
   _commentTextInputHandler(evt) {
     evt.preventDefault();
     this._commentTextInputUpdate();
+  }
+
+  _addCommentHandler(evt) {
+    if (evt.key === Button.ENTER && evt.ctrlKey) {
+      evt.preventDefault();
+      this._addComment();
+      this._callback.addComment(this._filmData.comments);
+    }
   }
 
   _closePopupHandler(evt) {
@@ -314,6 +313,21 @@ export default class Popup extends SmartView {
     this._watchedButton = null;
     this._watchlistButton = null;
     this._favoriteButton = null;
+    this._commentField = null;
+  }
+
+  setCommentAddHandler(callback) {
+    this._callback.addComment = callback;
+
+    this._commentField = this._element.querySelector(`.film-details__inner`);
+
+    this._commentField.addEventListener(Event.KEY_DOWN, this._addCommentHandler);
+  }
+
+  removeCommentAddHandler(callback) {
+    this._callback.addComment = callback;
+
+    this._commentField.removeEventListener(Event.KEY_DOWN, this._addCommentHandler);
   }
 
   setClosePopupHandler(callback) {
