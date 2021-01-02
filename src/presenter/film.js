@@ -47,7 +47,6 @@ export default class Film {
 
     if (this._bodyContainer.contains(prevPopupView.element)) {
       replace(this._popupView, prevPopupView);
-      this._popupView.setClosePopupHandler(this._popupCloseHandler);
     }
 
     remove(prevFilmView);
@@ -66,12 +65,17 @@ export default class Film {
     remove(this._popupView);
   }
 
-  _handleCommentAdd(comments) {
-    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
-      comments
-    }));
+  _handleCommentAdd(comment) {
+    if (comment.text === `` || comment.emotion === ``) {
+      return;
+    }
 
-    this._updatePopup();
+    this._updateData(UserAction.ADD_COMMENT, UpdateType.PATCH, {
+      "id": this._film.id,
+      "comment": comment
+    });
+
+    this.updatePopup();
   }
 
   _handleWatchedClick() {
@@ -80,7 +84,7 @@ export default class Film {
     }));
 
     if (this._isPopupOpen) {
-      this._updatePopup();
+      this.updatePopup();
     }
   }
 
@@ -90,7 +94,7 @@ export default class Film {
     }));
 
     if (this._isPopupOpen) {
-      this._updatePopup();
+      this.updatePopup();
     }
   }
 
@@ -100,7 +104,7 @@ export default class Film {
     }));
 
     if (this._isPopupOpen) {
-      this._updatePopup();
+      this.updatePopup();
     }
   }
 
@@ -121,7 +125,7 @@ export default class Film {
     this._popupClose();
   }
 
-  _updatePopup() {
+  updatePopup() {
     this._popupClose();
     this._popupShow();
   }
@@ -138,6 +142,6 @@ export default class Film {
   }
 
   _popupShowHandler(evt) {
-    this._updatePopup(evt);
+    this.updatePopup(evt);
   }
 }

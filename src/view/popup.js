@@ -166,6 +166,7 @@ export default class Popup extends SmartView {
       author: getRandomArrayItem(ACTORS),
       date: dayjs().format(`YYYY/M/D H:mm`)
     };
+
     this._scrollTop = 0;
 
     this._closePopupHandler = this._closePopupHandler.bind(this);
@@ -194,7 +195,7 @@ export default class Popup extends SmartView {
   }
 
   _restoreScrollTop() {
-    this._element.scrollTo({top: this._scrollTop});
+    this.element.scrollTo({top: this._scrollTop});
   }
 
   _setInnerHandlers() {
@@ -215,23 +216,7 @@ export default class Popup extends SmartView {
     this.setWatchedClickHandler(this._callback.watchedClick);
     this.setWatchlistClickHandler(this._callback.watchlistClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
-    this.setCommentAddHandler(this._callback.addComment);
-  }
-
-  _addComment() {
-    if (this._data.text === `` || this._data.emotion === ``) {
-      return;
-    }
-
-    this._filmData.comments.push(this._data);
-    this._updateData({
-      text: ``,
-      emotion: ``
-    });
-
-    this._setScrollTop();
-    this._updateElement();
-    this._restoreScrollTop();
+    this.setCommentAddHandler(this._callback.addNewComment);
   }
 
   _changeEmotion(emotion) {
@@ -240,7 +225,7 @@ export default class Popup extends SmartView {
     });
 
     this._setScrollTop();
-    this._updateElement();
+    this.updateElement();
     this._restoreScrollTop();
   }
 
@@ -266,8 +251,11 @@ export default class Popup extends SmartView {
   _addCommentHandler(evt) {
     if (evt.key === Button.ENTER && evt.ctrlKey) {
       evt.preventDefault();
-      this._addComment();
-      this._callback.addComment(this._filmData.comments);
+
+      this._setScrollTop();
+      this._callback.addNewComment(this._data);
+      this.updateElement();
+      this._restoreScrollTop();
     }
   }
 
@@ -317,22 +305,20 @@ export default class Popup extends SmartView {
   }
 
   setCommentAddHandler(callback) {
-    this._callback.addComment = callback;
-
+    this._callback.addNewComment = callback;
     this._commentField = this._element.querySelector(`.film-details__inner`);
 
     this._commentField.addEventListener(Event.KEY_DOWN, this._addCommentHandler);
   }
 
   removeCommentAddHandler(callback) {
-    this._callback.addComment = callback;
+    this._callback.addNewComment = callback;
 
     this._commentField.removeEventListener(Event.KEY_DOWN, this._addCommentHandler);
   }
 
   setClosePopupHandler(callback) {
     this._callback.closePopup = callback;
-
     this._closeButton = this._element.querySelector(`.film-details__close-btn`);
 
     this._closeButton.addEventListener(Event.MOUSE_DOWN, this._closePopupHandler);
@@ -350,7 +336,6 @@ export default class Popup extends SmartView {
 
   setWatchedClickHandler(callback) {
     this._callback.watchedClick = callback;
-
     this._watchedButton = this._element.querySelector(`.film-details__control-label--watched`);
 
     this._watchedButton.addEventListener(Event.MOUSE_DOWN, this._watchedClickHandler);
@@ -366,7 +351,6 @@ export default class Popup extends SmartView {
 
   setWatchlistClickHandler(callback) {
     this._callback.watchlistClick = callback;
-
     this._watchlistButton = this._element.querySelector(`.film-details__control-label--watchlist`);
 
     this._watchlistButton.addEventListener(Event.MOUSE_DOWN, this._watchlistClickHandler);
@@ -382,7 +366,6 @@ export default class Popup extends SmartView {
 
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClick = callback;
-
     this._favoriteButton = this._element.querySelector(`.film-details__control-label--favorite`);
 
     this._favoriteButton.addEventListener(Event.MOUSE_DOWN, this._favoriteClickHandler);
