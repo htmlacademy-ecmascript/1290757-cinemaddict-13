@@ -19,7 +19,8 @@ export default class Film {
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._handleCommentAdd = this._handleCommentAdd.bind(this);
+    this._handleAddComment = this._handleAddComment.bind(this);
+    this._handleDeleteComment = this._handleDeleteComment.bind(this);
   }
 
   init(film) {
@@ -59,13 +60,14 @@ export default class Film {
       this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
       this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
       this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
-      this._popupView.removeCommentAddHandler(this._handleCommentAdd);
+      this._popupView.removeCommentAddHandler(this._handleAddComment);
+      this._popupView.removeCommentDeleteHandler(this._handleDeleteComment);
     }
     remove(this._view);
     remove(this._popupView);
   }
 
-  _handleCommentAdd(comment) {
+  _handleAddComment(comment) {
     if (comment.text === `` || comment.emotion === ``) {
       return;
     }
@@ -73,6 +75,15 @@ export default class Film {
     this._updateData(UserAction.ADD_COMMENT, UpdateType.PATCH, {
       "id": this._film.id,
       "comment": comment
+    });
+
+    this.updatePopup();
+  }
+
+  _handleDeleteComment(evt) {
+    this._updateData(UserAction.DELETE_COMMENT, UpdateType.PATCH, {
+      "id": this._film.id,
+      "index": evt.target.dataset.count
     });
 
     this.updatePopup();
@@ -136,7 +147,8 @@ export default class Film {
     this._popupView.setWatchedClickHandler(this._handleWatchedClick);
     this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
     this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._popupView.setCommentAddHandler(this._handleCommentAdd);
+    this._popupView.setCommentAddHandler(this._handleAddComment);
+    this._popupView.setCommentDeleteHandler(this._handleDeleteComment);
     this._bodyContainer.classList.add(`hide-overflow`);
     this._isPopupOpen = true;
   }
