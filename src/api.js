@@ -15,13 +15,13 @@ export default class Api {
   }
 
   getTasks() {
-    return this._load({url: `tasks`})
+    return this._load({url: `movies`})
       .then(Api.toJSON);
   }
 
   updateTask(task) {
     return this._load({
-      url: `tasks/${task.id}`,
+      url: `movies/${task.id}`,
       method: Method.PUT,
       body: JSON.stringify(task),
       headers: new Headers({"Content-Type": `application/json`})
