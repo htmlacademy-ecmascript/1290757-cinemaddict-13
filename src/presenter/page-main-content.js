@@ -1,4 +1,3 @@
-import FilterView from "../view/filter.js";
 import SortingView from "../view/sorting.js";
 import FilmsContainerView from "../view/films-container.js";
 import NoFilmView from "../view/no-film";
@@ -7,6 +6,7 @@ import FilmPresenter from "./film.js";
 import {remove, render} from "../utils/render.js";
 import {RenderPosition, SortType, UpdateType, UserAction} from "../const.js";
 import {sortFilmByDate, sortFilmByRating} from "../utils/film.js";
+import {filter} from "../utils/filter.js";
 
 const MOVIES_PER_STEP = 5;
 const MAX_ADDITIONAL_FILMS = 2;
@@ -17,11 +17,11 @@ const FilmCategory = {
 };
 
 export default class PageMainContent {
-  constructor(bodyContainer, filmsModel) {
+  constructor(bodyContainer, mainContainer, filmsModel, filterModel) {
     this._filmsModel = filmsModel;
-    this._filterData = null;
+    this._filterModel = filterModel;
     this._bodyContainer = bodyContainer;
-    this._mainContainer = bodyContainer.querySelector(`.main`);
+    this._mainContainer = mainContainer;
     this._filmList = null;
     this._filmsContainer = null;
     this._filmListExtra = null;
@@ -41,11 +41,10 @@ export default class PageMainContent {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._filmsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
-  init(filterData) {
-    this._filterData = filterData;
-    this._renderFilter();
+  init() {
     this._renderFilmsContent();
   }
 
@@ -71,14 +70,18 @@ export default class PageMainContent {
   }
 
   _getFilms() {
+    const filterType = this._filterModel.filter;
+    const films = this._filmsModel.films;
+    const filteredTasks = filter[filterType](films);
+
     switch (this._currentSortType) {
       case SortType.BY_DATE:
-        return this._filmsModel.films.slice().sort(sortFilmByDate);
+        return filteredTasks.sort(sortFilmByDate);
       case SortType.BY_RATING:
-        return this._filmsModel.films.slice().sort(sortFilmByRating);
+        return filteredTasks.sort(sortFilmByRating);
     }
 
-    return this._filmsModel.films;
+    return filteredTasks;
   }
 
   _setTypesForFilmPresenterCollection() {
@@ -87,10 +90,6 @@ export default class PageMainContent {
     filmCategoryKeys.forEach((category) => {
       this._filmPresenter.set(FilmCategory[category], {});
     });
-  }
-
-  _renderFilter() {
-    render(this._mainContainer, new FilterView(this._filterData).element, RenderPosition.BEFORE_END);
   }
 
   _renderSorting() {
