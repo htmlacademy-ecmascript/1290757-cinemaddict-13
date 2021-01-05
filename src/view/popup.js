@@ -3,6 +3,7 @@ import SmartView from "./smart";
 import {ACTORS, Button, Event} from "../const";
 import {checkButtonPress, getRandomArrayItem} from "../utils/common";
 import dayjs from "dayjs";
+import he from "he";
 
 const EMOJIS = [
   `smile`,
@@ -144,7 +145,7 @@ const createPopupTemplate = (filmData, commentData) => {
             <div class="film-details__add-emoji-label">${chosenEmojiTemplate}</div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentInput}</textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(commentInput)}</textarea>
             </label>
 
             ${emojiTemplate}
