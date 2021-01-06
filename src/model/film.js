@@ -46,4 +46,62 @@ export default class Films extends Observer {
 
     this._notify(updateType, update);
   }
+
+  static adaptCommentToClient(comment) {
+    const adaptedComment = Object.assign({}, comment, {
+      text: comment.comment,
+      emotion: comment.emotion,
+      author: comment.author,
+      date: new Date(comment.date)
+    });
+
+    return adaptedComment;
+  }
+
+  static adaptCommentToServer(comment) {
+    const adaptedTask = Object.assign({}, comment, {
+      "comment": comment.text,
+      "date": comment.date.toISOString(),
+      "emotion": comment.emotion
+    });
+
+    return adaptedTask;
+  }
+
+  static adaptFilmToClient(film, comments) {
+    const adaptedFilm = Object.assign({}, film, {
+      id: film.id,
+      name: film.film_info.title,
+      poster: film.film_info.poster,
+      description: film.film_info.description,
+      comments,
+      rating: film.film_info.total_rating,
+      releaseDate: new Date(film.film_info.release.date),
+      runtime: film.film_info.runtime,
+      genres: film.film_info.genre,
+      director: film.film_info.director,
+      writers: film.film_info.writers,
+      actors: film.film_info.actors,
+      country: film.film_info.release.release_country,
+      age: film.film_info.age_rating,
+      watched: film.user_details.already_watched,
+      watchlist: film.user_details.watchlist,
+      favorite: film.user_details.favorite
+    });
+
+    return adaptedFilm;
+  }
+
+  static adaptFilmToServer(film) {
+    const adaptedTask = Object.assign({}, film, {
+      "comments": film.comments,
+      "user_details": {
+        "already_watched": film.watched,
+        "watchlist": film.watchlist,
+        "favorite": film.favorite,
+      },
+    });
+
+    return adaptedTask;
+  }
 }

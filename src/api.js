@@ -1,6 +1,10 @@
+import FilmsModel from "./model/film.js";
+
 const Method = {
   GET: `GET`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`
 };
 
 const SuccessHTTPStatusRange = {
@@ -14,19 +18,51 @@ export default class Api {
     this._authorization = authorization;
   }
 
-  getTasks() {
-    return this._load({url: `movies`})
-      .then(Api.toJSON);
+  _getComments(id) {
+    return this._load({url: `/comments/${id}`})
+      .then(Api.toJSON)
+      .then((comments) => comments.map(FilmsModel.adaptCommentToClient));
   }
 
-  updateTask(task) {
+  addComment(data) {
     return this._load({
-      url: `movies/${task.id}`,
-      method: Method.PUT,
-      body: JSON.stringify(task),
+      url: `/comments/${data.id}`,
+      method: Method.POST,
+      body: JSON.stringify(FilmsModel.adaptCommentToServer(data.comment)),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then(FilmsModel.adaptFilmToClient);
+  }
+
+  deleteComment(id) {
+    return this._load({
+      url: `/comments/${id}`,
+      method: Method.DELETE
+    });
+  }
+
+  getFilms() {
+    return this._load({url: `/movies`})
+      .then(Api.toJSON)
+      .then((films) => {
+        films.map((film) => {
+          const comments = this._getComments(film.id);
+
+          FilmsModel.adaptFilmToClient(film, comments);
+        });
+      });
+  }
+
+  updateFilms(film) {
+    return this._load({
+      url: `/movies/${film.id}`,
+      method: Method.PUT,
+      body: JSON.stringify(FilmsModel.adaptFilmToServer(film)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON)
+      .then(FilmsModel.adaptFilmToClient);
   }
 
   _load({
@@ -37,7 +73,9 @@ export default class Api {
   }) {
     headers.append(`Authorization`, this._authorization);
 
-    return fetch(`${this._endPoint}/${url}`, {method, body, headers}).then(Api.checkStatus).catch(Api.catchError);
+    return fetch(`${this._endPoint}${url}`, {method, body, headers})
+      .then(Api.checkStatus)
+      .catch(Api.catchError);
   }
 
   static checkStatus(response) {

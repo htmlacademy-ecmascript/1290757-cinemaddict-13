@@ -23,7 +23,7 @@ const filmsModel = new FilmModel();
 const filterModel = new FilterModel();
 const api = new Api(END_POINT, AUTHORIZATION);
 
-api.getTasks().then((items) => {
+api.getFilms().then((items) => {
   console.log(items);
   // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
   // а ещё на сервере используется snake_case, а у нас camelCase.
