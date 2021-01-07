@@ -18,10 +18,14 @@ export default class Api {
     this._authorization = authorization;
   }
 
-  _getComments(id) {
-    return this._load({url: `/comments/${id}`})
+  _getComment(film) {
+    this._load({url: `/comments/${film.id}`})
       .then(Api.toJSON)
-      .then((comments) => comments.map(FilmsModel.adaptCommentToClient));
+      .then((comments) => {
+        film.comments = comments.map(FilmsModel.adaptCommentToClient);
+      });
+
+    return film;
   }
 
   addComment(data) {
@@ -32,7 +36,7 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then(FilmsModel.adaptFilmToClient);
+      .then(FilmsModel.adaptCommentToClient);
   }
 
   deleteComment(id) {
@@ -45,13 +49,8 @@ export default class Api {
   getFilms() {
     return this._load({url: `/movies`})
       .then(Api.toJSON)
-      .then((films) => {
-        films.map((film) => {
-          const comments = this._getComments(film.id);
-
-          FilmsModel.adaptFilmToClient(film, comments);
-        });
-      });
+      .then((films) => films.map(FilmsModel.adaptFilmToClient))
+      .then((films) => films.map((film) => this._getComment(film)));
   }
 
   updateFilms(film) {

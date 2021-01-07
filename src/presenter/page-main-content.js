@@ -1,6 +1,7 @@
 import SortingView from "../view/sorting.js";
 import FilmsContainerView from "../view/films-container.js";
 import NoFilmView from "../view/no-film";
+import LoadingView from "../view/loading.js";
 import LoadMoreButtonView from "../view/button-load-more.js";
 import FilmPresenter from "./film.js";
 import {remove, render} from "../utils/render.js";
@@ -17,7 +18,7 @@ const FilmCategory = {
 };
 
 export default class PageMainContent {
-  constructor(bodyContainer, mainContainer, filmsModel, filterModel) {
+  constructor(bodyContainer, mainContainer, filmsModel, filterModel, api) {
     this._filmsModel = filmsModel;
     this._filterModel = filterModel;
     this._bodyContainer = bodyContainer;
@@ -29,11 +30,14 @@ export default class PageMainContent {
     this._filmPresenter = new Map();
     this._setTypesForFilmPresenterCollection();
     this._currentSortType = SortType.DEFAULT;
+    this._isLoading = true;
+    this._api = api;
 
     this._sortingView = null;
     this._loadMoreButtonView = null;
     this._filmsContainerView = new FilmsContainerView();
     this._noFilmView = new NoFilmView();
+    this._loadingView = new LoadingView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -49,6 +53,11 @@ export default class PageMainContent {
   }
 
   _renderFilmsContent() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     if (!this._getFilms().length) {
       this._renderNoFilms();
       return;
@@ -111,6 +120,10 @@ export default class PageMainContent {
     render(this._mainContainer, this._noFilmView.element, RenderPosition.BEFORE_END);
   }
 
+  _renderLoading() {
+    render(this._mainContainer, this._loadingView, RenderPosition.BEFORE_END);
+  }
+
   _renderFilmsList(container = this._filmsContainer, filmsList = this._getFilms(), limit = MOVIES_PER_STEP, type = FilmCategory.COMMON) {
     for (let i = 0; i < Math.min(filmsList.length, limit); i++) {
       this._renderFilm(container, filmsList[i], type);
@@ -166,6 +179,8 @@ export default class PageMainContent {
     this._setTypesForFilmPresenterCollection();
 
     remove(this._sortingView);
+    remove(this._noFilmView);
+    remove(this._loadingView);
     remove(this._loadMoreButtonView);
 
     if (resetRenderedTaskCount) {
@@ -185,7 +200,9 @@ export default class PageMainContent {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.CHANGE_STATUS:
-        this._filmsModel.updateFilm(updateType, update);
+        this._api.updateFilms(update).then((response) => {
+          this._filmsModel.updateFilm(updateType, response);
+        });
         break;
       case UserAction.ADD_COMMENT:
         this._filmsModel.addComment(updateType, update);
@@ -222,6 +239,11 @@ export default class PageMainContent {
         break;
       case UpdateType.MAJOR:
         this._clearFilmList({resetRenderedTaskCount: true, resetSortType: true});
+        this._renderFilmsContent();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingView);
         this._renderFilmsContent();
         break;
     }

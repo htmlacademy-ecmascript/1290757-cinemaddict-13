@@ -6,8 +6,10 @@ export default class Films extends Observer {
     this._films = [];
   }
 
-  setFilms(films) {
+  setFilms(updateType, films) {
     this._films = films.slice();
+
+    this._notify(updateType);
   }
 
   get films() {
@@ -55,26 +57,28 @@ export default class Films extends Observer {
       date: new Date(comment.date)
     });
 
+    delete adaptedComment.comment;
+
     return adaptedComment;
   }
 
   static adaptCommentToServer(comment) {
-    const adaptedTask = Object.assign({}, comment, {
+    const adaptedComment = Object.assign({}, comment, {
       "comment": comment.text,
       "date": comment.date.toISOString(),
       "emotion": comment.emotion
     });
 
-    return adaptedTask;
+    return adaptedComment;
   }
 
-  static adaptFilmToClient(film, comments) {
+  static adaptFilmToClient(film) {
     const adaptedFilm = Object.assign({}, film, {
       id: film.id,
       name: film.film_info.title,
       poster: film.film_info.poster,
       description: film.film_info.description,
-      comments,
+      comments: film.comments,
       rating: film.film_info.total_rating,
       releaseDate: new Date(film.film_info.release.date),
       runtime: film.film_info.runtime,
@@ -94,7 +98,6 @@ export default class Films extends Observer {
 
   static adaptFilmToServer(film) {
     const adaptedTask = Object.assign({}, film, {
-      "comments": film.comments,
       "user_details": {
         "already_watched": film.watched,
         "watchlist": film.watchlist,

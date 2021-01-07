@@ -71,7 +71,7 @@ const createPopupTemplate = (filmData, commentData) => {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/${poster}" alt="${name}">
+            <img class="film-details__poster-img" src="${poster}" alt="${name}">
 
             <p class="film-details__age">${age}+</p>
           </div>
