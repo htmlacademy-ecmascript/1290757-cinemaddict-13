@@ -30,7 +30,7 @@ export default class Film {
     const prevPopupView = this._popupView;
 
     this._view = new FilmView(film);
-    this._popupView = new PopupView(film);
+    this._popupView = null;
 
     this._view.setShowDetailHandler(this._popupShowHandler);
     this._view.setWatchedClickHandler(this._handleWatchedClick);
@@ -47,6 +47,7 @@ export default class Film {
     }
 
     if (this._bodyContainer.contains(prevPopupView.element)) {
+      this._popupView = new PopupView(film);
       replace(this._popupView, prevPopupView);
     }
 
@@ -142,6 +143,7 @@ export default class Film {
   }
 
   _popupShow() {
+    this._popupView = new PopupView(this._film);
     render(this._bodyContainer, this._popupView.element, RenderPosition.BEFORE_END);
     this._popupView.setClosePopupHandler(this._popupCloseHandler);
     this._popupView.setWatchedClickHandler(this._handleWatchedClick);

@@ -90,7 +90,8 @@ export default class Films extends Observer {
       age: film.film_info.age_rating,
       watched: film.user_details.already_watched,
       watchlist: film.user_details.watchlist,
-      favorite: film.user_details.favorite
+      favorite: film.user_details.favorite,
+      watchingDate: film.user_details.watching_date
     });
 
     return adaptedFilm;
@@ -102,8 +103,26 @@ export default class Films extends Observer {
         "already_watched": film.watched,
         "watchlist": film.watchlist,
         "favorite": film.favorite,
+        "watching_date": film.watchingDate
       },
     });
+
+    delete adaptedTask.actors;
+    delete adaptedTask.age;
+    delete adaptedTask.country;
+    delete adaptedTask.description;
+    delete adaptedTask.director;
+    delete adaptedTask.favorite;
+    delete adaptedTask.genres;
+    delete adaptedTask.name;
+    delete adaptedTask.poster;
+    delete adaptedTask.rating;
+    delete adaptedTask.releaseDate;
+    delete adaptedTask.runtime;
+    delete adaptedTask.watched;
+    delete adaptedTask.watchlist;
+    delete adaptedTask.writers;
+    delete adaptedTask.watchingDate;
 
     return adaptedTask;
   }
