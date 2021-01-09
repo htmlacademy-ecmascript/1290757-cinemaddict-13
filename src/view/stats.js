@@ -1,4 +1,5 @@
 import {SECONDS_IN_MINUTE} from "../const.js";
+import {getStats} from "../utils/stats.js";
 import AbstractView from "./abstract";
 
 const createDurationTemplate = (duration) => {
@@ -10,7 +11,8 @@ const createDurationTemplate = (duration) => {
     : `<p class="statistic__item-text">${minutes} <span class="statistic__item-description">m</span></p>`;
 };
 
-const createStatisticsTemplate = (stats) => {
+const createStatisticsTemplate = (films) => {
+  const stats = getStats(films);
   const {watched, rank, totalDuration, favoriteGenre} = stats;
 
   const durationTemplate = createDurationTemplate(totalDuration);
@@ -64,12 +66,12 @@ const createStatisticsTemplate = (stats) => {
 };
 
 export default class Statistics extends AbstractView {
-  constructor(stats) {
+  constructor(films) {
     super();
-    this._stats = stats;
+    this._films = films;
   }
 
   _getTemplate() {
-    return createStatisticsTemplate(this._stats);
+    return createStatisticsTemplate(this._films);
   }
 }

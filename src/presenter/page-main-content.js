@@ -3,6 +3,7 @@ import FilmsContainerView from "../view/films-container.js";
 import NoFilmView from "../view/no-film";
 import LoadingView from "../view/loading.js";
 import LoadMoreButtonView from "../view/button-load-more.js";
+import StatisticsView from "../view/stats.js";
 import FilmPresenter from "./film.js";
 import {remove, render} from "../utils/render.js";
 import {RenderPosition, SortType, UpdateType, UserAction} from "../const.js";
@@ -31,6 +32,7 @@ export default class PageMainContent {
     this._setTypesForFilmPresenterCollection();
     this._currentSortType = SortType.DEFAULT;
     this._isLoading = true;
+    this._isStatistic = true;
     this._api = api;
 
     this._sortingView = null;
@@ -49,17 +51,20 @@ export default class PageMainContent {
   }
 
   init() {
-    this._renderFilmsContent();
-  }
-
-  _renderFilmsContent() {
     if (this._isLoading) {
       this._renderLoading();
       return;
     }
 
-    if (!this._getFilms().length) {
+    const films = this._getFilms();
+
+    if (!films.length) {
       this._renderNoFilms();
+      return;
+    }
+
+    if (this._isStatistic) {
+      this._renderStats(films);
       return;
     }
 
@@ -99,6 +104,10 @@ export default class PageMainContent {
     filmCategoryKeys.forEach((category) => {
       this._filmPresenter.set(FilmCategory[category], {});
     });
+  }
+
+  _renderStats(films) {
+    render(this._mainContainer, new StatisticsView(films).element, RenderPosition.BEFORE_END);
   }
 
   _renderSorting() {
@@ -186,9 +195,6 @@ export default class PageMainContent {
     if (resetRenderedTaskCount) {
       this._renderedFilmCount = MOVIES_PER_STEP;
     } else {
-      // На случай, если перерисовка доски вызвана
-      // уменьшением количества задач (например, удаление или перенос в архив)
-      // нужно скорректировать число показанных задач
       this._renderedFilmCount = Math.min(filmCount, this._renderedFilmCount);
     }
 
@@ -239,12 +245,12 @@ export default class PageMainContent {
         break;
       case UpdateType.MAJOR:
         this._clearFilmList({resetRenderedTaskCount: true, resetSortType: true});
-        this._renderFilmsContent();
+        this.init();
         break;
       case UpdateType.INIT:
         this._isLoading = false;
         remove(this._loadingView);
-        this._renderFilmsContent();
+        this.init();
         break;
     }
   }
@@ -256,7 +262,7 @@ export default class PageMainContent {
 
     this._currentSortType = sortType;
     this._clearFilmList({resetRenderedTaskCount: true});
-    this._renderFilmsContent();
+    this.init();
   }
 
   _showMoreFilms() {

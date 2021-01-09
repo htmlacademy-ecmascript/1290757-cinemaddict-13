@@ -69,4 +69,5 @@ const FilterType = {
   FAVORITES: `favorites`
 };
 
-export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button, TOTAL_FILMS, SortType, UserAction, UpdateType, FilterType};
+export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button, TOTAL_FILMS, SortType,
+  UserAction, UpdateType, FilterType};

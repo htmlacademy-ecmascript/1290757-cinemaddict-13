@@ -74,7 +74,7 @@ const getFavoriteGenre = (genresData) => {
   return favoriteGenre[0];
 };
 
-const generateStats = (films) => {
+const getStats = (films) => {
   const filmsStats = getFilmsStats(films);
 
   return {
@@ -85,4 +85,4 @@ const generateStats = (films) => {
   };
 };
 
-export {generateStats};
+export {getStats};
