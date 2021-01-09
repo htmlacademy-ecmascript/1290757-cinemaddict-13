@@ -17,7 +17,7 @@ const createFilterTemplate = (filterItems, currentFilterType) => {
 
   return `<nav class="main-navigation">
     <div class="main-navigation__items">${filterItemsTemplate}</div>
-    <a href="#stats" class="main-navigation__additional">Stats</a>
+    <a href="#stats" class="main-navigation__additional ${currentFilterType === FilterType.STATISTICS ? `main-navigation__additional--active` : ``}">Stats</a>
   </nav>`;
 };
 
@@ -28,10 +28,19 @@ export default class Filter extends AbstractView {
     this._currentFilter = currentFilterType;
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
+    this._statisticsClickHandler = this._statisticsClickHandler.bind(this);
   }
 
   _getTemplate() {
     return createFilterTemplate(this._filter, this._currentFilter);
+  }
+
+  _statisticsClickHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, this._callback.statisticsClick, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.statisticsClick, Button.MOUSE_MAIN);
+    }
   }
 
   _filterTypeChangeHandler(evt) {
@@ -40,6 +49,14 @@ export default class Filter extends AbstractView {
     } else if (evt.type === Event.MOUSE_DOWN) {
       checkButtonPress(evt, this._callback.filterTypeChange, Button.MOUSE_MAIN);
     }
+  }
+
+  setStatisticsClickHandler(callback) {
+    this._callback.statisticsClick = callback;
+    const statisticsButtons = this.element.querySelector(`.main-navigation__additional`);
+
+    statisticsButtons.addEventListener(Event.MOUSE_DOWN, this._statisticsClickHandler);
+    statisticsButtons.addEventListener(Event.KEY_DOWN, this._statisticsClickHandler);
   }
 
   setFilterTypeChangeHandler(callback) {

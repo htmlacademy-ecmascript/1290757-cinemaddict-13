@@ -66,7 +66,8 @@ const FilterType = {
   ALL: `all`,
   WATCHLIST: `watchlist`,
   HISTORY: `history`,
-  FAVORITES: `favorites`
+  FAVORITES: `favorites`,
+  STATISTICS: `statistics`
 };
 
 export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button, TOTAL_FILMS, SortType,

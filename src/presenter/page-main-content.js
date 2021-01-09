@@ -6,7 +6,7 @@ import LoadMoreButtonView from "../view/button-load-more.js";
 import StatisticsView from "../view/stats.js";
 import FilmPresenter from "./film.js";
 import {remove, render} from "../utils/render.js";
-import {RenderPosition, SortType, UpdateType, UserAction} from "../const.js";
+import {RenderPosition, SortType, UpdateType, UserAction, FilterType} from "../const.js";
 import {sortFilmByDate, sortFilmByRating} from "../utils/film.js";
 import {filter} from "../utils/filter.js";
 
@@ -32,11 +32,11 @@ export default class PageMainContent {
     this._setTypesForFilmPresenterCollection();
     this._currentSortType = SortType.DEFAULT;
     this._isLoading = true;
-    this._isStatistic = true;
     this._api = api;
 
     this._sortingView = null;
     this._loadMoreButtonView = null;
+    this._statisticsView = null;
     this._filmsContainerView = new FilmsContainerView();
     this._noFilmView = new NoFilmView();
     this._loadingView = new LoadingView();
@@ -63,7 +63,7 @@ export default class PageMainContent {
       return;
     }
 
-    if (this._isStatistic) {
+    if (this._filterModel.filter === FilterType.STATISTICS) {
       this._renderStats(films);
       return;
     }
@@ -84,7 +84,12 @@ export default class PageMainContent {
   }
 
   _getFilms() {
-    const filterType = this._filterModel.filter;
+    let filterType = this._filterModel.filter;
+
+    if (filterType === FilterType.STATISTICS) {
+      filterType = FilterType.ALL;
+    }
+
     const films = this._filmsModel.films;
     const filteredTasks = filter[filterType](films);
 
@@ -107,7 +112,9 @@ export default class PageMainContent {
   }
 
   _renderStats(films) {
-    render(this._mainContainer, new StatisticsView(films).element, RenderPosition.BEFORE_END);
+    this._statisticsView = new StatisticsView(films);
+
+    render(this._mainContainer, this._statisticsView.element, RenderPosition.BEFORE_END);
   }
 
   _renderSorting() {
@@ -191,6 +198,8 @@ export default class PageMainContent {
     remove(this._noFilmView);
     remove(this._loadingView);
     remove(this._loadMoreButtonView);
+    remove(this._statisticsView);
+    remove(this._filmsContainerView);
 
     if (resetRenderedTaskCount) {
       this._renderedFilmCount = MOVIES_PER_STEP;
