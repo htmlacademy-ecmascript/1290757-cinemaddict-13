@@ -1,4 +1,8 @@
 import Observer from "../utils/observer.js";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 export default class Films extends Observer {
   constructor() {
@@ -54,7 +58,7 @@ export default class Films extends Observer {
       text: comment.comment,
       emotion: comment.emotion,
       author: comment.author,
-      date: new Date(comment.date)
+      date: dayjs(comment.date).format(`YYYY/M/D H:mm`)
     });
 
     delete adaptedComment.comment;
@@ -63,24 +67,22 @@ export default class Films extends Observer {
   }
 
   static adaptCommentToServer(comment) {
-    const adaptedComment = Object.assign({}, comment, {
+    return Object.assign({}, comment, {
       "comment": comment.text,
-      "date": comment.date.toISOString(),
+      "date": dayjs.utc().format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`),
       "emotion": comment.emotion
     });
-
-    return adaptedComment;
   }
 
   static adaptFilmToClient(film) {
-    const adaptedFilm = Object.assign({}, film, {
+    return Object.assign({}, film, {
       id: film.id,
       name: film.film_info.title,
       poster: film.film_info.poster,
       description: film.film_info.description,
       comments: film.comments,
       rating: film.film_info.total_rating,
-      releaseDate: new Date(film.film_info.release.date),
+      releaseDate: dayjs(film.film_info.release.date).format(`D MMMM YYYY`),
       runtime: film.film_info.runtime,
       genres: film.film_info.genre,
       director: film.film_info.director,
@@ -93,8 +95,6 @@ export default class Films extends Observer {
       favorite: film.user_details.favorite,
       watchingDate: film.user_details.watching_date
     });
-
-    return adaptedFilm;
   }
 
   static adaptFilmToServer(film) {
