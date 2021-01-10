@@ -3,6 +3,10 @@ import PopupView from "../view/popup.js";
 import {render, remove, replace} from "../utils/render.js";
 import {RenderPosition} from "../const.js";
 import {UserAction, UpdateType} from "../const.js";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 export default class Film {
   constructor(filmContainer, bodyContainer, updateData) {
@@ -92,7 +96,8 @@ export default class Film {
 
   _handleWatchedClick() {
     this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
-      watched: !this._film.watched
+      watched: !this._film.watched,
+      watchingDate: dayjs.utc().format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`)
     }));
 
     if (this._isPopupOpen) {
