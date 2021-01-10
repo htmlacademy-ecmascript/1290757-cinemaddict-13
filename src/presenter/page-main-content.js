@@ -215,9 +215,7 @@ export default class PageMainContent {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.CHANGE_STATUS:
-        this._api.updateFilms(update).then((response) => {
-          this._filmsModel.updateFilm(updateType, response);
-        });
+        this._filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.ADD_COMMENT:
         this._filmsModel.addComment(updateType, update);

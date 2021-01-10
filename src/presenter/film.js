@@ -30,7 +30,7 @@ export default class Film {
     const prevPopupView = this._popupView;
 
     this._view = new FilmView(film);
-    this._popupView = null;
+    this._popupView = new PopupView(film);
 
     this._view.setShowDetailHandler(this._popupShowHandler);
     this._view.setWatchedClickHandler(this._handleWatchedClick);
