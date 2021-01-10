@@ -110,6 +110,18 @@
 
 /***/ }),
 
+/***/ "./node_modules/dayjs/plugin/utc.js":
+/*!******************************************!*\
+  !*** ./node_modules/dayjs/plugin/utc.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+!function(t,i){ true?module.exports=i():undefined}(this,function(){"use strict";return function(t,i,e){var s=i.prototype;e.utc=function(t){return new i({date:t,utc:!0,args:arguments})},s.utc=function(t){var i=e(this.toDate(),{locale:this.$L,utc:!0});return t?i.add(this.utcOffset(),"minute"):i},s.local=function(){return e(this.toDate(),{locale:this.$L,utc:!1})};var f=s.parse;s.parse=function(t){t.utc&&(this.$u=!0),this.$utils().u(t.$offset)||(this.$offset=t.$offset),f.call(this,t)};var n=s.init;s.init=function(){if(this.$u){var t=this.$d;this.$y=t.getUTCFullYear(),this.$M=t.getUTCMonth(),this.$D=t.getUTCDate(),this.$W=t.getUTCDay(),this.$H=t.getUTCHours(),this.$m=t.getUTCMinutes(),this.$s=t.getUTCSeconds(),this.$ms=t.getUTCMilliseconds()}else n.call(this)};var u=s.utcOffset;s.utcOffset=function(t,i){var e=this.$utils().u;if(e(t))return this.$u?0:e(this.$offset)?u.call(this):this.$offset;var s=Math.abs(t)<=16?60*t:t,f=this;if(i)return f.$offset=s,f.$u=0===t,f;if(0!==t){var n=this.$u?this.toDate().getTimezoneOffset():-1*this.utcOffset();(f=this.local().add(s+n,"minute")).$offset=s,f.$x.$localOffset=n}else f=this.utc();return f};var o=s.format;s.format=function(t){var i=t||(this.$u?"YYYY-MM-DDTHH:mm:ss[Z]":"");return o.call(this,i)},s.valueOf=function(){var t=this.$utils().u(this.$offset)?0:this.$offset+(this.$x.$localOffset||(new Date).getTimezoneOffset());return this.$d.valueOf()-6e4*t},s.isUTC=function(){return!!this.$u},s.toISOString=function(){return this.toDate().toISOString()},s.toString=function(){return this.toDate().toUTCString()};var r=s.toDate;s.toDate=function(t){return"s"===t&&this.$offset?e(this.format("YYYY-MM-DD HH:mm:ss:SSS")).toDate():r.call(this)};var a=s.diff;s.diff=function(t,i,s){if(this.$u===t.$u)return a.call(this,t,i,s);var f=this.local(),n=e(t).local();return a.call(f,n,i,s)}}});
+
+
+/***/ }),
+
 /***/ "./node_modules/he/he.js":
 /*!*******************************!*\
   !*** ./node_modules/he/he.js ***!
@@ -799,7 +811,15 @@ pageMainContentPresenter.init();
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Films; });
 /* harmony import */ var _utils_observer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/observer.js */ "./src/utils/observer.js");
+/* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! dayjs */ "./node_modules/dayjs/dayjs.min.js");
+/* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(dayjs__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var dayjs_plugin_utc__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! dayjs/plugin/utc */ "./node_modules/dayjs/plugin/utc.js");
+/* harmony import */ var dayjs_plugin_utc__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(dayjs_plugin_utc__WEBPACK_IMPORTED_MODULE_2__);
 
+
+
+
+dayjs__WEBPACK_IMPORTED_MODULE_1___default.a.extend(dayjs_plugin_utc__WEBPACK_IMPORTED_MODULE_2___default.a);
 
 class Films extends _utils_observer_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor() {
@@ -855,7 +875,7 @@ class Films extends _utils_observer_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
       text: comment.comment,
       emotion: comment.emotion,
       author: comment.author,
-      date: new Date(comment.date)
+      date: dayjs__WEBPACK_IMPORTED_MODULE_1___default()(comment.date).format(`YYYY/M/D H:mm`)
     });
 
     delete adaptedComment.comment;
@@ -864,24 +884,22 @@ class Films extends _utils_observer_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
 
   static adaptCommentToServer(comment) {
-    const adaptedComment = Object.assign({}, comment, {
+    return Object.assign({}, comment, {
       "comment": comment.text,
-      "date": comment.date.toISOString(),
+      "date": dayjs__WEBPACK_IMPORTED_MODULE_1___default.a.utc().format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`),
       "emotion": comment.emotion
     });
-
-    return adaptedComment;
   }
 
   static adaptFilmToClient(film) {
-    const adaptedFilm = Object.assign({}, film, {
+    return Object.assign({}, film, {
       id: film.id,
       name: film.film_info.title,
       poster: film.film_info.poster,
       description: film.film_info.description,
       comments: film.comments,
       rating: film.film_info.total_rating,
-      releaseDate: new Date(film.film_info.release.date),
+      releaseDate: dayjs__WEBPACK_IMPORTED_MODULE_1___default()(film.film_info.release.date).format(`D MMMM YYYY`),
       runtime: film.film_info.runtime,
       genres: film.film_info.genre,
       director: film.film_info.director,
@@ -894,8 +912,6 @@ class Films extends _utils_observer_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
       favorite: film.user_details.favorite,
       watchingDate: film.user_details.watching_date
     });
-
-    return adaptedFilm;
   }
 
   static adaptFilmToServer(film) {
@@ -980,11 +996,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_popup_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../view/popup.js */ "./src/view/popup.js");
 /* harmony import */ var _utils_render_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/render.js */ "./src/utils/render.js");
 /* harmony import */ var _const_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../const.js */ "./src/const.js");
+/* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! dayjs */ "./node_modules/dayjs/dayjs.min.js");
+/* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(dayjs__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var dayjs_plugin_utc__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! dayjs/plugin/utc */ "./node_modules/dayjs/plugin/utc.js");
+/* harmony import */ var dayjs_plugin_utc__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(dayjs_plugin_utc__WEBPACK_IMPORTED_MODULE_5__);
 
 
 
 
 
+
+
+
+dayjs__WEBPACK_IMPORTED_MODULE_4___default.a.extend(dayjs_plugin_utc__WEBPACK_IMPORTED_MODULE_5___default.a);
 
 class Film {
   constructor(filmContainer, bodyContainer, updateData) {
@@ -1012,7 +1036,7 @@ class Film {
     const prevPopupView = this._popupView;
 
     this._view = new _view_film_js__WEBPACK_IMPORTED_MODULE_0__["default"](film);
-    this._popupView = null;
+    this._popupView = new _view_popup_js__WEBPACK_IMPORTED_MODULE_1__["default"](film);
 
     this._view.setShowDetailHandler(this._popupShowHandler);
     this._view.setWatchedClickHandler(this._handleWatchedClick);
@@ -1074,7 +1098,8 @@ class Film {
 
   _handleWatchedClick() {
     this._updateData(_const_js__WEBPACK_IMPORTED_MODULE_3__["UserAction"].CHANGE_STATUS, _const_js__WEBPACK_IMPORTED_MODULE_3__["UpdateType"].MINOR, Object.assign({}, this._film, {
-      watched: !this._film.watched
+      watched: !this._film.watched,
+      watchingDate: dayjs__WEBPACK_IMPORTED_MODULE_4___default.a.utc().format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`)
     }));
 
     if (this._isPopupOpen) {
@@ -1490,9 +1515,7 @@ class PageMainContent {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case _const_js__WEBPACK_IMPORTED_MODULE_8__["UserAction"].CHANGE_STATUS:
-        this._api.updateFilms(update).then((response) => {
-          this._filmsModel.updateFilm(updateType, response);
-        });
+        this._filmsModel.updateFilm(updateType, update);
         break;
       case _const_js__WEBPACK_IMPORTED_MODULE_8__["UserAction"].ADD_COMMENT:
         this._filmsModel.addComment(updateType, update);
