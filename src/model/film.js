@@ -24,7 +24,7 @@ export default class Films extends Observer {
     const index = this._films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
-      throw new Error(`Can't update unexisting task`);
+      throw new Error(`Can't update unexisting film`);
     }
 
     this._films = [
@@ -45,9 +45,14 @@ export default class Films extends Observer {
 
   deleteComment(updateType, update) {
     const film = this._films.find((item) => item.id === update.id);
+
+    if (update.index === -1) {
+      throw new Error(`Can't delete unexisting comment`);
+    }
+
     film.comments = [
       ...film.comments.slice(0, update.index),
-      ...film.comments.slice(update.index + 1)
+      ...film.comments.slice(update.index - (film.comments.length - 1))
     ];
 
     this._notify(updateType, update);

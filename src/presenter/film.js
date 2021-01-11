@@ -77,7 +77,7 @@ export default class Film {
       return;
     }
 
-    this._updateData(UserAction.ADD_COMMENT, UpdateType.PATCH, {
+    this._updateData(UserAction.ADD_COMMENT, UpdateType.MAJOR, {
       "id": this._film.id,
       "comment": comment
     });
@@ -86,7 +86,7 @@ export default class Film {
   }
 
   _handleDeleteComment(evt) {
-    this._updateData(UserAction.DELETE_COMMENT, UpdateType.PATCH, {
+    this._updateData(UserAction.DELETE_COMMENT, UpdateType.MAJOR, {
       "id": this._film.id,
       "index": evt.target.dataset.count
     });
