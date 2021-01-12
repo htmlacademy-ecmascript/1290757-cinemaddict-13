@@ -51,7 +51,7 @@ export default class Filter {
   }
 
   _handleFilterTypeChange(evt) {
-    const filterType = evt.target.dataset.type;
+    const filterType = evt.target.dataset.type ? evt.target.dataset.type : evt.target.parentElement.dataset.type;
 
     if (this._currentFilter === filterType) {
       return;
