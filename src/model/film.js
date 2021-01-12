@@ -59,20 +59,17 @@ export default class Films extends Observer {
   }
 
   static adaptCommentToClient(comment) {
-    const adaptedComment = Object.assign({}, comment, {
+    return Object.assign({}, {
+      id: comment.id,
       text: comment.comment,
       emotion: comment.emotion,
       author: comment.author,
       date: dayjs(comment.date).format(`YYYY/M/D H:mm`)
     });
-
-    delete adaptedComment.comment;
-
-    return adaptedComment;
   }
 
   static adaptCommentToServer(comment) {
-    return Object.assign({}, comment, {
+    return Object.assign({}, {
       "comment": comment.text,
       "date": dayjs.utc().format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`),
       "emotion": comment.emotion
@@ -103,32 +100,16 @@ export default class Films extends Observer {
   }
 
   static adaptFilmToServer(film) {
-    const adaptedTask = Object.assign({}, film, {
+    return Object.assign({}, {
+      "id": film.id,
+      "comments": film.comments,
+      "film_info": film.film_info,
       "user_details": {
         "already_watched": film.watched,
         "watchlist": film.watchlist,
         "favorite": film.favorite,
         "watching_date": film.watchingDate
-      },
+      }
     });
-
-    delete adaptedTask.actors;
-    delete adaptedTask.age;
-    delete adaptedTask.country;
-    delete adaptedTask.description;
-    delete adaptedTask.director;
-    delete adaptedTask.favorite;
-    delete adaptedTask.genres;
-    delete adaptedTask.name;
-    delete adaptedTask.poster;
-    delete adaptedTask.rating;
-    delete adaptedTask.releaseDate;
-    delete adaptedTask.runtime;
-    delete adaptedTask.watched;
-    delete adaptedTask.watchlist;
-    delete adaptedTask.writers;
-    delete adaptedTask.watchingDate;
-
-    return adaptedTask;
   }
 }
