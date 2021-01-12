@@ -841,7 +841,7 @@ class Films extends _utils_observer_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     const index = this._films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
-      throw new Error(`Can't update unexisting task`);
+      throw new Error(`Can't update unexisting film`);
     }
 
     this._films = [
@@ -862,9 +862,14 @@ class Films extends _utils_observer_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
 
   deleteComment(updateType, update) {
     const film = this._films.find((item) => item.id === update.id);
+
+    if (update.index === -1) {
+      throw new Error(`Can't delete unexisting comment`);
+    }
+
     film.comments = [
       ...film.comments.slice(0, update.index),
-      ...film.comments.slice(update.index + 1)
+      ...film.comments.slice(update.index - (film.comments.length - 1))
     ];
 
     this._notify(updateType, update);
@@ -1079,7 +1084,7 @@ class Film {
       return;
     }
 
-    this._updateData(_const_js__WEBPACK_IMPORTED_MODULE_3__["UserAction"].ADD_COMMENT, _const_js__WEBPACK_IMPORTED_MODULE_3__["UpdateType"].PATCH, {
+    this._updateData(_const_js__WEBPACK_IMPORTED_MODULE_3__["UserAction"].ADD_COMMENT, _const_js__WEBPACK_IMPORTED_MODULE_3__["UpdateType"].MAJOR, {
       "id": this._film.id,
       "comment": comment
     });
@@ -1088,7 +1093,7 @@ class Film {
   }
 
   _handleDeleteComment(evt) {
-    this._updateData(_const_js__WEBPACK_IMPORTED_MODULE_3__["UserAction"].DELETE_COMMENT, _const_js__WEBPACK_IMPORTED_MODULE_3__["UpdateType"].PATCH, {
+    this._updateData(_const_js__WEBPACK_IMPORTED_MODULE_3__["UserAction"].DELETE_COMMENT, _const_js__WEBPACK_IMPORTED_MODULE_3__["UpdateType"].MAJOR, {
       "id": this._film.id,
       "index": evt.target.dataset.count
     });
@@ -1703,7 +1708,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const filter = {
-  [_const__WEBPACK_IMPORTED_MODULE_0__["FilterType"].ALL]: (films) => films,
+  [_const__WEBPACK_IMPORTED_MODULE_0__["FilterType"].ALL]: (films) => films.filter((film) => film.id),
   [_const__WEBPACK_IMPORTED_MODULE_0__["FilterType"].WATCHLIST]: (films) => films.filter((film) => film.watchlist),
   [_const__WEBPACK_IMPORTED_MODULE_0__["FilterType"].HISTORY]: (films) => films.filter((film) => film.watched),
   [_const__WEBPACK_IMPORTED_MODULE_0__["FilterType"].FAVORITES]: (films) => films.filter((film) => film.favorite)
