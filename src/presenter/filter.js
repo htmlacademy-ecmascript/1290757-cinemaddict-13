@@ -11,12 +11,12 @@ export default class Filter {
     this._currentFilter = null;
     this._filterComponent = null;
 
-    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this.init = this.init.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
     this._handleStatisticsClick = this._handleStatisticsClick.bind(this);
 
-    this._filmsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
+    this._filmsModel.addObserver(this.init);
+    this._filterModel.addObserver(this.init);
   }
 
   init() {
@@ -36,10 +36,6 @@ export default class Filter {
 
     replace(this._filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
-  }
-
-  _handleModelEvent() {
-    this.init();
   }
 
   _handleStatisticsClick() {

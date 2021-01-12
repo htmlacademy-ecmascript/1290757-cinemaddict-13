@@ -28,7 +28,7 @@ export default class PageMainContent {
     this._filmsContainer = null;
     this._filmListExtra = null;
     this._renderedFilmCount = MOVIES_PER_STEP;
-    this._filmPresenter = new Map();
+    this._filmPresenters = new Map();
     this._setTypesForFilmPresenterCollection();
     this._currentSortType = SortType.DEFAULT;
     this._isLoading = true;
@@ -58,7 +58,7 @@ export default class PageMainContent {
 
     const films = this._getFilms();
 
-    if (!films.length) {
+    if (films.length === 0) {
       this._renderNoFilms();
       return;
     }
@@ -98,16 +98,16 @@ export default class PageMainContent {
         return filteredTasks.sort(sortFilmByDate);
       case SortType.BY_RATING:
         return filteredTasks.sort(sortFilmByRating);
+      default:
+        return filteredTasks;
     }
-
-    return filteredTasks;
   }
 
   _setTypesForFilmPresenterCollection() {
     const filmCategoryKeys = Object.keys(FilmCategory);
 
     filmCategoryKeys.forEach((category) => {
-      this._filmPresenter.set(FilmCategory[category], {});
+      this._filmPresenters.set(FilmCategory[category], {});
     });
   }
 
@@ -118,10 +118,6 @@ export default class PageMainContent {
   }
 
   _renderSorting() {
-    if (this._sortingView !== null) {
-      this._sortingView = null;
-    }
-
     this._sortingView = new SortingView(this._currentSortType);
     this._sortingView.setSortTypeChangeHandler(this._handleSortTypeChange);
 
@@ -149,7 +145,7 @@ export default class PageMainContent {
   _renderFilm(container, film, type) {
     const filmPresenter = new FilmPresenter(container, this._bodyContainer, this._handleViewAction);
     filmPresenter.init(film);
-    this._filmPresenter.get(type)[film.id] = filmPresenter;
+    this._filmPresenters.get(type)[film.id] = filmPresenter;
   }
 
   _renderTopRatedFilms() {
@@ -185,13 +181,13 @@ export default class PageMainContent {
   _clearFilmList({resetRenderedTaskCount = false, resetSortType = false} = {}) {
     const filmCount = this._getFilms().length;
 
-    this._filmPresenter.forEach((value) => {
+    this._filmPresenters.forEach((value) => {
       Object
         .values(value)
         .forEach((presenter) => presenter.destroy());
     });
 
-    this._filmPresenter = new Map();
+    this._filmPresenters = new Map();
     this._setTypesForFilmPresenterCollection();
 
     remove(this._sortingView);
@@ -201,11 +197,7 @@ export default class PageMainContent {
     remove(this._statisticsView);
     remove(this._filmsContainerView);
 
-    if (resetRenderedTaskCount) {
-      this._renderedFilmCount = MOVIES_PER_STEP;
-    } else {
-      this._renderedFilmCount = Math.min(filmCount, this._renderedFilmCount);
-    }
+    this._renderedFilmCount = resetRenderedTaskCount ? MOVIES_PER_STEP : Math.min(filmCount, this._renderedFilmCount);
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
@@ -223,13 +215,15 @@ export default class PageMainContent {
       case UserAction.DELETE_COMMENT:
         this._filmsModel.deleteComment(updateType, update);
         break;
+      default:
+        break;
     }
   }
 
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        this._filmPresenter.forEach((value) => {
+        this._filmPresenters.forEach((value) => {
           Object
             .values(value)
             .forEach((presenter) => {
@@ -240,7 +234,7 @@ export default class PageMainContent {
         });
         break;
       case UpdateType.MINOR:
-        this._filmPresenter.forEach((value) => {
+        this._filmPresenters.forEach((value) => {
           Object
             .values(value)
             .forEach((presenter) => {
@@ -258,6 +252,8 @@ export default class PageMainContent {
         this._isLoading = false;
         remove(this._loadingView);
         this.init();
+        break;
+      default:
         break;
     }
   }
