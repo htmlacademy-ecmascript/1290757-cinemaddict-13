@@ -23,7 +23,7 @@ const createEmojisTemplate = (emotion) => {
   </div>`;
 };
 
-const createChosenEmojiTemplate = (emotion) => emotion.length === 0 ? ``
+const createChosenEmojiTemplate = (emotion) => emotion === `` ? ``
   : `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">`;
 
 const createCommentsTemplate = (comments) => comments.length === 0 ? ``

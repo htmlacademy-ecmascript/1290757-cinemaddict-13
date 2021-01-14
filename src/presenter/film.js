@@ -34,6 +34,7 @@ export default class Film {
     const prevPopupView = this._popupView;
 
     this._view = new FilmView(film);
+    this._popupView = new PopupView(film);
 
     this._view.setShowDetailHandler(this._popupShowHandler);
     this._view.setWatchedClickHandler(this._handleWatchedClick);
@@ -50,7 +51,6 @@ export default class Film {
     }
 
     if (this._bodyContainer.contains(prevPopupView.element)) {
-      this._popupView = new PopupView(film);
       replace(this._popupView, prevPopupView);
     }
 
@@ -59,14 +59,12 @@ export default class Film {
   }
 
   destroy() {
-    if (this._isPopupOpen) {
-      this._popupView.removeClosePopupHandler(this._popupCloseHandler);
-      this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
-      this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
-      this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
-      this._popupView.removeCommentAddHandler(this._handleAddComment);
-      this._popupView.removeCommentDeleteHandler(this._handleDeleteComment);
-    }
+    this._popupView.removeClosePopupHandler(this._popupCloseHandler);
+    this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
+    this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
+    this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupView.removeCommentAddHandler(this._handleAddComment);
+    this._popupView.removeCommentDeleteHandler(this._handleDeleteComment);
     remove(this._view);
     remove(this._popupView);
   }
@@ -147,7 +145,6 @@ export default class Film {
   }
 
   _popupShow() {
-    this._popupView = new PopupView(this._film);
     render(this._bodyContainer, this._popupView.element, RenderPosition.BEFORE_END);
     this._popupView.setClosePopupHandler(this._popupCloseHandler);
     this._popupView.setWatchedClickHandler(this._handleWatchedClick);

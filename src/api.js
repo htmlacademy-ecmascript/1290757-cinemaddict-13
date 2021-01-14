@@ -19,13 +19,15 @@ export default class Api {
   }
 
   _getComment(film) {
-    this._load({url: `/comments/${film.id}`})
-      .then(Api.toJSON)
-      .then((comments) => {
-        film.comments = comments.map(FilmsModel.adaptCommentToClient);
-      });
+    return new Promise((resolve) => {
+      this._load({url: `/comments/${film.id}`})
+        .then(Api.toJSON)
+        .then((comments) => {
+          film.comments = comments.map(FilmsModel.adaptCommentToClient);
 
-    return film;
+          resolve(film);
+        });
+    });
   }
 
   addComment(data) {
@@ -50,7 +52,8 @@ export default class Api {
     return this._load({url: `/movies`})
       .then(Api.toJSON)
       .then((films) => films.map(FilmsModel.adaptFilmToClient))
-      .then((films) => films.map((film) => this._getComment(film)));
+      .then((films) => films.map((film) => this._getComment(film)))
+      .then((promises) => Promise.all(promises));
   }
 
   updateFilms(film) {
