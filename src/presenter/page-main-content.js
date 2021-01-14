@@ -222,17 +222,6 @@ export default class PageMainContent {
 
   _handleModelEvent(updateType, data) {
     switch (updateType) {
-      case UpdateType.PATCH:
-        this._filmPresenters.forEach((value) => {
-          Object
-            .values(value)
-            .forEach((presenter) => {
-              if (presenter._film.id === data.id) {
-                presenter.init(presenter._film);
-              }
-            });
-        });
-        break;
       case UpdateType.MINOR:
         this._filmPresenters.forEach((value) => {
           Object

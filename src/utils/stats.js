@@ -90,7 +90,7 @@ const getStats = (films) => {
   };
 };
 
-const countCompletedTaskInDateRange = (films, dateFrom, dateTo) => {
+const countCompletedFilmInDateRange = (films, dateFrom, dateTo) => {
   return films.reduce((counter, film) => {
     if (film.watchingDate === null) {
       return counter;
@@ -108,4 +108,4 @@ const countCompletedTaskInDateRange = (films, dateFrom, dateTo) => {
   }, 0);
 };
 
-export {getStats, countCompletedTaskInDateRange};
+export {getStats, countCompletedFilmInDateRange};

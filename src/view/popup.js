@@ -178,6 +178,7 @@ export default class Popup extends SmartView {
     this._deleteCommentHandler = this._deleteCommentHandler.bind(this);
     this._commentTextInputHandler = this._commentTextInputHandler.bind(this);
     this._changeEmotionHandler = this._changeEmotionHandler.bind(this);
+    this._defaultClickHandler = this._defaultClickHandler.bind(this);
 
     this._closeButton = null;
     this._watchedButton = null;
@@ -263,12 +264,16 @@ export default class Popup extends SmartView {
     }
   }
 
-  _deleteCommentHandler(evt) {
+  _defaultClickHandler(evt, cb) {
     if (evt.type === Event.KEY_DOWN) {
-      checkButtonPress(evt, this._callback.deleteComment, Button.ENTER);
+      checkButtonPress(evt, cb, Button.ENTER);
     } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, this._callback.deleteComment, Button.MOUSE_MAIN);
+      checkButtonPress(evt, cb, Button.MOUSE_MAIN);
     }
+  }
+
+  _deleteCommentHandler(evt) {
+    this._defaultClickHandler(evt, this._callback.deleteComment);
   }
 
   _closePopupHandler(evt) {
@@ -284,27 +289,15 @@ export default class Popup extends SmartView {
   }
 
   _watchedClickHandler(evt) {
-    if (evt.type === Event.KEY_DOWN) {
-      checkButtonPress(evt, this._callback.watchedClick, Button.ENTER);
-    } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, this._callback.watchedClick, Button.MOUSE_MAIN);
-    }
+    this._defaultClickHandler(evt, this._callback.watchedClick);
   }
 
   _watchlistClickHandler(evt) {
-    if (evt.type === Event.KEY_DOWN) {
-      checkButtonPress(evt, this._callback.watchlistClick, Button.ENTER);
-    } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, this._callback.watchlistClick, Button.MOUSE_MAIN);
-    }
+    this._defaultClickHandler(evt, this._callback.watchlistClick);
   }
 
   _favoriteClickHandler(evt) {
-    if (evt.type === Event.KEY_DOWN) {
-      checkButtonPress(evt, this._callback.favoriteClick, Button.ENTER);
-    } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, this._callback.favoriteClick, Button.MOUSE_MAIN);
-    }
+    this._defaultClickHandler(evt, this._callback.favoriteClick);
   }
 
   removeElement() {

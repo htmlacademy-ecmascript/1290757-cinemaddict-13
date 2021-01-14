@@ -29,26 +29,27 @@ export default class Filter extends AbstractView {
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
     this._statisticsClickHandler = this._statisticsClickHandler.bind(this);
+    this._defaultClickHandler = this._defaultClickHandler.bind(this);
   }
 
   _getTemplate() {
     return createFilterTemplate(this._filter, this._currentFilter);
   }
 
-  _statisticsClickHandler(evt) {
+  _defaultClickHandler(evt, cb) {
     if (evt.type === Event.KEY_DOWN) {
-      checkButtonPress(evt, this._callback.statisticsClick, Button.ENTER);
+      checkButtonPress(evt, cb, Button.ENTER);
     } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, this._callback.statisticsClick, Button.MOUSE_MAIN);
+      checkButtonPress(evt, cb, Button.MOUSE_MAIN);
     }
   }
 
+  _statisticsClickHandler(evt) {
+    this._defaultClickHandler(evt, this._callback.statisticsClick);
+  }
+
   _filterTypeChangeHandler(evt) {
-    if (evt.type === Event.KEY_DOWN) {
-      checkButtonPress(evt, this._callback.filterTypeChange, Button.ENTER);
-    } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, this._callback.filterTypeChange, Button.MOUSE_MAIN);
-    }
+    this._defaultClickHandler(evt, this._callback.filterTypeChange);
   }
 
   setStatisticsClickHandler(callback) {
