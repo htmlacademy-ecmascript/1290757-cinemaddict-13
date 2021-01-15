@@ -564,13 +564,15 @@ class Api {
   }
 
   _getComment(film) {
-    this._load({url: `/comments/${film.id}`})
-      .then(Api.toJSON)
-      .then((comments) => {
-        film.comments = comments.map(_model_film_js__WEBPACK_IMPORTED_MODULE_0__["default"].adaptCommentToClient);
-      });
+    return new Promise((resolve) => {
+      this._load({url: `/comments/${film.id}`})
+        .then(Api.toJSON)
+        .then((comments) => {
+          film.comments = comments.map(_model_film_js__WEBPACK_IMPORTED_MODULE_0__["default"].adaptCommentToClient);
 
-    return film;
+          resolve(film);
+        });
+    });
   }
 
   addComment(data) {
@@ -595,7 +597,8 @@ class Api {
     return this._load({url: `/movies`})
       .then(Api.toJSON)
       .then((films) => films.map(_model_film_js__WEBPACK_IMPORTED_MODULE_0__["default"].adaptFilmToClient))
-      .then((films) => films.map((film) => this._getComment(film)));
+      .then((films) => films.map((film) => this._getComment(film)))
+      .then((promises) => Promise.all(promises));
   }
 
   updateFilms(film) {
@@ -867,29 +870,23 @@ class Films extends _utils_observer_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
       throw new Error(`Can't delete unexisting comment`);
     }
 
-    film.comments = [
-      ...film.comments.slice(0, update.index),
-      ...film.comments.slice(update.index - (film.comments.length - 1))
-    ];
+    film.comments.splice(update.index, 1);
 
     this._notify(updateType, update);
   }
 
   static adaptCommentToClient(comment) {
-    const adaptedComment = Object.assign({}, comment, {
+    return Object.assign({}, {
+      id: comment.id,
       text: comment.comment,
       emotion: comment.emotion,
       author: comment.author,
       date: dayjs__WEBPACK_IMPORTED_MODULE_1___default()(comment.date).format(`YYYY/M/D H:mm`)
     });
-
-    delete adaptedComment.comment;
-
-    return adaptedComment;
   }
 
   static adaptCommentToServer(comment) {
-    return Object.assign({}, comment, {
+    return Object.assign({}, {
       "comment": comment.text,
       "date": dayjs__WEBPACK_IMPORTED_MODULE_1___default.a.utc().format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`),
       "emotion": comment.emotion
@@ -920,33 +917,17 @@ class Films extends _utils_observer_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
 
   static adaptFilmToServer(film) {
-    const adaptedTask = Object.assign({}, film, {
+    return Object.assign({}, {
+      "id": film.id,
+      "comments": film.comments,
+      "film_info": film.film_info,
       "user_details": {
         "already_watched": film.watched,
         "watchlist": film.watchlist,
         "favorite": film.favorite,
         "watching_date": film.watchingDate
-      },
+      }
     });
-
-    delete adaptedTask.actors;
-    delete adaptedTask.age;
-    delete adaptedTask.country;
-    delete adaptedTask.description;
-    delete adaptedTask.director;
-    delete adaptedTask.favorite;
-    delete adaptedTask.genres;
-    delete adaptedTask.name;
-    delete adaptedTask.poster;
-    delete adaptedTask.rating;
-    delete adaptedTask.releaseDate;
-    delete adaptedTask.runtime;
-    delete adaptedTask.watched;
-    delete adaptedTask.watchlist;
-    delete adaptedTask.writers;
-    delete adaptedTask.watchingDate;
-
-    return adaptedTask;
   }
 }
 
@@ -1058,7 +1039,6 @@ class Film {
     }
 
     if (this._bodyContainer.contains(prevPopupView.element)) {
-      this._popupView = new _view_popup_js__WEBPACK_IMPORTED_MODULE_1__["default"](film);
       Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["replace"])(this._popupView, prevPopupView);
     }
 
@@ -1067,14 +1047,12 @@ class Film {
   }
 
   destroy() {
-    if (this._isPopupOpen) {
-      this._popupView.removeClosePopupHandler(this._popupCloseHandler);
-      this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
-      this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
-      this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
-      this._popupView.removeCommentAddHandler(this._handleAddComment);
-      this._popupView.removeCommentDeleteHandler(this._handleDeleteComment);
-    }
+    this._popupView.removeClosePopupHandler(this._popupCloseHandler);
+    this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
+    this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
+    this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupView.removeCommentAddHandler(this._handleAddComment);
+    this._popupView.removeCommentDeleteHandler(this._handleDeleteComment);
     Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["remove"])(this._view);
     Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["remove"])(this._popupView);
   }
@@ -1084,7 +1062,7 @@ class Film {
       return;
     }
 
-    this._updateData(_const_js__WEBPACK_IMPORTED_MODULE_3__["UserAction"].ADD_COMMENT, _const_js__WEBPACK_IMPORTED_MODULE_3__["UpdateType"].MAJOR, {
+    this._updateData(_const_js__WEBPACK_IMPORTED_MODULE_3__["UserAction"].ADD_COMMENT, _const_js__WEBPACK_IMPORTED_MODULE_3__["UpdateType"].PATCH, {
       "id": this._film.id,
       "comment": comment
     });
@@ -1093,7 +1071,7 @@ class Film {
   }
 
   _handleDeleteComment(evt) {
-    this._updateData(_const_js__WEBPACK_IMPORTED_MODULE_3__["UserAction"].DELETE_COMMENT, _const_js__WEBPACK_IMPORTED_MODULE_3__["UpdateType"].MAJOR, {
+    this._updateData(_const_js__WEBPACK_IMPORTED_MODULE_3__["UserAction"].DELETE_COMMENT, _const_js__WEBPACK_IMPORTED_MODULE_3__["UpdateType"].PATCH, {
       "id": this._film.id,
       "index": evt.target.dataset.count
     });
@@ -1155,7 +1133,6 @@ class Film {
   }
 
   _popupShow() {
-    this._popupView = new _view_popup_js__WEBPACK_IMPORTED_MODULE_1__["default"](this._film);
     Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["render"])(this._bodyContainer, this._popupView.element, _const_js__WEBPACK_IMPORTED_MODULE_3__["RenderPosition"].BEFORE_END);
     this._popupView.setClosePopupHandler(this._popupCloseHandler);
     this._popupView.setWatchedClickHandler(this._handleWatchedClick);
@@ -1202,12 +1179,12 @@ class Filter {
     this._currentFilter = null;
     this._filterComponent = null;
 
-    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this.init = this.init.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
     this._handleStatisticsClick = this._handleStatisticsClick.bind(this);
 
-    this._filmsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
+    this._filmsModel.addObserver(this.init);
+    this._filterModel.addObserver(this.init);
   }
 
   init() {
@@ -1229,10 +1206,6 @@ class Filter {
     Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_1__["remove"])(prevFilterComponent);
   }
 
-  _handleModelEvent() {
-    this.init();
-  }
-
   _handleStatisticsClick() {
     if (this._currentFilter === _const_js__WEBPACK_IMPORTED_MODULE_3__["FilterType"].STATISTICS) {
       return;
@@ -1242,7 +1215,7 @@ class Filter {
   }
 
   _handleFilterTypeChange(evt) {
-    const filterType = evt.target.dataset.type;
+    const filterType = evt.target.dataset.type ? evt.target.dataset.type : evt.target.parentElement.dataset.type;
 
     if (this._currentFilter === filterType) {
       return;
@@ -1333,7 +1306,7 @@ class PageMainContent {
     this._filmsContainer = null;
     this._filmListExtra = null;
     this._renderedFilmCount = MOVIES_PER_STEP;
-    this._filmPresenter = new Map();
+    this._filmPresenters = new Map();
     this._setTypesForFilmPresenterCollection();
     this._currentSortType = _const_js__WEBPACK_IMPORTED_MODULE_8__["SortType"].DEFAULT;
     this._isLoading = true;
@@ -1363,7 +1336,7 @@ class PageMainContent {
 
     const films = this._getFilms();
 
-    if (!films.length) {
+    if (films.length === 0) {
       this._renderNoFilms();
       return;
     }
@@ -1403,16 +1376,16 @@ class PageMainContent {
         return filteredTasks.sort(_utils_film_js__WEBPACK_IMPORTED_MODULE_9__["sortFilmByDate"]);
       case _const_js__WEBPACK_IMPORTED_MODULE_8__["SortType"].BY_RATING:
         return filteredTasks.sort(_utils_film_js__WEBPACK_IMPORTED_MODULE_9__["sortFilmByRating"]);
+      default:
+        return filteredTasks;
     }
-
-    return filteredTasks;
   }
 
   _setTypesForFilmPresenterCollection() {
     const filmCategoryKeys = Object.keys(FilmCategory);
 
     filmCategoryKeys.forEach((category) => {
-      this._filmPresenter.set(FilmCategory[category], {});
+      this._filmPresenters.set(FilmCategory[category], {});
     });
   }
 
@@ -1423,10 +1396,6 @@ class PageMainContent {
   }
 
   _renderSorting() {
-    if (this._sortingView !== null) {
-      this._sortingView = null;
-    }
-
     this._sortingView = new _view_sorting_js__WEBPACK_IMPORTED_MODULE_0__["default"](this._currentSortType);
     this._sortingView.setSortTypeChangeHandler(this._handleSortTypeChange);
 
@@ -1454,7 +1423,7 @@ class PageMainContent {
   _renderFilm(container, film, type) {
     const filmPresenter = new _film_js__WEBPACK_IMPORTED_MODULE_6__["default"](container, this._bodyContainer, this._handleViewAction);
     filmPresenter.init(film);
-    this._filmPresenter.get(type)[film.id] = filmPresenter;
+    this._filmPresenters.get(type)[film.id] = filmPresenter;
   }
 
   _renderTopRatedFilms() {
@@ -1464,6 +1433,11 @@ class PageMainContent {
     films.sort((a, b) => b.rating - a.rating);
 
     this._renderFilmsList(container, films, MAX_ADDITIONAL_FILMS, FilmCategory.TOP_RATED);
+  }
+
+  _updateMostCommentedFilms() {
+    this._filmListExtra[1].querySelector(`.films-list__container`).innerHTML = ``;
+    this._renderMostCommentedFilms();
   }
 
   _renderMostCommentedFilms() {
@@ -1490,13 +1464,13 @@ class PageMainContent {
   _clearFilmList({resetRenderedTaskCount = false, resetSortType = false} = {}) {
     const filmCount = this._getFilms().length;
 
-    this._filmPresenter.forEach((value) => {
+    this._filmPresenters.forEach((value) => {
       Object
         .values(value)
         .forEach((presenter) => presenter.destroy());
     });
 
-    this._filmPresenter = new Map();
+    this._filmPresenters = new Map();
     this._setTypesForFilmPresenterCollection();
 
     Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_7__["remove"])(this._sortingView);
@@ -1506,15 +1480,27 @@ class PageMainContent {
     Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_7__["remove"])(this._statisticsView);
     Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_7__["remove"])(this._filmsContainerView);
 
-    if (resetRenderedTaskCount) {
-      this._renderedFilmCount = MOVIES_PER_STEP;
-    } else {
-      this._renderedFilmCount = Math.min(filmCount, this._renderedFilmCount);
-    }
+    this._renderedFilmCount = resetRenderedTaskCount ? MOVIES_PER_STEP : Math.min(filmCount, this._renderedFilmCount);
 
     if (resetSortType) {
       this._currentSortType = _const_js__WEBPACK_IMPORTED_MODULE_8__["SortType"].DEFAULT;
     }
+  }
+
+  _updateFilmPresenters(data, updateType = ``) {
+    this._filmPresenters.forEach((value) => {
+      Object
+        .values(value)
+        .forEach((presenter) => {
+          if (presenter._film.id === data.id) {
+            if (updateType === _const_js__WEBPACK_IMPORTED_MODULE_8__["UpdateType"].PATCH) {
+              presenter.init(presenter._film);
+            } else {
+              presenter.init(data);
+            }
+          }
+        });
+    });
   }
 
   _handleViewAction(actionType, updateType, update) {
@@ -1528,32 +1514,19 @@ class PageMainContent {
       case _const_js__WEBPACK_IMPORTED_MODULE_8__["UserAction"].DELETE_COMMENT:
         this._filmsModel.deleteComment(updateType, update);
         break;
+      default:
+        break;
     }
   }
 
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case _const_js__WEBPACK_IMPORTED_MODULE_8__["UpdateType"].PATCH:
-        this._filmPresenter.forEach((value) => {
-          Object
-            .values(value)
-            .forEach((presenter) => {
-              if (presenter._film.id === data.id) {
-                presenter.init(presenter._film);
-              }
-            });
-        });
+        this._updateFilmPresenters(data, _const_js__WEBPACK_IMPORTED_MODULE_8__["UpdateType"].PATCH);
+        this._updateMostCommentedFilms();
         break;
       case _const_js__WEBPACK_IMPORTED_MODULE_8__["UpdateType"].MINOR:
-        this._filmPresenter.forEach((value) => {
-          Object
-            .values(value)
-            .forEach((presenter) => {
-              if (presenter._film.id === data.id) {
-                presenter.init(data);
-              }
-            });
-        });
+        this._updateFilmPresenters(data);
         break;
       case _const_js__WEBPACK_IMPORTED_MODULE_8__["UpdateType"].MAJOR:
         this._clearFilmList({resetRenderedTaskCount: true, resetSortType: true});
@@ -1563,6 +1536,8 @@ class PageMainContent {
         this._isLoading = false;
         Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_7__["remove"])(this._loadingView);
         this.init();
+        break;
+      default:
         break;
     }
   }
@@ -1839,13 +1814,13 @@ const replace = (newChild, oldChild) => {
 /*!****************************!*\
   !*** ./src/utils/stats.js ***!
   \****************************/
-/*! exports provided: getStats, countCompletedTaskInDateRange */
+/*! exports provided: getStats, countCompletedFilmInDateRange */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStats", function() { return getStats; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "countCompletedTaskInDateRange", function() { return countCompletedTaskInDateRange; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "countCompletedFilmInDateRange", function() { return countCompletedFilmInDateRange; });
 /* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dayjs */ "./node_modules/dayjs/dayjs.min.js");
 /* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dayjs__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var dayjs_plugin_isBetween__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! dayjs/plugin/isBetween */ "./node_modules/dayjs/plugin/isBetween.js");
@@ -1942,7 +1917,7 @@ const getStats = (films) => {
   };
 };
 
-const countCompletedTaskInDateRange = (films, dateFrom, dateTo) => {
+const countCompletedFilmInDateRange = (films, dateFrom, dateTo) => {
   return films.reduce((counter, film) => {
     if (film.watchingDate === null) {
       return counter;
@@ -2330,26 +2305,27 @@ class Filter extends _abstract__WEBPACK_IMPORTED_MODULE_0__["default"] {
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
     this._statisticsClickHandler = this._statisticsClickHandler.bind(this);
+    this._defaultClickHandler = this._defaultClickHandler.bind(this);
   }
 
   _getTemplate() {
     return createFilterTemplate(this._filter, this._currentFilter);
   }
 
-  _statisticsClickHandler(evt) {
+  _defaultClickHandler(evt, cb) {
     if (evt.type === _const_js__WEBPACK_IMPORTED_MODULE_1__["Event"].KEY_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_2__["checkButtonPress"])(evt, this._callback.statisticsClick, _const_js__WEBPACK_IMPORTED_MODULE_1__["Button"].ENTER);
+      Object(_utils_common__WEBPACK_IMPORTED_MODULE_2__["checkButtonPress"])(evt, cb, _const_js__WEBPACK_IMPORTED_MODULE_1__["Button"].ENTER);
     } else if (evt.type === _const_js__WEBPACK_IMPORTED_MODULE_1__["Event"].MOUSE_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_2__["checkButtonPress"])(evt, this._callback.statisticsClick, _const_js__WEBPACK_IMPORTED_MODULE_1__["Button"].MOUSE_MAIN);
+      Object(_utils_common__WEBPACK_IMPORTED_MODULE_2__["checkButtonPress"])(evt, cb, _const_js__WEBPACK_IMPORTED_MODULE_1__["Button"].MOUSE_MAIN);
     }
   }
 
+  _statisticsClickHandler(evt) {
+    this._defaultClickHandler(evt, this._callback.statisticsClick);
+  }
+
   _filterTypeChangeHandler(evt) {
-    if (evt.type === _const_js__WEBPACK_IMPORTED_MODULE_1__["Event"].KEY_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_2__["checkButtonPress"])(evt, this._callback.filterTypeChange, _const_js__WEBPACK_IMPORTED_MODULE_1__["Button"].ENTER);
-    } else if (evt.type === _const_js__WEBPACK_IMPORTED_MODULE_1__["Event"].MOUSE_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_2__["checkButtonPress"])(evt, this._callback.filterTypeChange, _const_js__WEBPACK_IMPORTED_MODULE_1__["Button"].MOUSE_MAIN);
-    }
+    this._defaultClickHandler(evt, this._callback.filterTypeChange);
   }
 
   setStatisticsClickHandler(callback) {
@@ -2504,7 +2480,7 @@ const createEmojisTemplate = (emotion) => {
   </div>`;
 };
 
-const createChosenEmojiTemplate = (emotion) => emotion.length === 0 ? ``
+const createChosenEmojiTemplate = (emotion) => emotion === `` ? ``
   : `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">`;
 
 const createCommentsTemplate = (comments) => comments.length === 0 ? ``
@@ -2659,6 +2635,7 @@ class Popup extends _smart__WEBPACK_IMPORTED_MODULE_1__["default"] {
     this._deleteCommentHandler = this._deleteCommentHandler.bind(this);
     this._commentTextInputHandler = this._commentTextInputHandler.bind(this);
     this._changeEmotionHandler = this._changeEmotionHandler.bind(this);
+    this._defaultClickHandler = this._defaultClickHandler.bind(this);
 
     this._closeButton = null;
     this._watchedButton = null;
@@ -2744,12 +2721,16 @@ class Popup extends _smart__WEBPACK_IMPORTED_MODULE_1__["default"] {
     }
   }
 
-  _deleteCommentHandler(evt) {
+  _defaultClickHandler(evt, cb) {
     if (evt.type === _const__WEBPACK_IMPORTED_MODULE_2__["Event"].KEY_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_3__["checkButtonPress"])(evt, this._callback.deleteComment, _const__WEBPACK_IMPORTED_MODULE_2__["Button"].ENTER);
+      Object(_utils_common__WEBPACK_IMPORTED_MODULE_3__["checkButtonPress"])(evt, cb, _const__WEBPACK_IMPORTED_MODULE_2__["Button"].ENTER);
     } else if (evt.type === _const__WEBPACK_IMPORTED_MODULE_2__["Event"].MOUSE_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_3__["checkButtonPress"])(evt, this._callback.deleteComment, _const__WEBPACK_IMPORTED_MODULE_2__["Button"].MOUSE_MAIN);
+      Object(_utils_common__WEBPACK_IMPORTED_MODULE_3__["checkButtonPress"])(evt, cb, _const__WEBPACK_IMPORTED_MODULE_2__["Button"].MOUSE_MAIN);
     }
+  }
+
+  _deleteCommentHandler(evt) {
+    this._defaultClickHandler(evt, this._callback.deleteComment);
   }
 
   _closePopupHandler(evt) {
@@ -2765,27 +2746,15 @@ class Popup extends _smart__WEBPACK_IMPORTED_MODULE_1__["default"] {
   }
 
   _watchedClickHandler(evt) {
-    if (evt.type === _const__WEBPACK_IMPORTED_MODULE_2__["Event"].KEY_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_3__["checkButtonPress"])(evt, this._callback.watchedClick, _const__WEBPACK_IMPORTED_MODULE_2__["Button"].ENTER);
-    } else if (evt.type === _const__WEBPACK_IMPORTED_MODULE_2__["Event"].MOUSE_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_3__["checkButtonPress"])(evt, this._callback.watchedClick, _const__WEBPACK_IMPORTED_MODULE_2__["Button"].MOUSE_MAIN);
-    }
+    this._defaultClickHandler(evt, this._callback.watchedClick);
   }
 
   _watchlistClickHandler(evt) {
-    if (evt.type === _const__WEBPACK_IMPORTED_MODULE_2__["Event"].KEY_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_3__["checkButtonPress"])(evt, this._callback.watchlistClick, _const__WEBPACK_IMPORTED_MODULE_2__["Button"].ENTER);
-    } else if (evt.type === _const__WEBPACK_IMPORTED_MODULE_2__["Event"].MOUSE_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_3__["checkButtonPress"])(evt, this._callback.watchlistClick, _const__WEBPACK_IMPORTED_MODULE_2__["Button"].MOUSE_MAIN);
-    }
+    this._defaultClickHandler(evt, this._callback.watchlistClick);
   }
 
   _favoriteClickHandler(evt) {
-    if (evt.type === _const__WEBPACK_IMPORTED_MODULE_2__["Event"].KEY_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_3__["checkButtonPress"])(evt, this._callback.favoriteClick, _const__WEBPACK_IMPORTED_MODULE_2__["Button"].ENTER);
-    } else if (evt.type === _const__WEBPACK_IMPORTED_MODULE_2__["Event"].MOUSE_DOWN) {
-      Object(_utils_common__WEBPACK_IMPORTED_MODULE_3__["checkButtonPress"])(evt, this._callback.favoriteClick, _const__WEBPACK_IMPORTED_MODULE_2__["Button"].MOUSE_MAIN);
-    }
+    this._defaultClickHandler(evt, this._callback.favoriteClick);
   }
 
   removeElement() {
