@@ -14,8 +14,8 @@ export default class Smart extends Abstract {
     this._data = Object.assign({}, this._data, update);
   }
 
-  _updateElement() {
-    let prevElement = this._element;
+  updateElement() {
+    let prevElement = this.element;
     const parent = prevElement.parentElement;
     this.removeElement();
 

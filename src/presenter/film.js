@@ -2,6 +2,11 @@ import FilmView from "../view/film.js";
 import PopupView from "../view/popup.js";
 import {render, remove, replace} from "../utils/render.js";
 import {RenderPosition} from "../const.js";
+import {UserAction, UpdateType} from "../const.js";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 export default class Film {
   constructor(filmContainer, bodyContainer, updateData) {
@@ -18,6 +23,8 @@ export default class Film {
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleAddComment = this._handleAddComment.bind(this);
+    this._handleDeleteComment = this._handleDeleteComment.bind(this);
   }
 
   init(film) {
@@ -45,49 +52,73 @@ export default class Film {
 
     if (this._bodyContainer.contains(prevPopupView.element)) {
       replace(this._popupView, prevPopupView);
-      this._popupView.setClosePopupHandler(this._popupCloseHandler);
     }
 
     remove(prevFilmView);
     remove(prevPopupView);
   }
 
-  _destroy() {
+  destroy() {
     this._popupView.removeClosePopupHandler(this._popupCloseHandler);
     this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
     this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
     this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupView.removeCommentAddHandler(this._handleAddComment);
+    this._popupView.removeCommentDeleteHandler(this._handleDeleteComment);
     remove(this._view);
     remove(this._popupView);
   }
 
+  _handleAddComment(comment) {
+    if (comment.text === `` || comment.emotion === ``) {
+      return;
+    }
+
+    this._updateData(UserAction.ADD_COMMENT, UpdateType.PATCH, {
+      "id": this._film.id,
+      "comment": comment
+    });
+
+    this.updatePopup();
+  }
+
+  _handleDeleteComment(evt) {
+    this._updateData(UserAction.DELETE_COMMENT, UpdateType.PATCH, {
+      "id": this._film.id,
+      "index": evt.target.dataset.count
+    });
+
+    this.updatePopup();
+  }
+
   _handleWatchedClick() {
-    this._updateData(Object.assign({}, this._film, {
-      watched: !this._film.watched
+    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
+      watched: !this._film.watched,
+      watchingDate: dayjs.utc().format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`)
     }));
 
     if (this._isPopupOpen) {
-      this._updatePopup();
+      this.updatePopup();
     }
   }
 
   _handleWatchlistClick() {
-    this._updateData(Object.assign({}, this._film, {
+    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
       watchlist: !this._film.watchlist
     }));
 
     if (this._isPopupOpen) {
-      this._updatePopup();
+      this.updatePopup();
     }
   }
 
   _handleFavoriteClick() {
-    this._updateData(Object.assign({}, this._film, {
+    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
       favorite: !this._film.favorite
     }));
 
     if (this._isPopupOpen) {
-      this._updatePopup();
+      this.updatePopup();
     }
   }
 
@@ -108,7 +139,7 @@ export default class Film {
     this._popupClose();
   }
 
-  _updatePopup() {
+  updatePopup() {
     this._popupClose();
     this._popupShow();
   }
@@ -119,11 +150,13 @@ export default class Film {
     this._popupView.setWatchedClickHandler(this._handleWatchedClick);
     this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
     this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupView.setCommentAddHandler(this._handleAddComment);
+    this._popupView.setCommentDeleteHandler(this._handleDeleteComment);
     this._bodyContainer.classList.add(`hide-overflow`);
     this._isPopupOpen = true;
   }
 
   _popupShowHandler(evt) {
-    this._updatePopup(evt);
+    this.updatePopup(evt);
   }
 }

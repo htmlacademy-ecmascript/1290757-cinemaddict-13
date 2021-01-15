@@ -32,6 +32,10 @@ const getFormatTime = (minutes) => Math.floor(minutes / SECONDS_IN_MINUTE)
   : `${Math.floor(minutes % SECONDS_IN_MINUTE)}m`;
 
 const remove = (component) => {
+  if (component === null) {
+    return;
+  }
+
   if (!(component instanceof AbstractView)) {
     throw new Error(`Can remove only components`);
   }

@@ -13,6 +13,7 @@ const PROPOSALS = [
   `Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.`,
   `In rutrum ac purus sit amet tempus.`
 ];
+
 const ACTORS = [
   `Erich von Stroheim`,
   `Mary Beth Hughes`,
@@ -22,10 +23,12 @@ const ACTORS = [
   `Tom Cruise`,
   `Angelina Jolie`
 ];
+
 const RenderPosition = {
   AFTER_BEGIN: `afterbegin`,
   BEFORE_END: `beforeend`
 };
+
 const Event = {
   MOUSE_DOWN: `mousedown`,
   KEY_DOWN: `keydown`,
@@ -33,10 +36,39 @@ const Event = {
   INPUT: `input`,
   CHANGE: `change`
 };
+
 const Button = {
   ENTER: `Enter`,
   ESCAPE: `Escape`,
   MOUSE_MAIN: 0
 };
 
-export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button, TOTAL_FILMS};
+const SortType = {
+  DEFAULT: `default`,
+  BY_DATE: `byDate`,
+  BY_RATING: `byRating`
+};
+
+const UserAction = {
+  CHANGE_STATUS: `CHANGE_STATUS`,
+  ADD_COMMENT: `ADD_COMMENT`,
+  DELETE_COMMENT: `DELETE_COMMENT`
+};
+
+const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
+};
+
+const FilterType = {
+  ALL: `all`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`,
+  STATISTICS: `statistics`
+};
+
+export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button, TOTAL_FILMS, SortType,
+  UserAction, UpdateType, FilterType};

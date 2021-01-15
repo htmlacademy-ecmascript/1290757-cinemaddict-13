@@ -1,5 +1,15 @@
 import {SECONDS_IN_MINUTE} from "../const.js";
-import AbstractView from "./abstract";
+import {getStats} from "../utils/stats.js";
+import dayjs from "dayjs";
+import SmartView from "./smart";
+
+const Interval = {
+  ALL_TIME: `all time`,
+  YEAR: `year`,
+  MONTH: `month`,
+  WEEK: `week`,
+  DAY: `day`
+};
 
 const createDurationTemplate = (duration) => {
   const hours = Math.floor(duration / SECONDS_IN_MINUTE);
@@ -10,9 +20,14 @@ const createDurationTemplate = (duration) => {
     : `<p class="statistic__item-text">${minutes} <span class="statistic__item-description">m</span></p>`;
 };
 
-const createStatisticsTemplate = (stats) => {
-  const {watched, rank, totalDuration, favoriteGenre} = stats;
+const renderDaysChart = () => {
+  // Функция для отрисовки графика по датам
+};
 
+const createStatisticsTemplate = (data) => {
+  const {films} = data;
+  const stats = getStats(films);
+  const {watched, rank, totalDuration, favoriteGenre} = stats;
   const durationTemplate = createDurationTemplate(totalDuration);
 
   return `<section class="statistic">
@@ -63,13 +78,61 @@ const createStatisticsTemplate = (stats) => {
   </section>`;
 };
 
-export default class Statistics extends AbstractView {
-  constructor(stats) {
+export default class Statistics extends SmartView {
+  constructor(films) {
     super();
-    this._stats = stats;
+    this._data = {
+      films,
+      dateFrom: (() => {
+        const daysToFullWeek = Interval.WEEK;
+        return dayjs().subtract(1, daysToFullWeek).toDate();
+      })(),
+      dateTo: dayjs().toDate()
+    };
+
+    this._daysChart = null;
+
+    this._dateChangeHandler = this._dateChangeHandler.bind(this);
+
+    this._setCharts();
   }
 
   _getTemplate() {
-    return createStatisticsTemplate(this._stats);
+    return createStatisticsTemplate(this._data);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._daysChart !== null) {
+      this._daysChart = null;
+    }
+  }
+
+  restoreHandlers() {
+    this._setCharts();
+  }
+
+  _dateChangeHandler([dateFrom, dateTo]) {
+    if (!dateFrom || !dateTo) {
+      return;
+    }
+
+    this._updateData({
+      dateFrom,
+      dateTo
+    });
+  }
+
+  _setCharts() {
+    if (this._colorsCart !== null || this._daysChart !== null) {
+      this._colorsCart = null;
+      this._daysChart = null;
+    }
+
+    const {tasks, dateFrom, dateTo} = this._data;
+    const daysCtx = this.element.querySelector(`.statistic__chart`);
+
+    this._daysChart = renderDaysChart(daysCtx, tasks, dateFrom, dateTo);
   }
 }

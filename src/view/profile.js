@@ -1,23 +1,20 @@
 import AbstractView from "./abstract";
+import {getStats} from "../utils/stats";
 
-const createRankTemplate = (rank) => rank !== `` ? `<p class="profile__rating">${rank}</p>` : ``;
-
-const createProfileTemplate = (stats) => {
-  const rankTemplate = createRankTemplate(stats.rank);
-
+const createProfileTemplate = (rank) => {
   return `<section class="header__profile profile">
-    ${rankTemplate}
+    ${rank !== `` ? `<p class="profile__rating">${rank}</p>` : ``}
     <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
   </section>`;
 };
 
 export default class Profile extends AbstractView {
-  constructor(stats) {
+  constructor(films) {
     super();
-    this._stats = stats;
+    this._rank = getStats(films).rank;
   }
 
   _getTemplate() {
-    return createProfileTemplate(this._stats);
+    return createProfileTemplate(this._rank);
   }
 }

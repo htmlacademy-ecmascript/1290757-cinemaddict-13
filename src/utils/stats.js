@@ -1,3 +1,8 @@
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+
+dayjs.extend(isBetween);
+
 const RATING = {
   novice: {
     limit: 1,
@@ -74,7 +79,7 @@ const getFavoriteGenre = (genresData) => {
   return favoriteGenre[0];
 };
 
-const generateStats = (films) => {
+const getStats = (films) => {
   const filmsStats = getFilmsStats(films);
 
   return {
@@ -85,4 +90,22 @@ const generateStats = (films) => {
   };
 };
 
-export {generateStats};
+const countCompletedFilmInDateRange = (films, dateFrom, dateTo) => {
+  return films.reduce((counter, film) => {
+    if (film.watchingDate === null) {
+      return counter;
+    }
+
+    if (
+      dayjs(film.watchingDate).isSame(dateFrom) ||
+      dayjs(film.watchingDate).isBetween(dateFrom, dateTo) ||
+      dayjs(film.watchingDate).isSame(dateTo)
+    ) {
+      return counter + 1;
+    }
+
+    return counter;
+  }, 0);
+};
+
+export {getStats, countCompletedFilmInDateRange};
