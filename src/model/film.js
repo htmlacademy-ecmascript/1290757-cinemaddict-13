@@ -50,10 +50,7 @@ export default class Films extends Observer {
       throw new Error(`Can't delete unexisting comment`);
     }
 
-    film.comments = [
-      ...film.comments.slice(0, update.index),
-      ...film.comments.slice(update.index - (film.comments.length - 1))
-    ];
+    film.comments.splice(update.index, 1);
 
     this._notify(updateType, update);
   }

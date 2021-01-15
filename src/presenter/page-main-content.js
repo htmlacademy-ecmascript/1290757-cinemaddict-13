@@ -157,6 +157,11 @@ export default class PageMainContent {
     this._renderFilmsList(container, films, MAX_ADDITIONAL_FILMS, FilmCategory.TOP_RATED);
   }
 
+  _updateMostCommentedFilms() {
+    this._filmListExtra[1].querySelector(`.films-list__container`).innerHTML = ``;
+    this._renderMostCommentedFilms();
+  }
+
   _renderMostCommentedFilms() {
     const container = this._filmListExtra[1].querySelector(`.films-list__container`);
     const films = [...this._getFilms()];
@@ -204,6 +209,22 @@ export default class PageMainContent {
     }
   }
 
+  _updateFilmPresenters(data, updateType = ``) {
+    this._filmPresenters.forEach((value) => {
+      Object
+        .values(value)
+        .forEach((presenter) => {
+          if (presenter._film.id === data.id) {
+            if (updateType === UpdateType.PATCH) {
+              presenter.init(presenter._film);
+            } else {
+              presenter.init(data);
+            }
+          }
+        });
+    });
+  }
+
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.CHANGE_STATUS:
@@ -222,16 +243,12 @@ export default class PageMainContent {
 
   _handleModelEvent(updateType, data) {
     switch (updateType) {
+      case UpdateType.PATCH:
+        this._updateFilmPresenters(data, UpdateType.PATCH);
+        this._updateMostCommentedFilms();
+        break;
       case UpdateType.MINOR:
-        this._filmPresenters.forEach((value) => {
-          Object
-            .values(value)
-            .forEach((presenter) => {
-              if (presenter._film.id === data.id) {
-                presenter.init(data);
-              }
-            });
-        });
+        this._updateFilmPresenters(data);
         break;
       case UpdateType.MAJOR:
         this._clearFilmList({resetRenderedTaskCount: true, resetSortType: true});
