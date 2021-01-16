@@ -1,7 +1,9 @@
 import {SECONDS_IN_MINUTE} from "../const.js";
-import {getStats} from "../utils/stats.js";
+import {getStats, getFilmInDateRange, getCharsData} from "../utils/stats.js";
 import dayjs from "dayjs";
 import SmartView from "./smart";
+import Chart from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 const Interval = {
   ALL_TIME: `all time`,
@@ -20,8 +22,69 @@ const createDurationTemplate = (duration) => {
     : `<p class="statistic__item-text">${minutes} <span class="statistic__item-description">m</span></p>`;
 };
 
-const renderDaysChart = () => {
-  // Функция для отрисовки графика по датам
+const renderDaysChart = (statisticCtx, films, dateFrom, dateTo) => {
+  const BAR_HEIGHT = 50;
+  const filmInDateRange = getFilmInDateRange(films, dateFrom, dateTo);
+  const charsData = getCharsData(filmInDateRange);
+
+  statisticCtx.height = BAR_HEIGHT * Object.keys(charsData).length;
+
+  return new Chart(statisticCtx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: Object.keys(charsData),
+      datasets: [{
+        data: Object.values(charsData),
+        backgroundColor: `#ffe800`,
+        hoverBackgroundColor: `#ffe800`,
+        anchor: `start`
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 20
+          },
+          color: `#ffffff`,
+          anchor: `start`,
+          align: `start`,
+          offset: 40,
+        }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#ffffff`,
+            padding: 100,
+            fontSize: 20
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          barThickness: 24
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false
+      }
+    }
+  });
 };
 
 const createStatisticsTemplate = (data) => {
@@ -125,14 +188,13 @@ export default class Statistics extends SmartView {
   }
 
   _setCharts() {
-    if (this._colorsCart !== null || this._daysChart !== null) {
-      this._colorsCart = null;
+    if (this._daysChart !== null) {
       this._daysChart = null;
     }
 
-    const {tasks, dateFrom, dateTo} = this._data;
-    const daysCtx = this.element.querySelector(`.statistic__chart`);
+    const {films, dateFrom, dateTo} = this._data;
+    const statisticCtx = this.element.querySelector(`.statistic__chart`);
 
-    this._daysChart = renderDaysChart(daysCtx, tasks, dateFrom, dateTo);
+    this._daysChart = renderDaysChart(statisticCtx, films, dateFrom, dateTo);
   }
 }

@@ -90,22 +90,28 @@ const getStats = (films) => {
   };
 };
 
-const countCompletedFilmInDateRange = (films, dateFrom, dateTo) => {
-  return films.reduce((counter, film) => {
-    if (film.watchingDate === null) {
-      return counter;
-    }
-
-    if (
-      dayjs(film.watchingDate).isSame(dateFrom) ||
+const getFilmInDateRange = (films, dateFrom, dateTo) => {
+  return films.filter((film) => {
+    return dayjs(film.watchingDate).isSame(dateFrom) ||
       dayjs(film.watchingDate).isBetween(dateFrom, dateTo) ||
-      dayjs(film.watchingDate).isSame(dateTo)
-    ) {
-      return counter + 1;
-    }
-
-    return counter;
-  }, 0);
+      dayjs(film.watchingDate).isSame(dateTo);
+  });
 };
 
-export {getStats, countCompletedFilmInDateRange};
+const getCharsData = (films) => {
+  let chartData = {};
+
+  films.forEach((film) => {
+    film.genres.forEach((genre) => {
+      if (chartData[genre]) {
+        chartData[genre]++;
+      } else {
+        chartData[genre] = 1;
+      }
+    });
+  });
+
+  return chartData;
+};
+
+export {getStats, getFilmInDateRange, getCharsData};
