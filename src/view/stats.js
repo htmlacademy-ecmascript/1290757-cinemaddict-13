@@ -214,6 +214,7 @@ export default class Statistics extends SmartView {
 
   _changeIntervalHandler(evt) {
     evt.preventDefault();
+
     this._changeInterval(evt.target.innerText);
   }
 
