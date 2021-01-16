@@ -91,11 +91,19 @@ const getStats = (films) => {
 };
 
 const getFilmInDateRange = (films, dateFrom, dateTo) => {
+  if (dateFrom === null) {
+    return films;
+  }
+
   return films.filter((film) => {
     return dayjs(film.watchingDate).isSame(dateFrom) ||
       dayjs(film.watchingDate).isBetween(dateFrom, dateTo) ||
       dayjs(film.watchingDate).isSame(dateTo);
   });
+};
+
+const sortGenreByCount = (charsData) => {
+  return Object.fromEntries(Object.entries(charsData).sort((genreA, genreB) => genreB[1] - genreA[1]));
 };
 
 const getCharsData = (films) => {
@@ -114,4 +122,4 @@ const getCharsData = (films) => {
   return chartData;
 };
 
-export {getStats, getFilmInDateRange, getCharsData};
+export {getStats, getFilmInDateRange, getCharsData, sortGenreByCount};

@@ -1,30 +1,38 @@
 import {SECONDS_IN_MINUTE} from "../const.js";
-import {getStats, getFilmInDateRange, getCharsData} from "../utils/stats.js";
+import {getStats, getFilmInDateRange, getCharsData, sortGenreByCount} from "../utils/stats.js";
 import dayjs from "dayjs";
 import SmartView from "./smart";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 const Intervals = {
   ALL_TIME: {
     value: `all-time`,
-    name: `All time`
+    name: `All time`,
+    dayjsValue: ``
   },
   YEAR: {
     value: `year`,
-    name: `Year`
+    name: `Year`,
+    dayjsValue: `year`
   },
   MONTH: {
     value: `month`,
-    name: `Month`
+    name: `Month`,
+    dayjsValue: `month`
   },
   WEEK: {
     value: `week`,
-    name: `Week`
+    name: `Week`,
+    dayjsValue: `week`
   },
   TODAY: {
     value: `today`,
-    name: `Today`
+    name: `Today`,
+    dayjsValue: `day`
   }
 };
 
@@ -32,6 +40,7 @@ const renderDaysChart = (statisticCtx, films, dateFrom, dateTo) => {
   const BAR_HEIGHT = 50;
   const filmInDateRange = getFilmInDateRange(films, dateFrom, dateTo);
   const charsData = getCharsData(filmInDateRange);
+  const sortCharsData = sortGenreByCount(charsData);
 
   statisticCtx.height = BAR_HEIGHT * Object.keys(charsData).length;
 
@@ -39,9 +48,9 @@ const renderDaysChart = (statisticCtx, films, dateFrom, dateTo) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: Object.keys(charsData),
+      labels: Object.keys(sortCharsData),
       datasets: [{
-        data: Object.values(charsData),
+        data: Object.values(sortCharsData),
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`
@@ -107,8 +116,7 @@ const createIntervalToggleTemplate = (currentInterval) => {
       <label for="statistic-${interval.value}" class="statistic__filters-label">${interval.name}</label>`).join(``);
 };
 
-const createStatisticsTemplate = (data) => {
-  const {films} = data;
+const createStatisticsTemplate = (films) => {
   const currentInterval = Intervals.WEEK;
   const stats = getStats(films);
   const {watched, rank, totalDuration, favoriteGenre} = stats;
@@ -153,11 +161,11 @@ const createStatisticsTemplate = (data) => {
 export default class Statistics extends SmartView {
   constructor(films) {
     super();
+    this._statsPeriod = Intervals.ALL_TIME;
     this._data = {
       films,
       dateFrom: (() => {
-        const daysToFullWeek = Intervals.WEEK;
-        return dayjs().subtract(1, daysToFullWeek).toDate();
+        return this._statsPeriod !== Intervals.ALL_TIME ? dayjs().subtract(1, this._statsPeriod.dayjsValue).toDate() : null;
       })(),
       dateTo: dayjs().toDate()
     };
@@ -170,7 +178,7 @@ export default class Statistics extends SmartView {
   }
 
   _getTemplate() {
-    return createStatisticsTemplate(this._data);
+    return createStatisticsTemplate(this._data.films);
   }
 
   removeElement() {
