@@ -1,4 +1,4 @@
-import {SECONDS_IN_MINUTE} from "../const.js";
+import {Event, SECONDS_IN_MINUTE} from "../const.js";
 import {getStats, getFilmInDateRange, getCharsData, sortGenreByCount} from "../utils/stats.js";
 import dayjs from "dayjs";
 import SmartView from "./smart";
@@ -116,8 +116,7 @@ const createIntervalToggleTemplate = (currentInterval) => {
       <label for="statistic-${interval.value}" class="statistic__filters-label">${interval.name}</label>`).join(``);
 };
 
-const createStatisticsTemplate = (films) => {
-  const currentInterval = Intervals.WEEK;
+const createStatisticsTemplate = (films, currentInterval) => {
   const stats = getStats(films);
   const {watched, rank, totalDuration, favoriteGenre} = stats;
   const durationTemplate = createDurationTemplate(totalDuration);
@@ -161,11 +160,11 @@ const createStatisticsTemplate = (films) => {
 export default class Statistics extends SmartView {
   constructor(films) {
     super();
-    this._statsPeriod = Intervals.ALL_TIME;
+    this._currentInterval = Intervals.ALL_TIME;
     this._data = {
       films,
       dateFrom: (() => {
-        return this._statsPeriod !== Intervals.ALL_TIME ? dayjs().subtract(1, this._statsPeriod.dayjsValue).toDate() : null;
+        return this._currentInterval !== Intervals.ALL_TIME ? dayjs().subtract(1, this._currentInterval.dayjsValue).toDate() : null;
       })(),
       dateTo: dayjs().toDate()
     };
@@ -173,12 +172,10 @@ export default class Statistics extends SmartView {
     this._daysChart = null;
 
     this._dateChangeHandler = this._dateChangeHandler.bind(this);
+    this._changeIntervalHandler = this._changeIntervalHandler.bind(this);
 
     this._setCharts();
-  }
-
-  _getTemplate() {
-    return createStatisticsTemplate(this._data.films);
+    this._setInnerHandlers();
   }
 
   removeElement() {
@@ -189,8 +186,42 @@ export default class Statistics extends SmartView {
     }
   }
 
-  restoreHandlers() {
+  _restoreHandlers() {
     this._setCharts();
+    this._setInnerHandlers();
+  }
+
+  _getTemplate() {
+    return createStatisticsTemplate(this._data.films, this._currentInterval);
+  }
+
+  _changeInterval(intervalName) {
+    for (let interval in Intervals) {
+      if (Intervals[interval].name === intervalName) {
+        this._currentInterval = Intervals[interval];
+      }
+    }
+
+    this._updateData({
+      dateFrom: (() => {
+        return this._currentInterval !== Intervals.ALL_TIME ? dayjs().subtract(1, this._currentInterval.dayjsValue).toDate() : null;
+      })(),
+    });
+    this.updateElement();
+  }
+
+  _changeIntervalHandler(evt) {
+    evt.preventDefault();
+
+    this._changeInterval(evt.target.innerText);
+  }
+
+  _setInnerHandlers() {
+    this.element
+      .querySelectorAll(`.statistic__filters-label`)
+      .forEach((input) => {
+        input.addEventListener(Event.MOUSE_DOWN, this._changeIntervalHandler);
+      });
   }
 
   _dateChangeHandler([dateFrom, dateTo]) {
