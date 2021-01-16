@@ -1,5 +1,5 @@
 import {Event, SECONDS_IN_MINUTE} from "../const.js";
-import {getStats, getFilmInDateRange, getCharsData, sortGenreByCount} from "../utils/stats.js";
+import {getStats, getFilmInDateRange, getCharsData, sortGenreByCount, getRank} from "../utils/stats.js";
 import dayjs from "dayjs";
 import SmartView from "./smart";
 import Chart from "chart.js";
@@ -36,9 +36,8 @@ const Intervals = {
   }
 };
 
-const renderDaysChart = (statisticCtx, films, dateFrom, dateTo) => {
+const renderDaysChart = (statisticCtx, filmInDateRange) => {
   const BAR_HEIGHT = 50;
-  const filmInDateRange = getFilmInDateRange(films, dateFrom, dateTo);
   const charsData = getCharsData(filmInDateRange);
   const sortCharsData = sortGenreByCount(charsData);
 
@@ -116,9 +115,10 @@ const createIntervalToggleTemplate = (currentInterval) => {
       <label for="statistic-${interval.value}" class="statistic__filters-label">${interval.name}</label>`).join(``);
 };
 
-const createStatisticsTemplate = (films, currentInterval) => {
+const createStatisticsTemplate = (films, filmsCount, currentInterval) => {
   const stats = getStats(films);
-  const {watched, rank, totalDuration, favoriteGenre} = stats;
+  const {watched, totalDuration, favoriteGenre} = stats;
+  const rank = getRank(filmsCount);
   const durationTemplate = createDurationTemplate(totalDuration);
   const intervalToggleTemplate = createIntervalToggleTemplate(currentInterval);
 
@@ -170,6 +170,7 @@ export default class Statistics extends SmartView {
     };
 
     this._daysChart = null;
+    this._filmInDateRange = getFilmInDateRange(this._data);
 
     this._dateChangeHandler = this._dateChangeHandler.bind(this);
     this._changeIntervalHandler = this._changeIntervalHandler.bind(this);
@@ -192,7 +193,7 @@ export default class Statistics extends SmartView {
   }
 
   _getTemplate() {
-    return createStatisticsTemplate(this._data.films, this._currentInterval);
+    return createStatisticsTemplate(this._filmInDateRange, this._data.films.length, this._currentInterval);
   }
 
   _changeInterval(intervalName) {
@@ -207,6 +208,7 @@ export default class Statistics extends SmartView {
         return this._currentInterval !== Intervals.ALL_TIME ? dayjs().subtract(1, this._currentInterval.dayjsValue).toDate() : null;
       })(),
     });
+    this._filmInDateRange = getFilmInDateRange(this._data);
     this.updateElement();
   }
 
@@ -240,9 +242,8 @@ export default class Statistics extends SmartView {
       this._daysChart = null;
     }
 
-    const {films, dateFrom, dateTo} = this._data;
     const statisticCtx = this.element.querySelector(`.statistic__chart`);
 
-    this._daysChart = renderDaysChart(statisticCtx, films, dateFrom, dateTo);
+    this._daysChart = renderDaysChart(statisticCtx, this._filmInDateRange);
   }
 }

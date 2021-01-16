@@ -90,7 +90,9 @@ const getStats = (films) => {
   };
 };
 
-const getFilmInDateRange = (films, dateFrom, dateTo) => {
+const getFilmInDateRange = (data) => {
+  const {films, dateFrom, dateTo} = data;
+
   if (dateFrom === null) {
     return films;
   }
@@ -122,4 +124,4 @@ const getCharsData = (films) => {
   return chartData;
 };
 
-export {getStats, getFilmInDateRange, getCharsData, sortGenreByCount};
+export {getStats, getFilmInDateRange, getCharsData, sortGenreByCount, getRank};
