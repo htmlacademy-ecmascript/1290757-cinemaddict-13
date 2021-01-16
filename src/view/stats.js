@@ -5,21 +5,27 @@ import SmartView from "./smart";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const Interval = {
-  ALL_TIME: `all time`,
-  YEAR: `year`,
-  MONTH: `month`,
-  WEEK: `week`,
-  DAY: `day`
-};
-
-const createDurationTemplate = (duration) => {
-  const hours = Math.floor(duration / SECONDS_IN_MINUTE);
-  const minutes = Math.floor(duration % SECONDS_IN_MINUTE);
-
-  return hours > 0
-    ? `<p class="statistic__item-text">${hours} <span class="statistic__item-description">h</span> ${minutes} <span class="statistic__item-description">m</span></p>`
-    : `<p class="statistic__item-text">${minutes} <span class="statistic__item-description">m</span></p>`;
+const Intervals = {
+  ALL_TIME: {
+    value: `all-time`,
+    name: `All time`
+  },
+  YEAR: {
+    value: `year`,
+    name: `Year`
+  },
+  MONTH: {
+    value: `month`,
+    name: `Month`
+  },
+  WEEK: {
+    value: `week`,
+    name: `Week`
+  },
+  TODAY: {
+    value: `today`,
+    name: `Today`
+  }
 };
 
 const renderDaysChart = (statisticCtx, films, dateFrom, dateTo) => {
@@ -87,11 +93,27 @@ const renderDaysChart = (statisticCtx, films, dateFrom, dateTo) => {
   });
 };
 
+const createDurationTemplate = (duration) => {
+  const hours = Math.floor(duration / SECONDS_IN_MINUTE);
+  const minutes = Math.floor(duration % SECONDS_IN_MINUTE);
+
+  return hours > 0
+    ? `<p class="statistic__item-text">${hours} <span class="statistic__item-description">h</span> ${minutes} <span class="statistic__item-description">m</span></p>`
+    : `<p class="statistic__item-text">${minutes} <span class="statistic__item-description">m</span></p>`;
+};
+
+const createIntervalToggleTemplate = (currentInterval) => {
+  return Object.values(Intervals).map((interval) => `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${interval.value}" value="${interval.value}" ${currentInterval.value === interval.value ? `checked` : ``}>
+      <label for="statistic-${interval.value}" class="statistic__filters-label">${interval.name}</label>`).join(``);
+};
+
 const createStatisticsTemplate = (data) => {
   const {films} = data;
+  const currentInterval = Intervals.WEEK;
   const stats = getStats(films);
   const {watched, rank, totalDuration, favoriteGenre} = stats;
   const durationTemplate = createDurationTemplate(totalDuration);
+  const intervalToggleTemplate = createIntervalToggleTemplate(currentInterval);
 
   return `<section class="statistic">
     <p class="statistic__rank">
@@ -103,20 +125,7 @@ const createStatisticsTemplate = (data) => {
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
       <p class="statistic__filters-description">Show stats:</p>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-      <label for="statistic-all-time" class="statistic__filters-label">All time</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
-      <label for="statistic-today" class="statistic__filters-label">Today</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
-      <label for="statistic-week" class="statistic__filters-label">Week</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
-      <label for="statistic-month" class="statistic__filters-label">Month</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
-      <label for="statistic-year" class="statistic__filters-label">Year</label>
+      ${intervalToggleTemplate}
     </form>
 
     <ul class="statistic__text-list">
@@ -147,7 +156,7 @@ export default class Statistics extends SmartView {
     this._data = {
       films,
       dateFrom: (() => {
-        const daysToFullWeek = Interval.WEEK;
+        const daysToFullWeek = Intervals.WEEK;
         return dayjs().subtract(1, daysToFullWeek).toDate();
       })(),
       dateTo: dayjs().toDate()

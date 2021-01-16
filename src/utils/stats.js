@@ -3,16 +3,16 @@ import isBetween from "dayjs/plugin/isBetween";
 
 dayjs.extend(isBetween);
 
-const RATING = {
-  novice: {
+const Rating = {
+  NOVICE: {
     limit: 1,
     name: `novice`
   },
-  fan: {
+  FAN: {
     limit: 11,
     name: `fan`
   },
-  movieBuff: {
+  MOVIE_BUFF: {
     limit: 21,
     name: `movie buff`
   }
@@ -48,12 +48,12 @@ const getFilmsStats = (films) => {
 const getRank = (count) => {
   let rank = ``;
 
-  if (count >= RATING.novice.limit && count < RATING.fan.limit) {
-    rank = RATING.novice.name;
-  } else if (count >= RATING.fan.limit && count < RATING.movieBuff.limit) {
-    rank = RATING.fan.name;
-  } else if (count >= RATING.movieBuff.limit) {
-    rank = RATING.movieBuff.name;
+  if (count >= Rating.NOVICE.limit && count < Rating.FAN.limit) {
+    rank = Rating.NOVICE.name;
+  } else if (count >= Rating.FAN.limit && count < Rating.MOVIE_BUFF.limit) {
+    rank = Rating.FAN.name;
+  } else if (count >= Rating.MOVIE_BUFF.limit) {
+    rank = Rating.MOVIE_BUFF.name;
   }
 
   return rank;
