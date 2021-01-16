@@ -1,14 +1,104 @@
-import {SECONDS_IN_MINUTE} from "../const.js";
-import {getStats} from "../utils/stats.js";
+import {Event, SECONDS_IN_MINUTE} from "../const.js";
+import {getStats, getFilmInDateRange, getCharsData, sortGenreByCount, getRank} from "../utils/stats.js";
 import dayjs from "dayjs";
 import SmartView from "./smart";
+import Chart from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import utc from "dayjs/plugin/utc";
 
-const Interval = {
-  ALL_TIME: `all time`,
-  YEAR: `year`,
-  MONTH: `month`,
-  WEEK: `week`,
-  DAY: `day`
+dayjs.extend(utc);
+
+const Intervals = {
+  ALL_TIME: {
+    value: `all-time`,
+    name: `All time`,
+    dayjsValue: ``
+  },
+  YEAR: {
+    value: `year`,
+    name: `Year`,
+    dayjsValue: `year`
+  },
+  MONTH: {
+    value: `month`,
+    name: `Month`,
+    dayjsValue: `month`
+  },
+  WEEK: {
+    value: `week`,
+    name: `Week`,
+    dayjsValue: `week`
+  },
+  TODAY: {
+    value: `today`,
+    name: `Today`,
+    dayjsValue: `day`
+  }
+};
+
+const renderDaysChart = (statisticCtx, filmInDateRange) => {
+  const BAR_HEIGHT = 50;
+  const charsData = getCharsData(filmInDateRange);
+  const sortCharsData = sortGenreByCount(charsData);
+
+  statisticCtx.height = BAR_HEIGHT * Object.keys(charsData).length;
+
+  return new Chart(statisticCtx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: Object.keys(sortCharsData),
+      datasets: [{
+        data: Object.values(sortCharsData),
+        backgroundColor: `#ffe800`,
+        hoverBackgroundColor: `#ffe800`,
+        anchor: `start`
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 20
+          },
+          color: `#ffffff`,
+          anchor: `start`,
+          align: `start`,
+          offset: 40,
+        }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#ffffff`,
+            padding: 100,
+            fontSize: 20
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          barThickness: 24
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false
+      }
+    }
+  });
 };
 
 const createDurationTemplate = (duration) => {
@@ -20,15 +110,17 @@ const createDurationTemplate = (duration) => {
     : `<p class="statistic__item-text">${minutes} <span class="statistic__item-description">m</span></p>`;
 };
 
-const renderDaysChart = () => {
-  // Функция для отрисовки графика по датам
+const createIntervalToggleTemplate = (currentInterval) => {
+  return Object.values(Intervals).map((interval) => `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${interval.value}" value="${interval.value}" ${currentInterval.value === interval.value ? `checked` : ``}>
+      <label for="statistic-${interval.value}" class="statistic__filters-label">${interval.name}</label>`).join(``);
 };
 
-const createStatisticsTemplate = (data) => {
-  const {films} = data;
+const createStatisticsTemplate = (films, filmsCount, currentInterval) => {
   const stats = getStats(films);
-  const {watched, rank, totalDuration, favoriteGenre} = stats;
+  const {watched, totalDuration, favoriteGenre} = stats;
+  const rank = getRank(filmsCount);
   const durationTemplate = createDurationTemplate(totalDuration);
+  const intervalToggleTemplate = createIntervalToggleTemplate(currentInterval);
 
   return `<section class="statistic">
     <p class="statistic__rank">
@@ -40,20 +132,7 @@ const createStatisticsTemplate = (data) => {
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
       <p class="statistic__filters-description">Show stats:</p>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-      <label for="statistic-all-time" class="statistic__filters-label">All time</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
-      <label for="statistic-today" class="statistic__filters-label">Today</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
-      <label for="statistic-week" class="statistic__filters-label">Week</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
-      <label for="statistic-month" class="statistic__filters-label">Month</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
-      <label for="statistic-year" class="statistic__filters-label">Year</label>
+      ${intervalToggleTemplate}
     </form>
 
     <ul class="statistic__text-list">
@@ -81,24 +160,23 @@ const createStatisticsTemplate = (data) => {
 export default class Statistics extends SmartView {
   constructor(films) {
     super();
+    this._currentInterval = Intervals.ALL_TIME;
     this._data = {
       films,
       dateFrom: (() => {
-        const daysToFullWeek = Interval.WEEK;
-        return dayjs().subtract(1, daysToFullWeek).toDate();
+        return this._currentInterval !== Intervals.ALL_TIME ? dayjs().subtract(1, this._currentInterval.dayjsValue).toDate() : null;
       })(),
       dateTo: dayjs().toDate()
     };
 
     this._daysChart = null;
+    this._filmInDateRange = getFilmInDateRange(this._data);
 
     this._dateChangeHandler = this._dateChangeHandler.bind(this);
+    this._changeIntervalHandler = this._changeIntervalHandler.bind(this);
 
     this._setCharts();
-  }
-
-  _getTemplate() {
-    return createStatisticsTemplate(this._data);
+    this._setInnerHandlers();
   }
 
   removeElement() {
@@ -109,8 +187,43 @@ export default class Statistics extends SmartView {
     }
   }
 
-  restoreHandlers() {
+  _restoreHandlers() {
     this._setCharts();
+    this._setInnerHandlers();
+  }
+
+  _getTemplate() {
+    return createStatisticsTemplate(this._filmInDateRange, this._data.films.length, this._currentInterval);
+  }
+
+  _changeInterval(intervalName) {
+    for (let interval in Intervals) {
+      if (Intervals[interval].name === intervalName) {
+        this._currentInterval = Intervals[interval];
+      }
+    }
+
+    this._updateData({
+      dateFrom: (() => {
+        return this._currentInterval !== Intervals.ALL_TIME ? dayjs().subtract(1, this._currentInterval.dayjsValue).toDate() : null;
+      })(),
+    });
+    this._filmInDateRange = getFilmInDateRange(this._data);
+    this.updateElement();
+  }
+
+  _changeIntervalHandler(evt) {
+    evt.preventDefault();
+
+    this._changeInterval(evt.target.innerText);
+  }
+
+  _setInnerHandlers() {
+    this.element
+      .querySelectorAll(`.statistic__filters-label`)
+      .forEach((input) => {
+        input.addEventListener(Event.MOUSE_DOWN, this._changeIntervalHandler);
+      });
   }
 
   _dateChangeHandler([dateFrom, dateTo]) {
@@ -125,14 +238,12 @@ export default class Statistics extends SmartView {
   }
 
   _setCharts() {
-    if (this._colorsCart !== null || this._daysChart !== null) {
-      this._colorsCart = null;
+    if (this._daysChart !== null) {
       this._daysChart = null;
     }
 
-    const {tasks, dateFrom, dateTo} = this._data;
-    const daysCtx = this.element.querySelector(`.statistic__chart`);
+    const statisticCtx = this.element.querySelector(`.statistic__chart`);
 
-    this._daysChart = renderDaysChart(daysCtx, tasks, dateFrom, dateTo);
+    this._daysChart = renderDaysChart(statisticCtx, this._filmInDateRange);
   }
 }

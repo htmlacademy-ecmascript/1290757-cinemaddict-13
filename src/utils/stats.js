@@ -3,16 +3,16 @@ import isBetween from "dayjs/plugin/isBetween";
 
 dayjs.extend(isBetween);
 
-const RATING = {
-  novice: {
+const Rating = {
+  NOVICE: {
     limit: 1,
     name: `novice`
   },
-  fan: {
+  FAN: {
     limit: 11,
     name: `fan`
   },
-  movieBuff: {
+  MOVIE_BUFF: {
     limit: 21,
     name: `movie buff`
   }
@@ -48,12 +48,12 @@ const getFilmsStats = (films) => {
 const getRank = (count) => {
   let rank = ``;
 
-  if (count >= RATING.novice.limit && count < RATING.fan.limit) {
-    rank = RATING.novice.name;
-  } else if (count >= RATING.fan.limit && count < RATING.movieBuff.limit) {
-    rank = RATING.fan.name;
-  } else if (count >= RATING.movieBuff.limit) {
-    rank = RATING.movieBuff.name;
+  if (count >= Rating.NOVICE.limit && count < Rating.FAN.limit) {
+    rank = Rating.NOVICE.name;
+  } else if (count >= Rating.FAN.limit && count < Rating.MOVIE_BUFF.limit) {
+    rank = Rating.FAN.name;
+  } else if (count >= Rating.MOVIE_BUFF.limit) {
+    rank = Rating.MOVIE_BUFF.name;
   }
 
   return rank;
@@ -90,22 +90,38 @@ const getStats = (films) => {
   };
 };
 
-const countCompletedFilmInDateRange = (films, dateFrom, dateTo) => {
-  return films.reduce((counter, film) => {
-    if (film.watchingDate === null) {
-      return counter;
-    }
+const getFilmInDateRange = (data) => {
+  const {films, dateFrom, dateTo} = data;
 
-    if (
-      dayjs(film.watchingDate).isSame(dateFrom) ||
+  if (dateFrom === null) {
+    return films;
+  }
+
+  return films.filter((film) => {
+    return dayjs(film.watchingDate).isSame(dateFrom) ||
       dayjs(film.watchingDate).isBetween(dateFrom, dateTo) ||
-      dayjs(film.watchingDate).isSame(dateTo)
-    ) {
-      return counter + 1;
-    }
-
-    return counter;
-  }, 0);
+      dayjs(film.watchingDate).isSame(dateTo);
+  });
 };
 
-export {getStats, countCompletedFilmInDateRange};
+const sortGenreByCount = (charsData) => {
+  return Object.fromEntries(Object.entries(charsData).sort((genreA, genreB) => genreB[1] - genreA[1]));
+};
+
+const getCharsData = (films) => {
+  let chartData = {};
+
+  films.forEach((film) => {
+    film.genres.forEach((genre) => {
+      if (chartData[genre]) {
+        chartData[genre]++;
+      } else {
+        chartData[genre] = 1;
+      }
+    });
+  });
+
+  return chartData;
+};
+
+export {getStats, getFilmInDateRange, getCharsData, sortGenreByCount, getRank};

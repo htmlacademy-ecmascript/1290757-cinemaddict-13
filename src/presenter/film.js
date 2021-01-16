@@ -40,6 +40,12 @@ export default class Film {
     this._view.setWatchedClickHandler(this._handleWatchedClick);
     this._view.setWatchlistClickHandler(this._handleWatchlistClick);
     this._view.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupView.setClosePopupHandler(this._popupCloseHandler);
+    this._popupView.setWatchedClickHandler(this._handleWatchedClick);
+    this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupView.setCommentAddHandler(this._handleAddComment);
+    this._popupView.setCommentDeleteHandler(this._handleDeleteComment);
 
     if (prevFilmView === null || prevPopupView === null) {
       render(this._container, this._view, RenderPosition.BEFORE_END);
@@ -146,12 +152,6 @@ export default class Film {
 
   _popupShow() {
     render(this._bodyContainer, this._popupView.element, RenderPosition.BEFORE_END);
-    this._popupView.setClosePopupHandler(this._popupCloseHandler);
-    this._popupView.setWatchedClickHandler(this._handleWatchedClick);
-    this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
-    this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._popupView.setCommentAddHandler(this._handleAddComment);
-    this._popupView.setCommentDeleteHandler(this._handleDeleteComment);
     this._bodyContainer.classList.add(`hide-overflow`);
     this._isPopupOpen = true;
   }
