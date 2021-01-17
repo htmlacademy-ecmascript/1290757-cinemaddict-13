@@ -234,13 +234,17 @@ export default class PageMainContent {
         });
         break;
       case UserAction.ADD_COMMENT:
-        this._filmsModel.addComment(updateType, update);
+        this._api.addComment(update).then((response) => {
+          this._filmsModel.addComment(updateType, response);
+        });
+        break;
+      case UserAction.DELETE_COMMENT:
+        this._api.deleteComment(update.commentId).then(() => {
+          this._filmsModel.deleteComment(updateType, update);
+        });
         break;
       case UserAction.LOAD_COMMENTS:
         this._filmsModel.setComments(updateType, update);
-        break;
-      case UserAction.DELETE_COMMENT:
-        this._filmsModel.deleteComment(updateType, update);
         break;
       default:
         break;

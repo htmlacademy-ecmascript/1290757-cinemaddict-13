@@ -273,6 +273,10 @@ export default class Popup extends SmartView {
 
   _deleteCommentHandler(evt) {
     this._defaultClickHandler(evt, this._callback.deleteComment);
+
+    this._setScrollTop();
+    this.updateElement();
+    this._restoreScrollTop();
   }
 
   _closePopupHandler(evt) {

@@ -24,15 +24,14 @@ export default class Api {
       .then((comments) => comments.map(FilmsModel.adaptCommentToClient));
   }
 
-  addComment(data) {
+  addComment(film) {
     return this._load({
-      url: `/comments/${data.id}`,
+      url: `/comments/${film.id}`,
       method: Method.POST,
-      body: JSON.stringify(FilmsModel.adaptCommentToServer(data.comment)),
+      body: JSON.stringify(FilmsModel.adaptCommentToServer(film.comment)),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(Api.toJSON)
-      .then(FilmsModel.adaptCommentToClient);
+      .then(Api.toJSON);
   }
 
   deleteComment(id) {

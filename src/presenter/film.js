@@ -95,7 +95,7 @@ export default class Film {
   _handleDeleteComment(evt) {
     this._updateData(UserAction.DELETE_COMMENT, UpdateType.PATCH, {
       "id": this._film.id,
-      "index": evt.target.dataset.count
+      "commentId": this._film.comments[evt.target.dataset.count]
     });
 
     this.updatePopup();
