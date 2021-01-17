@@ -20,7 +20,6 @@ export default class Film {
     this._view = null;
     this._popupView = null;
     this._isPopupOpen = false;
-    this._isLoadComment = false;
 
     this._popupShowHandler = this._popupShowHandler.bind(this);
     this._popupCloseHandler = this._popupCloseHandler.bind(this);
@@ -160,20 +159,12 @@ export default class Film {
   updatePopup() {
     this._popupClose();
     this._popupShow();
-
-    if (this._isLoadComment) {
-      this._isLoadComment = false;
-    }
   }
 
   _loadComment() {
     api.getComment(this._film)
       .then((comments) => {
         this._handleCommentLoad(comments);
-        this._isLoadComment = true;
-      })
-      .catch(() => {
-        this._isLoadComment = true;
       });
   }
 
@@ -181,10 +172,7 @@ export default class Film {
     render(this._bodyContainer, this._popupView.element, RenderPosition.BEFORE_END);
     this._bodyContainer.classList.add(`hide-overflow`);
     this._isPopupOpen = true;
-
-    if (!this._isLoadComment) {
-      this._loadComment();
-    }
+    this._loadComment();
   }
 
   _popupShowHandler(evt) {

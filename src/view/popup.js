@@ -46,16 +46,16 @@ const createCommentsTemplate = (comments) => comments.length === 0 ? ``
 const createGenresTemplate = (genres) => genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 
 const createPopupTemplate = (filmData, commentData) => {
-  const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country,
+  const {name, poster, description, loadedComments, rating, releaseDate, runtime, genres, director, writers, actors, country,
     age, watched, watchlist, favorite} = filmData;
 
-  const commentCount = comments[0].text ? comments.length : 0;
+  const commentCount = loadedComments ? loadedComments.length : 0;
   const genreTitle = genres.length > 1 ? `Genres` : `Genre`;
   const duration = getFormatTime(runtime);
   const genresTemplate = createGenresTemplate(genres);
   const writersTemplate = writers.join(`, `);
   const actorsTemplate = actors.join(`, `);
-  const commentsTemplate = comments[0].text ? createCommentsTemplate(comments) : ``;
+  const commentsTemplate = loadedComments ? createCommentsTemplate(loadedComments) : ``;
   const watchedStatus = checkFlagStatus(watched);
   const watchlistStatus = checkFlagStatus(watchlist);
   const favoriteStatus = checkFlagStatus(favorite);

@@ -62,7 +62,7 @@ export default class Films extends Observer {
       throw new Error(`Can't delete unexisting comment`);
     }
 
-    film.comments = update.comments;
+    film.loadedComments = update.comments;
 
     this._notify(updateType, update);
   }
