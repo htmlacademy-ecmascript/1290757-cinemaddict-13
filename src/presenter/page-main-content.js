@@ -233,6 +233,9 @@ export default class PageMainContent {
       case UserAction.ADD_COMMENT:
         this._filmsModel.addComment(updateType, update);
         break;
+      case UserAction.LOAD_COMMENTS:
+        this._filmsModel.setComments(updateType, update);
+        break;
       case UserAction.DELETE_COMMENT:
         this._filmsModel.deleteComment(updateType, update);
         break;

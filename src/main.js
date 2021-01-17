@@ -5,11 +5,8 @@ import FilterPresenter from "./presenter/filter.js";
 import FilmModel from "./model/film.js";
 import FilterModel from "./model/filter.js";
 import {render} from "./utils/render.js";
-import {RenderPosition, UpdateType} from "./const.js";
+import {RenderPosition, UpdateType, AUTHORIZATION, END_POINT} from "./const.js";
 import Api from "./api.js";
-
-const AUTHORIZATION = `Basic az36347hxjmwyhepv`;
-const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
 
 const body = document.querySelector(`body`);
 const header = body.querySelector(`.header`);
@@ -22,7 +19,7 @@ const api = new Api(END_POINT, AUTHORIZATION);
 api.getFilms()
   .then((films) => {
     filmsModel.setFilms(UpdateType.INIT, films);
-    render(header, new Profile(films).element, RenderPosition.BEFORE_END);
+    render(header, new Profile(films.length).element, RenderPosition.BEFORE_END);
     render(footerStatistics, new FooterStatistics(films.length).element, RenderPosition.BEFORE_END);
   })
   .catch(() => {

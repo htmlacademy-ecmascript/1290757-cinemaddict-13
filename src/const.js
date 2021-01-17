@@ -52,7 +52,8 @@ const SortType = {
 const UserAction = {
   CHANGE_STATUS: `CHANGE_STATUS`,
   ADD_COMMENT: `ADD_COMMENT`,
-  DELETE_COMMENT: `DELETE_COMMENT`
+  DELETE_COMMENT: `DELETE_COMMENT`,
+  LOAD_COMMENTS: `LOAD_COMMENTS`
 };
 
 const UpdateType = {
@@ -70,5 +71,8 @@ const FilterType = {
   STATISTICS: `statistics`
 };
 
+const AUTHORIZATION = `Basic az36347hxjmwyhepv`;
+const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
+
 export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button, TOTAL_FILMS, SortType,
-  UserAction, UpdateType, FilterType};
+  UserAction, UpdateType, FilterType, AUTHORIZATION, END_POINT};

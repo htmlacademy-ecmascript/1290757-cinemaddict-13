@@ -55,9 +55,20 @@ export default class Films extends Observer {
     this._notify(updateType, update);
   }
 
+  setComments(updateType, update) {
+    const film = this._films.find((item) => item.id === update.id);
+
+    if (update.index === -1) {
+      throw new Error(`Can't delete unexisting comment`);
+    }
+
+    film.comments = update.comments;
+
+    this._notify(updateType, update);
+  }
+
   static adaptCommentToClient(comment) {
     return Object.assign({}, {
-      id: comment.id,
       text: comment.comment,
       emotion: comment.emotion,
       author: comment.author,

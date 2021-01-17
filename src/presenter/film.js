@@ -1,12 +1,15 @@
 import FilmView from "../view/film.js";
 import PopupView from "../view/popup.js";
 import {render, remove, replace} from "../utils/render.js";
-import {RenderPosition} from "../const.js";
+import {AUTHORIZATION, END_POINT, RenderPosition} from "../const.js";
 import {UserAction, UpdateType} from "../const.js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import Api from "../api";
 
 dayjs.extend(utc);
+
+const api = new Api(END_POINT, AUTHORIZATION);
 
 export default class Film {
   constructor(filmContainer, bodyContainer, updateData) {
@@ -17,6 +20,7 @@ export default class Film {
     this._view = null;
     this._popupView = null;
     this._isPopupOpen = false;
+    this._isLoadComment = false;
 
     this._popupShowHandler = this._popupShowHandler.bind(this);
     this._popupCloseHandler = this._popupCloseHandler.bind(this);
@@ -25,6 +29,7 @@ export default class Film {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleAddComment = this._handleAddComment.bind(this);
     this._handleDeleteComment = this._handleDeleteComment.bind(this);
+    this._handleCommentLoad = this._handleCommentLoad.bind(this);
   }
 
   init(film) {
@@ -97,6 +102,13 @@ export default class Film {
     this.updatePopup();
   }
 
+  _handleCommentLoad(comments) {
+    this._updateData(UserAction.LOAD_COMMENTS, UpdateType.PATCH, {
+      "id": this._film.id,
+      "comments": comments
+    });
+  }
+
   _handleWatchedClick() {
     this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
       watched: !this._film.watched,
@@ -148,12 +160,31 @@ export default class Film {
   updatePopup() {
     this._popupClose();
     this._popupShow();
+
+    if (this._isLoadComment) {
+      this._isLoadComment = false;
+    }
+  }
+
+  _loadComment() {
+    api.getComment(this._film)
+      .then((comments) => {
+        this._handleCommentLoad(comments);
+        this._isLoadComment = true;
+      })
+      .catch(() => {
+        this._isLoadComment = true;
+      });
   }
 
   _popupShow() {
     render(this._bodyContainer, this._popupView.element, RenderPosition.BEFORE_END);
     this._bodyContainer.classList.add(`hide-overflow`);
     this._isPopupOpen = true;
+
+    if (!this._isLoadComment) {
+      this._loadComment();
+    }
   }
 
   _popupShowHandler(evt) {
