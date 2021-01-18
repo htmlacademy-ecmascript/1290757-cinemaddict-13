@@ -225,23 +225,47 @@ export default class PageMainContent {
     });
   }
 
+  _setFilmPresentersAborting(data) {
+    this._filmPresenters.forEach((value) => {
+      Object
+        .values(value)
+        .forEach((presenter) => {
+          if (presenter._film.id === data.id) {
+            presenter.setAborting();
+          }
+        });
+    });
+  }
+
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.CHANGE_STATUS:
         delete update.loadedComments;
-        this._api.updateFilms(update).then((response) => {
-          this._filmsModel.updateFilm(updateType, response);
-        });
+        this._api.updateFilms(update)
+          .then((response) => {
+            this._filmsModel.updateFilm(updateType, response);
+          })
+          .catch(() => {
+            this._setFilmPresentersAborting(update);
+          });
         break;
       case UserAction.ADD_COMMENT:
-        this._api.addComment(update).then((response) => {
-          this._filmsModel.addComment(updateType, response);
-        });
+        this._api.addComment(update)
+          .then((response) => {
+            this._filmsModel.addComment(updateType, response);
+          })
+          .catch(() => {
+            this._setFilmPresentersAborting(update);
+          });
         break;
       case UserAction.DELETE_COMMENT:
-        this._api.deleteComment(update.commentId).then(() => {
-          this._filmsModel.deleteComment(updateType, update);
-        });
+        this._api.deleteComment(update.commentId)
+          .then(() => {
+            this._filmsModel.deleteComment(updateType, update);
+          })
+          .catch(() => {
+            this._setFilmPresentersAborting(update);
+          });
         break;
       case UserAction.LOAD_COMMENTS:
         this._filmsModel.setComments(updateType, update);

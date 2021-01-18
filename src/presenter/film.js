@@ -79,6 +79,14 @@ export default class Film {
     remove(this._popupView);
   }
 
+  setAborting() {
+    if (this._isPopupOpen) {
+      this._popupView.shake();
+    } else {
+      this._view.shake();
+    }
+  }
+
   _handleAddComment(comment) {
     if (comment.text === `` || comment.emotion === ``) {
       return;
