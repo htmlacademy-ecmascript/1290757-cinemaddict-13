@@ -59,6 +59,7 @@ const UserAction = {
 const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
+  PRE_MAJOR: `PRE_MAJOR`,
   MAJOR: `MAJOR`,
   INIT: `INIT`
 };

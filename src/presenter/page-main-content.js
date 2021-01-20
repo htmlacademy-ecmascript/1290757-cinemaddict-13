@@ -285,6 +285,11 @@ export default class PageMainContent {
       case UpdateType.MINOR:
         this._updateFilmPresenters(data);
         break;
+      case UpdateType.PRE_MAJOR:
+        this._clearFilmList({resetRenderedTaskCount: true});
+        this._updateFilmPresenters(data);
+        this.init();
+        break;
       case UpdateType.MAJOR:
         this._clearFilmList({resetRenderedTaskCount: true, resetSortType: true});
         this.init();

@@ -33,6 +33,12 @@ export default class Film {
 
   init(film) {
     this._film = film;
+    this._changeableData = {
+      watched: this._film.watched,
+      watchingDate: this._film.watchingDate,
+      watchlist: this._film.watchlist,
+      favorite: this._film.favorite
+    };
 
     const prevFilmView = this._view;
     const prevPopupView = this._popupView;
@@ -123,35 +129,64 @@ export default class Film {
     });
   }
 
+  _setUpdateType() {
+    return this._isPopupOpen ? UpdateType.MINOR : UpdateType.PRE_MAJOR;
+  }
+
   _handleWatchedClick() {
-    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
+    const updateType = this._setUpdateType();
+
+    this._updateData(UserAction.CHANGE_STATUS, updateType, Object.assign({}, this._film, {
       watched: !this._film.watched,
       watchingDate: dayjs.utc().format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`)
     }));
 
     if (this._isPopupOpen) {
       this.updatePopup();
+      this._changeableData = {
+        watched: !this._film.watched,
+        watchingDate: dayjs.utc().format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`)
+      };
     }
   }
 
   _handleWatchlistClick() {
-    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
+    const updateType = this._setUpdateType();
+
+    this._updateData(UserAction.CHANGE_STATUS, updateType, Object.assign({}, this._film, {
       watchlist: !this._film.watchlist
     }));
 
     if (this._isPopupOpen) {
       this.updatePopup();
+      this._changeableData = {
+        watchlist: !this._film.watchlist
+      };
     }
   }
 
   _handleFavoriteClick() {
-    this._updateData(UserAction.CHANGE_STATUS, UpdateType.MINOR, Object.assign({}, this._film, {
+    const updateType = this._setUpdateType();
+
+    this._updateData(UserAction.CHANGE_STATUS, updateType, Object.assign({}, this._film, {
       favorite: !this._film.favorite
     }));
 
     if (this._isPopupOpen) {
       this.updatePopup();
+      this._changeableData = {
+        favorite: !this._film.favorite
+      };
     }
+  }
+
+  _updateFilmStatus() {
+    this._updateData(UserAction.CHANGE_STATUS, UpdateType.PRE_MAJOR, Object.assign({}, this._film, {
+      watched: this._changeableData.watched,
+      watchingDate: this._changeableData.watchingDate,
+      watchlist: this._changeableData.watchlist,
+      favorite: this._changeableData.favorite
+    }));
   }
 
   _popupClose() {
@@ -169,6 +204,7 @@ export default class Film {
 
   _popupCloseHandler() {
     this._popupClose();
+    this._updateFilmStatus();
   }
 
   updatePopup() {
