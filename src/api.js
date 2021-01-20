@@ -18,27 +18,20 @@ export default class Api {
     this._authorization = authorization;
   }
 
-  _getComment(film) {
-    return new Promise((resolve) => {
-      this._load({url: `/comments/${film.id}`})
-        .then(Api.toJSON)
-        .then((comments) => {
-          film.comments = comments.map(FilmsModel.adaptCommentToClient);
-
-          resolve(film);
-        });
-    });
+  getComment(film) {
+    return this._load({url: `/comments/${film.id}`})
+      .then(Api.toJSON)
+      .then((comments) => comments.map(FilmsModel.adaptCommentToClient));
   }
 
-  addComment(data) {
+  addComment(film) {
     return this._load({
-      url: `/comments/${data.id}`,
+      url: `/comments/${film.id}`,
       method: Method.POST,
-      body: JSON.stringify(FilmsModel.adaptCommentToServer(data.comment)),
+      body: JSON.stringify(FilmsModel.adaptCommentToServer(film.comment)),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(Api.toJSON)
-      .then(FilmsModel.adaptCommentToClient);
+      .then(Api.toJSON);
   }
 
   deleteComment(id) {
@@ -51,9 +44,7 @@ export default class Api {
   getFilms() {
     return this._load({url: `/movies`})
       .then(Api.toJSON)
-      .then((films) => films.map(FilmsModel.adaptFilmToClient))
-      .then((films) => films.map((film) => this._getComment(film)))
-      .then((promises) => Promise.all(promises));
+      .then((films) => films.map(FilmsModel.adaptFilmToClient));
   }
 
   updateFilms(film) {

@@ -1,10 +1,30 @@
 import {FilterType} from "../const";
 
-const filter = {
-  [FilterType.ALL]: (films) => films.filter((film) => film.id),
-  [FilterType.WATCHLIST]: (films) => films.filter((film) => film.watchlist),
-  [FilterType.HISTORY]: (films) => films.filter((film) => film.watched),
-  [FilterType.FAVORITES]: (films) => films.filter((film) => film.favorite)
+const getFilteredFilms = (films) => {
+  const filter = {
+    [FilterType.ALL]: [],
+    [FilterType.WATCHLIST]: [],
+    [FilterType.HISTORY]: [],
+    [FilterType.FAVORITES]: [],
+  };
+
+  films.forEach((film) => {
+    filter[FilterType.ALL].push(film);
+
+    if (film.watchlist) {
+      filter[FilterType.WATCHLIST].push(film);
+    }
+
+    if (film.watched) {
+      filter[FilterType.HISTORY].push(film);
+    }
+
+    if (film.favorite) {
+      filter[FilterType.FAVORITES].push(film);
+    }
+  });
+
+  return filter;
 };
 
-export {filter};
+export {getFilteredFilms};

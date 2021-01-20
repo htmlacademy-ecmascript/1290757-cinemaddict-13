@@ -37,27 +37,40 @@ export default class Films extends Observer {
   }
 
   addComment(updateType, update) {
-    const film = this._films.find((item) => item.id === update.id);
-    film.comments.push(update.comment);
+    const film = this._films.find((item) => item.id === update.movie.id);
+    film.comments = update.movie.comments;
 
     this._notify(updateType, update);
   }
 
   deleteComment(updateType, update) {
     const film = this._films.find((item) => item.id === update.id);
+    const index = film.comments.indexOf(update.commentId);
+
+    if (index === -1) {
+      throw new Error(`Can't delete unexisting comment`);
+    }
+
+    film.comments.splice(index, 1);
+    film.loadedComments.splice(index, 1);
+
+    this._notify(updateType, update);
+  }
+
+  setComments(updateType, update) {
+    const film = this._films.find((item) => item.id === update.id);
 
     if (update.index === -1) {
       throw new Error(`Can't delete unexisting comment`);
     }
 
-    film.comments.splice(update.index, 1);
+    film.loadedComments = update.comments;
 
     this._notify(updateType, update);
   }
 
   static adaptCommentToClient(comment) {
     return Object.assign({}, {
-      id: comment.id,
       text: comment.comment,
       emotion: comment.emotion,
       author: comment.author,

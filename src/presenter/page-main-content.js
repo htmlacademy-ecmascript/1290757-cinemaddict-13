@@ -8,7 +8,7 @@ import FilmPresenter from "./film.js";
 import {remove, render} from "../utils/render.js";
 import {RenderPosition, SortType, UpdateType, UserAction, FilterType} from "../const.js";
 import {sortFilmByDate, sortFilmByRating} from "../utils/film.js";
-import {filter} from "../utils/filter.js";
+import {getFilteredFilms} from "../utils/filter.js";
 
 const MOVIES_PER_STEP = 5;
 const MAX_ADDITIONAL_FILMS = 2;
@@ -75,7 +75,7 @@ export default class PageMainContent {
     this._filmListExtra = this._mainContainer.querySelectorAll(`.films-list.films-list--extra`);
     this._renderFilmsList();
 
-    if (this._getFilms().length > this._renderedFilmCount) {
+    if (films.length > this._renderedFilmCount) {
       this._renderLoadMoreButton();
     }
 
@@ -91,15 +91,16 @@ export default class PageMainContent {
     }
 
     const films = this._filmsModel.films;
-    const filteredTasks = filter[filterType](films);
+    const filteredFilms = getFilteredFilms(films);
+    const filteredFilmsByType = filteredFilms[filterType];
 
     switch (this._currentSortType) {
       case SortType.BY_DATE:
-        return filteredTasks.sort(sortFilmByDate);
+        return filteredFilmsByType.sort(sortFilmByDate);
       case SortType.BY_RATING:
-        return filteredTasks.sort(sortFilmByRating);
+        return filteredFilmsByType.sort(sortFilmByRating);
       default:
-        return filteredTasks;
+        return filteredFilmsByType;
     }
   }
 
@@ -225,16 +226,50 @@ export default class PageMainContent {
     });
   }
 
+  _setFilmPresentersAborting(data) {
+    this._filmPresenters.forEach((value) => {
+      Object
+        .values(value)
+        .forEach((presenter) => {
+          if (presenter._film.id === data.id) {
+            presenter.setAborting();
+          }
+        });
+    });
+  }
+
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.CHANGE_STATUS:
-        this._filmsModel.updateFilm(updateType, update);
+        delete update.loadedComments;
+        this._api.updateFilms(update)
+          .then((response) => {
+            this._filmsModel.updateFilm(updateType, response);
+          })
+          .catch(() => {
+            this._setFilmPresentersAborting(update);
+          });
         break;
       case UserAction.ADD_COMMENT:
-        this._filmsModel.addComment(updateType, update);
+        this._api.addComment(update)
+          .then((response) => {
+            this._filmsModel.addComment(updateType, response);
+          })
+          .catch(() => {
+            this._setFilmPresentersAborting(update);
+          });
         break;
       case UserAction.DELETE_COMMENT:
-        this._filmsModel.deleteComment(updateType, update);
+        this._api.deleteComment(update.commentId)
+          .then(() => {
+            this._filmsModel.deleteComment(updateType, update);
+          })
+          .catch(() => {
+            this._setFilmPresentersAborting(update);
+          });
+        break;
+      case UserAction.LOAD_COMMENTS:
+        this._filmsModel.setComments(updateType, update);
         break;
       default:
         break;

@@ -1,5 +1,5 @@
 import AbstractView from "./abstract";
-import {getStats} from "../utils/stats";
+import {getRank} from "../utils/stats";
 
 const createProfileTemplate = (rank) => {
   return `<section class="header__profile profile">
@@ -9,9 +9,9 @@ const createProfileTemplate = (rank) => {
 };
 
 export default class Profile extends AbstractView {
-  constructor(films) {
+  constructor(filmsCount = 0) {
     super();
-    this._rank = getStats(films).rank;
+    this._rank = getRank(filmsCount);
   }
 
   _getTemplate() {

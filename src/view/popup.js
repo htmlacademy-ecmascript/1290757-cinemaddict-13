@@ -46,16 +46,16 @@ const createCommentsTemplate = (comments) => comments.length === 0 ? ``
 const createGenresTemplate = (genres) => genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 
 const createPopupTemplate = (filmData, commentData) => {
-  const {name, poster, description, comments, rating, releaseDate, runtime, genres, director, writers, actors, country,
+  const {name, poster, description, loadedComments, rating, releaseDate, runtime, genres, director, writers, actors, country,
     age, watched, watchlist, favorite} = filmData;
 
-  const commentCount = comments.length;
+  const commentCount = loadedComments ? loadedComments.length : 0;
   const genreTitle = genres.length > 1 ? `Genres` : `Genre`;
   const duration = getFormatTime(runtime);
   const genresTemplate = createGenresTemplate(genres);
   const writersTemplate = writers.join(`, `);
   const actorsTemplate = actors.join(`, `);
-  const commentsTemplate = createCommentsTemplate(comments);
+  const commentsTemplate = loadedComments ? createCommentsTemplate(loadedComments) : ``;
   const watchedStatus = checkFlagStatus(watched);
   const watchlistStatus = checkFlagStatus(watchlist);
   const favoriteStatus = checkFlagStatus(favorite);
@@ -140,7 +140,6 @@ const createPopupTemplate = (filmData, commentData) => {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentCount}</span></h3>
 
           ${commentsTemplate}
-
           <div class="film-details__new-comment">
             <div class="film-details__add-emoji-label">${chosenEmojiTemplate}</div>
 
@@ -274,6 +273,10 @@ export default class Popup extends SmartView {
 
   _deleteCommentHandler(evt) {
     this._defaultClickHandler(evt, this._callback.deleteComment);
+
+    this._setScrollTop();
+    this.updateElement();
+    this._restoreScrollTop();
   }
 
   _closePopupHandler(evt) {
