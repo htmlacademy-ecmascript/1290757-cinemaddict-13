@@ -284,9 +284,6 @@ export default class PageMainContent {
         break;
       case UpdateType.MINOR:
         this._updateFilmPresenters(data);
-        this._clearFilmList({resetRenderedTaskCount: true});
-        this.init();
-        this._bodyContainer.classList.remove(`hide-overflow`);
         break;
       case UpdateType.MAJOR:
         this._clearFilmList({resetRenderedTaskCount: true, resetSortType: true});
