@@ -75,7 +75,7 @@ export default class PageMainContent {
     this._filmListExtra = this._mainContainer.querySelectorAll(`.films-list.films-list--extra`);
     this._renderFilmsList();
 
-    if (this._getFilms().length > this._renderedFilmCount) {
+    if (films.length > this._renderedFilmCount) {
       this._renderLoadMoreButton();
     }
 
@@ -92,15 +92,15 @@ export default class PageMainContent {
 
     const films = this._filmsModel.films;
     const filteredFilms = getFilteredFilms(films);
-    const filteredFilm = filteredFilms[filterType];
+    const filteredFilmsByType = filteredFilms[filterType];
 
     switch (this._currentSortType) {
       case SortType.BY_DATE:
-        return filteredFilm.sort(sortFilmByDate);
+        return filteredFilmsByType.sort(sortFilmByDate);
       case SortType.BY_RATING:
-        return filteredFilm.sort(sortFilmByRating);
+        return filteredFilmsByType.sort(sortFilmByRating);
       default:
-        return filteredFilm;
+        return filteredFilmsByType;
     }
   }
 
@@ -284,6 +284,9 @@ export default class PageMainContent {
         break;
       case UpdateType.MINOR:
         this._updateFilmPresenters(data);
+        this._clearFilmList({resetRenderedTaskCount: true});
+        this.init();
+        this._bodyContainer.classList.remove(`hide-overflow`);
         break;
       case UpdateType.MAJOR:
         this._clearFilmList({resetRenderedTaskCount: true, resetSortType: true});

@@ -69,14 +69,11 @@ export default class Film {
   }
 
   destroy() {
-    this._popupView.removeClosePopupHandler(this._popupCloseHandler);
-    this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
-    this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
-    this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
-    this._popupView.removeCommentAddHandler(this._handleAddComment);
-    this._popupView.removeCommentDeleteHandler(this._handleDeleteComment);
+    if (this._isPopupOpen) {
+      this._destroyPopup();
+    }
+
     remove(this._view);
-    remove(this._popupView);
   }
 
   setAborting() {
@@ -85,6 +82,16 @@ export default class Film {
     } else {
       this._view.shake();
     }
+  }
+
+  _destroyPopup() {
+    this._popupView.removeClosePopupHandler(this._popupCloseHandler);
+    this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
+    this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
+    this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupView.removeCommentAddHandler(this._handleAddComment);
+    this._popupView.removeCommentDeleteHandler(this._handleDeleteComment);
+    remove(this._popupView);
   }
 
   _handleAddComment(comment) {
