@@ -8,7 +8,7 @@ import FilmPresenter from "./film.js";
 import {remove, render} from "../utils/render.js";
 import {RenderPosition, SortType, UpdateType, UserAction, FilterType} from "../const.js";
 import {sortFilmByDate, sortFilmByRating} from "../utils/film.js";
-import {filter} from "../utils/filter.js";
+import {getFilteredFilms} from "../utils/filter.js";
 
 const MOVIES_PER_STEP = 5;
 const MAX_ADDITIONAL_FILMS = 2;
@@ -91,15 +91,16 @@ export default class PageMainContent {
     }
 
     const films = this._filmsModel.films;
-    const filteredTasks = filter[filterType](films);
+    const filteredFilms = getFilteredFilms(films);
+    const filteredFilm = filteredFilms[filterType];
 
     switch (this._currentSortType) {
       case SortType.BY_DATE:
-        return filteredTasks.sort(sortFilmByDate);
+        return filteredFilm.sort(sortFilmByDate);
       case SortType.BY_RATING:
-        return filteredTasks.sort(sortFilmByRating);
+        return filteredFilm.sort(sortFilmByRating);
       default:
-        return filteredTasks;
+        return filteredFilm;
     }
   }
 
