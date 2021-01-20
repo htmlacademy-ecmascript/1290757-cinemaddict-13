@@ -40,6 +40,7 @@ const Event = {
 const Button = {
   ENTER: `Enter`,
   ESCAPE: `Escape`,
+  META: `Meta`,
   MOUSE_MAIN: 0
 };
 

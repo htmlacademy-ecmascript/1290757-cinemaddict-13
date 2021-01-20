@@ -253,7 +253,7 @@ export default class Popup extends SmartView {
   }
 
   _addCommentHandler(evt) {
-    if (evt.key === Button.ENTER && evt.ctrlKey) {
+    if ((evt.key === Button.ENTER || evt.key === Button.META) && evt.ctrlKey) {
       evt.preventDefault();
 
       this._setScrollTop();
