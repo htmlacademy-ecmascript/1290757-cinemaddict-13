@@ -255,11 +255,7 @@ export default class Popup extends SmartView {
   _addCommentHandler(evt) {
     if ((evt.key === Button.ENTER || evt.key === Button.META) && evt.ctrlKey) {
       evt.preventDefault();
-
-      this._setScrollTop();
       this._callback.addNewComment(this._data);
-      this.updateElement();
-      this._restoreScrollTop();
     }
   }
 
@@ -272,11 +268,8 @@ export default class Popup extends SmartView {
   }
 
   _deleteCommentHandler(evt) {
+    evt.target.textContent = `Deleting…`;
     this._defaultClickHandler(evt, this._callback.deleteComment);
-
-    this._setScrollTop();
-    this.updateElement();
-    this._restoreScrollTop();
   }
 
   _closePopupHandler(evt) {

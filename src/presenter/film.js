@@ -109,8 +109,6 @@ export default class Film {
       "id": this._film.id,
       "comment": comment
     });
-
-    this.updatePopup();
   }
 
   _handleDeleteComment(evt) {
@@ -118,8 +116,6 @@ export default class Film {
       "id": this._film.id,
       "commentId": this._film.comments[evt.target.dataset.count]
     });
-
-    this.updatePopup();
   }
 
   _handleCommentLoad(comments) {
