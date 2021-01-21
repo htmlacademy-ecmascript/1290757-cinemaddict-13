@@ -82,12 +82,21 @@ export default class Film {
     remove(this._view);
   }
 
-  setAborting() {
+  setChangeStatusAborting() {
     if (this._isPopupOpen) {
       this._popupView.shake();
-    } else {
-      this._view.shake();
+      return;
     }
+
+    this._view.shake();
+  }
+
+  setAddCommentAborting() {
+    this._popupView.shakeField();
+  }
+
+  setDeleteCommentAborting(data) {
+    this._popupView.shakeComment(data);
   }
 
   _destroyPopup() {

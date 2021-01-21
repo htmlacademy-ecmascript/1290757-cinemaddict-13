@@ -226,13 +226,37 @@ export default class PageMainContent {
     });
   }
 
-  _setFilmPresentersAborting(data) {
+  _changeStatusAborting(data) {
     this._filmPresenters.forEach((value) => {
       Object
         .values(value)
         .forEach((presenter) => {
           if (presenter._film.id === data.id) {
-            presenter.setAborting();
+            presenter.setChangeStatusAborting();
+          }
+        });
+    });
+  }
+
+  _addCommentAborting(data) {
+    this._filmPresenters.forEach((value) => {
+      Object
+        .values(value)
+        .forEach((presenter) => {
+          if (presenter._film.id === data.id) {
+            presenter.setAddCommentAborting();
+          }
+        });
+    });
+  }
+
+  _deleteCommentAborting(data) {
+    this._filmPresenters.forEach((value) => {
+      Object
+        .values(value)
+        .forEach((presenter) => {
+          if (presenter._film.id === data.id) {
+            presenter.setDeleteCommentAborting(data);
           }
         });
     });
@@ -247,7 +271,7 @@ export default class PageMainContent {
             this._filmsModel.updateFilm(updateType, response);
           })
           .catch(() => {
-            this._setFilmPresentersAborting(update);
+            this._changeStatusAborting(update);
           });
         break;
       case UserAction.ADD_COMMENT:
@@ -256,7 +280,7 @@ export default class PageMainContent {
             this._filmsModel.setComments(updateType, response);
           })
           .catch(() => {
-            this._setFilmPresentersAborting(update);
+            this._addCommentAborting(update);
           });
         break;
       case UserAction.DELETE_COMMENT:
@@ -265,7 +289,7 @@ export default class PageMainContent {
             this._filmsModel.deleteComment(updateType, update);
           })
           .catch(() => {
-            this._setFilmPresentersAborting(update);
+            this._deleteCommentAborting(update);
           });
         break;
       case UserAction.LOAD_COMMENTS:

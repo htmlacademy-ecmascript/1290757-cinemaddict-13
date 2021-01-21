@@ -75,6 +75,7 @@ const FilterType = {
 
 const AUTHORIZATION = `Basic az36347hxjmwyhepv`;
 const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export {PROPOSALS, ACTORS, MAX_DAYS, SECONDS_IN_MINUTE, RenderPosition, Event, Button, TOTAL_FILMS, SortType,
-  UserAction, UpdateType, FilterType, AUTHORIZATION, END_POINT};
+  UserAction, UpdateType, FilterType, AUTHORIZATION, END_POINT, SHAKE_ANIMATION_TIMEOUT};
