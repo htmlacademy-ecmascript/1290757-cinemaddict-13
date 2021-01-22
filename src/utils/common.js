@@ -24,9 +24,14 @@ const checkButtonPress = (evt, action, button) => {
   }
 };
 
+const isOnline = () => {
+  return window.navigator.onLine;
+};
+
 export {
   getRandomInteger,
   getRandomArrayItem,
   getArrayWithRandomItems,
-  checkButtonPress
+  checkButtonPress,
+  isOnline
 };
