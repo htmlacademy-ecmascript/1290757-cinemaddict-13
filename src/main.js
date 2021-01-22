@@ -6,7 +6,7 @@ import FilmModel from "./model/film.js";
 import FilterModel from "./model/filter.js";
 import {render} from "./utils/render.js";
 import {RenderPosition, UpdateType, AUTHORIZATION, END_POINT} from "./const.js";
-import Api from "./api.js";
+import Api from "./api/api.js";
 
 const body = document.querySelector(`body`);
 const header = body.querySelector(`.header`);

@@ -5,7 +5,7 @@ import {AUTHORIZATION, END_POINT, RenderPosition} from "../const.js";
 import {UserAction, UpdateType} from "../const.js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import Api from "../api";
+import Api from "../api/api";
 
 dayjs.extend(utc);
 
