@@ -33,3 +33,7 @@ const filterPresenter = new FilterPresenter(main, filterModel, filmsModel);
 
 filterPresenter.init();
 pageMainContentPresenter.init();
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`);
+});
