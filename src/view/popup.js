@@ -1,6 +1,6 @@
 import {getFormatTime} from "../utils/render.js";
 import SmartView from "./smart";
-import {ACTORS, Button, Event} from "../const";
+import {ACTORS, Button, Event, SHAKE_ANIMATION_TIMEOUT} from "../const";
 import {checkButtonPress, getRandomArrayItem} from "../utils/common";
 import dayjs from "dayjs";
 import he from "he";
@@ -11,6 +11,11 @@ const EMOJIS = [
   `puke`,
   `angry`
 ];
+
+const DeleteButtonStatus = {
+  DELETING: `Deleting…`,
+  DELETE: `Delete`
+};
 
 const checkFlagStatus = (value) => value ? `checked` : ``;
 
@@ -183,7 +188,7 @@ export default class Popup extends SmartView {
     this._watchedButton = null;
     this._watchlistButton = null;
     this._favoriteButton = null;
-    this._commentField = null;
+    this._commentForm = null;
     this._deleteButtons = null;
 
     this._setInnerHandlers();
@@ -253,13 +258,10 @@ export default class Popup extends SmartView {
   }
 
   _addCommentHandler(evt) {
-    if (evt.key === Button.ENTER && evt.ctrlKey) {
+    if ((evt.key === Button.ENTER || evt.key === Button.META) && evt.ctrlKey) {
       evt.preventDefault();
-
-      this._setScrollTop();
+      evt.target.disabled = true;
       this._callback.addNewComment(this._data);
-      this.updateElement();
-      this._restoreScrollTop();
     }
   }
 
@@ -272,11 +274,9 @@ export default class Popup extends SmartView {
   }
 
   _deleteCommentHandler(evt) {
+    evt.target.textContent = DeleteButtonStatus.DELETING;
+    evt.target.disabled = true;
     this._defaultClickHandler(evt, this._callback.deleteComment);
-
-    this._setScrollTop();
-    this.updateElement();
-    this._restoreScrollTop();
   }
 
   _closePopupHandler(evt) {
@@ -303,13 +303,36 @@ export default class Popup extends SmartView {
     this._defaultClickHandler(evt, this._callback.favoriteClick);
   }
 
+  shakeField() {
+    const commentField = this._element.querySelector(`.film-details__comment-input`);
+
+    commentField.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      commentField.style.animation = ``;
+      commentField.disabled = false;
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shakeComment(data) {
+    const index = this._filmData.comments.indexOf(data.commentId);
+    const comment = this._element.querySelector(`.film-details__comment:nth-child(${index + 1})`);
+    const deleteButton = comment.querySelector(`.film-details__comment-delete`);
+
+    comment.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      comment.style.animation = ``;
+      deleteButton.disabled = false;
+      deleteButton.textContent = DeleteButtonStatus.DELETE;
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
   removeElement() {
     this._element = null;
     this._closeButton = null;
     this._watchedButton = null;
     this._watchlistButton = null;
     this._favoriteButton = null;
-    this._commentField = null;
+    this._commentForm = null;
     this._deleteButtons = null;
   }
 
@@ -334,15 +357,15 @@ export default class Popup extends SmartView {
 
   setCommentAddHandler(callback) {
     this._callback.addNewComment = callback;
-    this._commentField = this._element.querySelector(`.film-details__inner`);
+    this._commentForm = this._element.querySelector(`.film-details__inner`);
 
-    this._commentField.addEventListener(Event.KEY_DOWN, this._addCommentHandler);
+    this._commentForm.addEventListener(Event.KEY_DOWN, this._addCommentHandler);
   }
 
   removeCommentAddHandler(callback) {
     this._callback.addNewComment = callback;
 
-    this._commentField.removeEventListener(Event.KEY_DOWN, this._addCommentHandler);
+    this._commentForm.removeEventListener(Event.KEY_DOWN, this._addCommentHandler);
   }
 
   setClosePopupHandler(callback) {

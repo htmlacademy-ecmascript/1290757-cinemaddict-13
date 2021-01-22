@@ -31,7 +31,8 @@ export default class Api {
       body: JSON.stringify(FilmsModel.adaptCommentToServer(film.comment)),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then((data) => FilmsModel.adaptAddCommentToClient(data));
   }
 
   deleteComment(id) {
