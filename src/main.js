@@ -36,7 +36,7 @@ apiWithProvider.getFilms()
     render(footerStatistics, new FooterStatistics().element, RenderPosition.BEFORE_END);
   });
 
-const pageMainContentPresenter = new PageMainContent(body, main, filmsModel, filterModel, apiWithProvider);
+const pageMainContentPresenter = new PageMainContent(body, main, filmsModel, filterModel, apiWithProvider, api);
 const filterPresenter = new FilterPresenter(main, filterModel, filmsModel);
 
 filterPresenter.init();

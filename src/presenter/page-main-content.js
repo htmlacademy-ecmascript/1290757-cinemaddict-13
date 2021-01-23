@@ -19,7 +19,7 @@ const FilmCategory = {
 };
 
 export default class PageMainContent {
-  constructor(bodyContainer, mainContainer, filmsModel, filterModel, api) {
+  constructor(bodyContainer, mainContainer, filmsModel, filterModel, apiWithProvider, api) {
     this._filmsModel = filmsModel;
     this._filterModel = filterModel;
     this._bodyContainer = bodyContainer;
@@ -32,6 +32,7 @@ export default class PageMainContent {
     this._setTypesForFilmPresenterCollection();
     this._currentSortType = SortType.DEFAULT;
     this._isLoading = true;
+    this._apiWithProvider = apiWithProvider;
     this._api = api;
 
     this._sortingView = null;
@@ -266,7 +267,7 @@ export default class PageMainContent {
     switch (actionType) {
       case UserAction.CHANGE_STATUS:
         delete update.loadedComments;
-        this._api.updateFilm(update)
+        this._apiWithProvider.updateFilm(update)
           .then((response) => {
             this._filmsModel.updateFilm(updateType, response);
           })
