@@ -5,12 +5,13 @@ import FilterPresenter from "./presenter/filter.js";
 import FilmModel from "./model/film.js";
 import FilterModel from "./model/filter.js";
 import {render} from "./utils/render.js";
+import {toast} from "./utils/toast";
 import {RenderPosition, UpdateType, AUTHORIZATION, END_POINT} from "./const.js";
 import Api from "./api/api.js";
 import Store from "./api/store.js";
 import Provider from "./api/provider.js";
 
-const STORE_PREFIX = `taskmanager-localstorage`;
+const STORE_PREFIX = `cinemaddict-localstorage`;
 const STORE_VER = `v13`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
@@ -47,10 +48,12 @@ window.addEventListener(`load`, () => {
 });
 
 window.addEventListener(`online`, () => {
+  toast(`Internet connection restored`);
   document.title = document.title.replace(` [offline]`, ``);
   apiWithProvider.sync();
 });
 
 window.addEventListener(`offline`, () => {
+  toast(`Internet connection is down`);
   document.title += ` [offline]`;
 });

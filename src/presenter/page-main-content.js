@@ -184,8 +184,7 @@ export default class PageMainContent {
     render(this._filmList, this._loadMoreButtonView.element, RenderPosition.BEFORE_END);
   }
 
-
-  _clearFilmList({resetRenderedTaskCount = false, resetSortType = false} = {}) {
+  _clearFilmList({resetRenderedFilmCount = false, resetSortType = false} = {}) {
     const filmCount = this._getFilms().length;
 
     this._filmPresenters.forEach((value) => {
@@ -204,7 +203,7 @@ export default class PageMainContent {
     remove(this._statisticsView);
     remove(this._filmsContainerView);
 
-    this._renderedFilmCount = resetRenderedTaskCount ? MOVIES_PER_STEP : Math.min(filmCount, this._renderedFilmCount);
+    this._renderedFilmCount = resetRenderedFilmCount ? MOVIES_PER_STEP : Math.min(filmCount, this._renderedFilmCount);
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
@@ -311,12 +310,12 @@ export default class PageMainContent {
         this._updateFilmPresenters(data);
         break;
       case UpdateType.PRE_MAJOR:
-        this._clearFilmList({resetRenderedTaskCount: true});
+        this._clearFilmList({resetRenderedFilmCount: true});
         this._updateFilmPresenters(data);
         this.init();
         break;
       case UpdateType.MAJOR:
-        this._clearFilmList({resetRenderedTaskCount: true, resetSortType: true});
+        this._clearFilmList({resetRenderedFilmCount: true, resetSortType: true});
         this.init();
         break;
       case UpdateType.INIT:
@@ -335,7 +334,7 @@ export default class PageMainContent {
     }
 
     this._currentSortType = sortType;
-    this._clearFilmList({resetRenderedTaskCount: true});
+    this._clearFilmList({resetRenderedFilmCount: true});
     this.init();
   }
 
