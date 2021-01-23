@@ -1,21 +1,19 @@
 import FilmView from "../view/film.js";
 import PopupView from "../view/popup.js";
 import {render, remove, replace} from "../utils/render.js";
-import {AUTHORIZATION, END_POINT, RenderPosition} from "../const.js";
+import {RenderPosition} from "../const.js";
 import {UserAction, UpdateType} from "../const.js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import Api from "../api/api";
 
 dayjs.extend(utc);
 
-const api = new Api(END_POINT, AUTHORIZATION);
-
 export default class Film {
-  constructor(filmContainer, bodyContainer, updateData) {
+  constructor(filmContainer, bodyContainer, updateData, api) {
     this._container = filmContainer;
     this._bodyContainer = bodyContainer;
     this._updateData = updateData;
+    this._api = api;
 
     this._view = null;
     this._popupView = null;
@@ -218,7 +216,7 @@ export default class Film {
   }
 
   _loadComment() {
-    api.getComment(this._film)
+    this._api.getComment(this._film)
       .then((comments) => {
         this._handleCommentLoad(comments);
       });

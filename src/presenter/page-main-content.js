@@ -144,7 +144,7 @@ export default class PageMainContent {
   }
 
   _renderFilm(container, film, type) {
-    const filmPresenter = new FilmPresenter(container, this._bodyContainer, this._handleViewAction);
+    const filmPresenter = new FilmPresenter(container, this._bodyContainer, this._handleViewAction, this._api);
     filmPresenter.init(film);
     this._filmPresenters.get(type)[film.id] = filmPresenter;
   }
@@ -266,7 +266,7 @@ export default class PageMainContent {
     switch (actionType) {
       case UserAction.CHANGE_STATUS:
         delete update.loadedComments;
-        this._api.updateFilms(update)
+        this._api.updateFilm(update)
           .then((response) => {
             this._filmsModel.updateFilm(updateType, response);
           })

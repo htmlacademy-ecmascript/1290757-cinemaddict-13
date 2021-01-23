@@ -49,25 +49,40 @@ export default class Provider {
     return Promise.resolve(film);
   }
 
-  addFilm(film) {
+  getComment(film) {
     if (isOnline()) {
-      return this._api.addFilm(film)
-        .then((newFilm) => {
-          this._store.setItem(newFilm.id, FilmsModel.adaptFilmToServer(newFilm));
-          return newFilm;
+      return this._api.getComment(film)
+        .then((comment) => {
+          const items = createStoreStructure(comment);
+          this._store.setItems(items);
+          return comment;
         });
     }
 
-    return Promise.reject(new Error(`Add task failed`));
+    const storeComment = Object.values(this._store.getItems());
+
+    return Promise.resolve(storeComment[film.id].comments.map(FilmsModel.adaptCommentToClient));
   }
 
-  deleteFilm(film) {
+  addComment(film) {
     if (isOnline()) {
-      return this._api.deleteFilm(film)
-        .then(() => this._store.removeItem(film.id));
+      return this._api.addComment(film)
+        .then((data) => {
+          this._store.setItem(data.id, FilmsModel.adaptCommentToServer(data.comments));
+          return data;
+        });
     }
 
-    return Promise.reject(new Error(`Delete task failed`));
+    return Promise.reject(new Error(`Add comment failed`));
+  }
+
+  deleteComment(id) {
+    if (isOnline()) {
+      return this._api.deleteComment(id)
+        .then(() => this._store.removeItem(id));
+    }
+
+    return Promise.reject(new Error(`Delete comment failed`));
   }
 
   sync() {

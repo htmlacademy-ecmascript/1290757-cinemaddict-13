@@ -7,6 +7,12 @@ import FilterModel from "./model/filter.js";
 import {render} from "./utils/render.js";
 import {RenderPosition, UpdateType, AUTHORIZATION, END_POINT} from "./const.js";
 import Api from "./api/api.js";
+import Store from "./api/store.js";
+import Provider from "./api/provider.js";
+
+const STORE_PREFIX = `taskmanager-localstorage`;
+const STORE_VER = `v13`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const body = document.querySelector(`body`);
 const header = body.querySelector(`.header`);
@@ -15,8 +21,10 @@ const footerStatistics = body.querySelector(`.footer__statistics`);
 const filmsModel = new FilmModel();
 const filterModel = new FilterModel();
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
-api.getFilms()
+apiWithProvider.getFilms()
   .then((films) => {
     filmsModel.setFilms(UpdateType.INIT, films);
     render(header, new Profile(films.length).element, RenderPosition.BEFORE_END);
@@ -28,7 +36,7 @@ api.getFilms()
     render(footerStatistics, new FooterStatistics().element, RenderPosition.BEFORE_END);
   });
 
-const pageMainContentPresenter = new PageMainContent(body, main, filmsModel, filterModel, api);
+const pageMainContentPresenter = new PageMainContent(body, main, filmsModel, filterModel, apiWithProvider);
 const filterPresenter = new FilterPresenter(main, filterModel, filmsModel);
 
 filterPresenter.init();
@@ -36,4 +44,13 @@ pageMainContentPresenter.init();
 
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`);
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
 });
