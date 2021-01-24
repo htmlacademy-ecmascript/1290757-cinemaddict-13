@@ -99,6 +99,11 @@ export default class Film {
     this._popupView.shakeComment(data);
   }
 
+  updatePopup() {
+    this._popupClose();
+    this._popupShow();
+  }
+
   _destroyPopup() {
     this._popupView.removeClosePopupHandler(this._popupCloseHandler);
     this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
@@ -210,11 +215,6 @@ export default class Film {
   _popupCloseHandler() {
     this._popupClose();
     this._updateFilmStatus();
-  }
-
-  updatePopup() {
-    this._popupClose();
-    this._popupShow();
   }
 
   _loadComment() {

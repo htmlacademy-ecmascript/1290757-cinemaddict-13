@@ -1,7 +1,7 @@
 import {getFormatTime} from "../utils/render.js";
 import SmartView from "./smart";
-import {ACTORS, Button, Event, SHAKE_ANIMATION_TIMEOUT} from "../const";
-import {checkButtonPress, getRandomArrayItem, isOnline} from "../utils/common";
+import {Button, Event, SHAKE_ANIMATION_TIMEOUT} from "../const";
+import {checkButtonPress, isOnline} from "../utils/common";
 import dayjs from "dayjs";
 import he from "he";
 import {toast} from "../utils/toast";
@@ -169,7 +169,6 @@ export default class Popup extends SmartView {
     this._data = {
       text: ``,
       emotion: ``,
-      author: getRandomArrayItem(ACTORS),
       date: dayjs().format(`YYYY/M/D H:mm`)
     };
 
@@ -197,6 +196,39 @@ export default class Popup extends SmartView {
 
   _getTemplate() {
     return createPopupTemplate(this._filmData, this._data);
+  }
+
+  removeElement() {
+    this._element = null;
+    this._closeButton = null;
+    this._watchedButton = null;
+    this._watchlistButton = null;
+    this._favoriteButton = null;
+    this._commentForm = null;
+    this._deleteButtons = null;
+  }
+
+  shakeField() {
+    const commentField = this._element.querySelector(`.film-details__comment-input`);
+
+    commentField.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      commentField.style.animation = ``;
+      commentField.disabled = false;
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shakeComment(data) {
+    const index = this._filmData.comments.indexOf(data.commentId);
+    const comment = this._element.querySelector(`.film-details__comment:nth-child(${index + 1})`);
+    const deleteButton = comment.querySelector(`.film-details__comment-delete`);
+
+    comment.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      comment.style.animation = ``;
+      deleteButton.disabled = false;
+      deleteButton.textContent = DeleteButtonStatus.DELETE;
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   _setScrollTop() {
@@ -312,39 +344,6 @@ export default class Popup extends SmartView {
 
   _favoriteClickHandler(evt) {
     this._defaultClickHandler(evt, this._callback.favoriteClick);
-  }
-
-  shakeField() {
-    const commentField = this._element.querySelector(`.film-details__comment-input`);
-
-    commentField.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    setTimeout(() => {
-      commentField.style.animation = ``;
-      commentField.disabled = false;
-    }, SHAKE_ANIMATION_TIMEOUT);
-  }
-
-  shakeComment(data) {
-    const index = this._filmData.comments.indexOf(data.commentId);
-    const comment = this._element.querySelector(`.film-details__comment:nth-child(${index + 1})`);
-    const deleteButton = comment.querySelector(`.film-details__comment-delete`);
-
-    comment.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    setTimeout(() => {
-      comment.style.animation = ``;
-      deleteButton.disabled = false;
-      deleteButton.textContent = DeleteButtonStatus.DELETE;
-    }, SHAKE_ANIMATION_TIMEOUT);
-  }
-
-  removeElement() {
-    this._element = null;
-    this._closeButton = null;
-    this._watchedButton = null;
-    this._watchlistButton = null;
-    this._favoriteButton = null;
-    this._commentForm = null;
-    this._deleteButtons = null;
   }
 
   setCommentDeleteHandler(callback) {
