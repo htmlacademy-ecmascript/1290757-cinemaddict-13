@@ -277,7 +277,7 @@ export default class PageMainContent {
       case UserAction.ADD_COMMENT:
         this._api.addComment(update)
           .then((response) => {
-            this._filmsModel.setComments(updateType, response);
+            this._filmsModel.addComments(updateType, response);
           })
           .catch(() => {
             this._addCommentAborting(update);

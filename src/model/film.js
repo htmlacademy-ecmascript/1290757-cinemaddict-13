@@ -44,6 +44,15 @@ export default class Films extends Observer {
     this._notify(updateType, update);
   }
 
+  addComments(updateType, update) {
+    const film = this._films.find((item) => item.id === update.id);
+
+    film.loadedComments = update.comments;
+    film.comments.push(update.comments[update.comments.length - 1].id);
+
+    this._notify(updateType, update);
+  }
+
   deleteComment(updateType, update) {
     const film = this._films.find((item) => item.id === update.id);
     const index = film.comments.indexOf(update.commentId);
@@ -63,7 +72,8 @@ export default class Films extends Observer {
       text: comment.comment,
       emotion: comment.emotion,
       author: comment.author,
-      date: dayjs(comment.date).format(`YYYY/M/D H:mm`)
+      date: dayjs(comment.date).format(`YYYY/M/D H:mm`),
+      id: comment.id
     });
   }
 
