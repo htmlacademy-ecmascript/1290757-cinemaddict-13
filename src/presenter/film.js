@@ -20,7 +20,6 @@ export default class Film {
     this._view = null;
     this._popupView = null;
     this._isPopupOpen = false;
-    this._isTriedOfflineLoadComment = false;
 
     this._popupShowHandler = this._popupShowHandler.bind(this);
     this._popupCloseHandler = this._popupCloseHandler.bind(this);
@@ -111,11 +110,6 @@ export default class Film {
   }
 
   _handleAddComment(comment) {
-    if (!isOnline()) {
-      toast(`You can't add comment offline`);
-      return;
-    }
-
     if (comment.text === `` || comment.emotion === ``) {
       return;
     }
@@ -127,14 +121,6 @@ export default class Film {
   }
 
   _handleDeleteComment(evt) {
-    if (!isOnline() && !this._isTriedOfflineLoadComment) {
-      toast(`You can't delete comment offline`);
-      this._isTriedOfflineLoadComment = true;
-      return;
-    }
-
-    this._isTriedOfflineLoadComment = false;
-
     this._updateData(UserAction.DELETE_COMMENT, UpdateType.PATCH, {
       "id": this._film.id,
       "commentId": this._film.comments[evt.target.dataset.count]

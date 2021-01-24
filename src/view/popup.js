@@ -1,9 +1,10 @@
 import {getFormatTime} from "../utils/render.js";
 import SmartView from "./smart";
 import {ACTORS, Button, Event, SHAKE_ANIMATION_TIMEOUT} from "../const";
-import {checkButtonPress, getRandomArrayItem} from "../utils/common";
+import {checkButtonPress, getRandomArrayItem, isOnline} from "../utils/common";
 import dayjs from "dayjs";
 import he from "he";
+import {toast} from "../utils/toast";
 
 const EMOJIS = [
   `smile`,
@@ -259,6 +260,11 @@ export default class Popup extends SmartView {
 
   _addCommentHandler(evt) {
     if ((evt.key === Button.ENTER || evt.key === Button.META) && evt.ctrlKey) {
+      if (!isOnline()) {
+        toast(`You can't add comment offline`);
+        return;
+      }
+
       evt.preventDefault();
       evt.target.disabled = true;
       this._callback.addNewComment(this._data);
@@ -274,6 +280,11 @@ export default class Popup extends SmartView {
   }
 
   _deleteCommentHandler(evt) {
+    if (!isOnline()) {
+      toast(`You can't delete comment offline`);
+      return;
+    }
+
     evt.target.textContent = DeleteButtonStatus.DELETING;
     evt.target.disabled = true;
     this._defaultClickHandler(evt, this._callback.deleteComment);
