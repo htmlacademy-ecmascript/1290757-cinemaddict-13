@@ -172,8 +172,6 @@ export default class Popup extends SmartView {
       date: dayjs().format(`YYYY/M/D H:mm`)
     };
 
-    this._scrollTop = 0;
-
     this._closePopupHandler = this._closePopupHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);

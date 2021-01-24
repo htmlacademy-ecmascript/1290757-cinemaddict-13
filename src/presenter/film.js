@@ -67,7 +67,9 @@ export default class Film {
     }
 
     if (this._bodyContainer.contains(prevPopupView.element)) {
+      const scrollTop = prevPopupView._element.scrollTop;
       replace(this._popupView, prevPopupView);
+      this._popupView.element.scrollTo({top: scrollTop});
     }
 
     remove(prevFilmView);
