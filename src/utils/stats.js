@@ -63,24 +63,17 @@ const getRank = (films) => {
   return rank;
 };
 
-const getFavoriteGenre = (genresData) => {
-  if (!genresData.size) {
+const sortCharsData = (charsData) => Object.entries(charsData).sort((genreA, genreB) => genreB[1] - genreA[1]);
+const sortGenreByCount = (charsData) => Object.fromEntries(sortCharsData(charsData));
+
+const getFavoriteGenre = (films) => {
+  if (films.length === 0) {
     return ``;
   }
 
-  let favoriteGenre;
+  const charsData = getCharsData(films);
 
-  for (const [key, value] of genresData) {
-    if (!favoriteGenre) {
-      favoriteGenre = [key, value];
-    } else {
-      if (favoriteGenre[1] < value) {
-        favoriteGenre = [key, value];
-      }
-    }
-  }
-
-  return favoriteGenre[0];
+  return sortCharsData(charsData)[0][0];
 };
 
 const getStats = (films) => {
@@ -90,7 +83,7 @@ const getStats = (films) => {
     watched: filmsStats.count,
     rank: getRank(films),
     totalDuration: filmsStats.minutes,
-    favoriteGenre: getFavoriteGenre(filmsStats.genres),
+    favoriteGenre: getFavoriteGenre(films),
   };
 };
 
@@ -106,10 +99,6 @@ const getFilmInDateRange = (data) => {
       dayjs(film.watchingDate).isBetween(dateFrom, dateTo) ||
       dayjs(film.watchingDate).isSame(dateTo);
   });
-};
-
-const sortGenreByCount = (charsData) => {
-  return Object.fromEntries(Object.entries(charsData).sort((genreA, genreB) => genreB[1] - genreA[1]));
 };
 
 const getCharsData = (films) => {
