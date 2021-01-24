@@ -28,7 +28,7 @@ const apiWithProvider = new Provider(api, store);
 apiWithProvider.getFilms()
   .then((films) => {
     filmsModel.setFilms(UpdateType.INIT, films);
-    render(header, new Profile(films.length).element, RenderPosition.BEFORE_END);
+    render(header, new Profile(films).element, RenderPosition.BEFORE_END);
     render(footerStatistics, new FooterStatistics(films.length).element, RenderPosition.BEFORE_END);
   })
   .catch(() => {

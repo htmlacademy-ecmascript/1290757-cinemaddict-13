@@ -9,9 +9,9 @@ const createProfileTemplate = (rank) => {
 };
 
 export default class Profile extends AbstractView {
-  constructor(filmsCount = 0) {
+  constructor(films) {
     super();
-    this._rank = getRank(filmsCount);
+    this._rank = getRank(films);
   }
 
   _getTemplate() {

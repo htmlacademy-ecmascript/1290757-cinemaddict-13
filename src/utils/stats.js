@@ -45,15 +45,19 @@ const getFilmsStats = (films) => {
   return filmsStats;
 };
 
-const getRank = (count) => {
+const getRank = (films) => {
   let rank = ``;
 
-  if (count >= Rating.NOVICE.limit && count < Rating.FAN.limit) {
-    rank = Rating.NOVICE.name;
-  } else if (count >= Rating.FAN.limit && count < Rating.MOVIE_BUFF.limit) {
-    rank = Rating.FAN.name;
-  } else if (count >= Rating.MOVIE_BUFF.limit) {
-    rank = Rating.MOVIE_BUFF.name;
+  if (films.length !== 0) {
+    const count = films.filter((film) => film.watched).length;
+
+    if (count >= Rating.NOVICE.limit && count < Rating.FAN.limit) {
+      rank = Rating.NOVICE.name;
+    } else if (count >= Rating.FAN.limit && count < Rating.MOVIE_BUFF.limit) {
+      rank = Rating.FAN.name;
+    } else if (count >= Rating.MOVIE_BUFF.limit) {
+      rank = Rating.MOVIE_BUFF.name;
+    }
   }
 
   return rank;
@@ -84,7 +88,7 @@ const getStats = (films) => {
 
   return {
     watched: filmsStats.count,
-    rank: getRank(filmsStats.count),
+    rank: getRank(films),
     totalDuration: filmsStats.minutes,
     favoriteGenre: getFavoriteGenre(filmsStats.genres),
   };
