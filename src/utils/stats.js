@@ -89,15 +89,16 @@ const getStats = (films) => {
 
 const getFilmInDateRange = (data) => {
   const {films, dateFrom, dateTo} = data;
+  const watchedFilms = films.filter((film) => film.watched);
 
   if (dateFrom === null) {
-    return films;
+    return watchedFilms;
   }
 
-  return films.filter((film) => {
-    return dayjs(film.watchingDate).isSame(dateFrom) ||
-      dayjs(film.watchingDate).isBetween(dateFrom, dateTo) ||
-      dayjs(film.watchingDate).isSame(dateTo);
+  return watchedFilms.filter((watchedFilm) => {
+    return dayjs(watchedFilm.watchingDate).isSame(dateFrom) ||
+      dayjs(watchedFilm.watchingDate).isBetween(dateFrom, dateTo) ||
+      dayjs(watchedFilm.watchingDate).isSame(dateTo);
   });
 };
 
