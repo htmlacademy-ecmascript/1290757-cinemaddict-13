@@ -5,6 +5,7 @@ import {checkButtonPress, isOnline} from "../utils/common";
 import dayjs from "dayjs";
 import he from "he";
 import {toast} from "../utils/toast";
+import {covertCommentDateToString} from "../utils/film";
 
 const EMOJIS = [
   `smile`,
@@ -54,6 +55,10 @@ const createGenresTemplate = (genres) => genres.map((genre) => `<span class="fil
 const createPopupTemplate = (filmData, commentData) => {
   const {name, poster, description, loadedComments, rating, releaseDate, runtime, genres, director, writers, actors, country,
     age, watched, watchlist, favorite} = filmData;
+
+  if (loadedComments) {
+    covertCommentDateToString(loadedComments);
+  }
 
   const commentCount = loadedComments ? loadedComments.length : 0;
   const genreTitle = genres.length > 1 ? `Genres` : `Genre`;
