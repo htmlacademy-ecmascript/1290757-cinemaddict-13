@@ -154,7 +154,6 @@ export default class Film {
     }));
 
     if (this._isPopupOpen) {
-      this.updatePopup();
       this._changeableData = {
         watched: !this._film.watched,
         watchingDate: dayjs.utc().format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`)
@@ -170,7 +169,6 @@ export default class Film {
     }));
 
     if (this._isPopupOpen) {
-      this.updatePopup();
       this._changeableData = {
         watchlist: !this._film.watchlist
       };
@@ -185,7 +183,6 @@ export default class Film {
     }));
 
     if (this._isPopupOpen) {
-      this.updatePopup();
       this._changeableData = {
         favorite: !this._film.favorite
       };

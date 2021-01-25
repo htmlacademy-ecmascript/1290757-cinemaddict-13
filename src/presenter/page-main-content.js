@@ -220,6 +220,7 @@ export default class PageMainContent {
               presenter.init(presenter._film);
             } else {
               presenter.init(data);
+              presenter.updatePopup();
             }
           }
         });
