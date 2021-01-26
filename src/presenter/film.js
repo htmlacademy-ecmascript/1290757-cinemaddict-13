@@ -41,23 +41,16 @@ export default class Film {
     };
 
     const prevFilmView = this._view;
-    const prevPopupView = this._popupView;
+    this._prevPopupView = this._popupView;
 
     this._view = new FilmView(film);
-    this._popupView = new PopupView(film);
 
     this._view.setShowDetailHandler(this._popupShowHandler);
     this._view.setWatchedClickHandler(this._handleWatchedClick);
     this._view.setWatchlistClickHandler(this._handleWatchlistClick);
     this._view.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._popupView.setClosePopupHandler(this._popupCloseHandler);
-    this._popupView.setWatchedClickHandler(this._handleWatchedClick);
-    this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
-    this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._popupView.setCommentAddHandler(this._handleAddComment);
-    this._popupView.setCommentDeleteHandler(this._handleDeleteComment);
 
-    if (prevFilmView === null || prevPopupView === null) {
+    if (prevFilmView === null) {
       render(this._container, this._view, RenderPosition.BEFORE_END);
       return;
     }
@@ -66,14 +59,14 @@ export default class Film {
       replace(this._view, prevFilmView);
     }
 
-    if (this._bodyContainer.contains(prevPopupView.element)) {
-      const scrollTop = prevPopupView._element.scrollTop;
-      replace(this._popupView, prevPopupView);
+    if (this._bodyContainer.contains(this._prevPopupView.element)) {
+      const scrollTop = this._prevPopupView._element.scrollTop;
+      replace(this._popupView, this._prevPopupView);
       this._popupView.element.scrollTo({top: scrollTop});
     }
 
+    this._prevPopupView = null;
     remove(prevFilmView);
-    remove(prevPopupView);
   }
 
   destroy() {
@@ -199,10 +192,19 @@ export default class Film {
   }
 
   _popupClose() {
-    remove(this._popupView);
-    this._bodyContainer.classList.remove(`hide-overflow`);
-    this._popupView.removeElement();
-    this._isPopupOpen = false;
+    if (this._isPopupOpen) {
+      this._popupView.removeClosePopupHandler(this._popupCloseHandler);
+      this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
+      this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
+      this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
+      this._popupView.removeCommentAddHandler(this._handleAddComment);
+      this._popupView.removeCommentDeleteHandler(this._handleDeleteComment);
+
+      remove(this._popupView);
+      this._popupView.removeElement();
+      this._bodyContainer.classList.remove(`hide-overflow`);
+      this._isPopupOpen = false;
+    }
   }
 
   _popupCloseHandler() {
@@ -223,6 +225,14 @@ export default class Film {
   }
 
   _popupShow() {
+    this._popupView = new PopupView(this._film);
+    this._popupView.setClosePopupHandler(this._popupCloseHandler);
+    this._popupView.setWatchedClickHandler(this._handleWatchedClick);
+    this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupView.setCommentAddHandler(this._handleAddComment);
+    this._popupView.setCommentDeleteHandler(this._handleDeleteComment);
+
     render(this._bodyContainer, this._popupView.element, RenderPosition.BEFORE_END);
     this._bodyContainer.classList.add(`hide-overflow`);
     this._isPopupOpen = true;
