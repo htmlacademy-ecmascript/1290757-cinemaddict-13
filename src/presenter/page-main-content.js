@@ -171,11 +171,6 @@ export default class PageMainContent {
     });
   }
 
-  _updateMostCommentedFilms() {
-    this._filmListExtra[1].querySelector(`.films-list__container`).innerHTML = ``;
-    this._renderMostCommentedFilms();
-  }
-
   _renderMostCommentedFilms() {
     const container = this._filmListExtra[1].querySelector(`.films-list__container`);
     const films = [...this._getFilms()];
@@ -323,7 +318,6 @@ export default class PageMainContent {
     switch (updateType) {
       case UpdateType.PATCH:
         this._updateFilmPresenters(data, UpdateType.PATCH);
-        this._updateMostCommentedFilms();
         break;
       case UpdateType.MINOR:
         this._updateFilmPresenters(data);
