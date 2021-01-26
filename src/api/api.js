@@ -1,4 +1,4 @@
-import FilmsModel from "./model/film.js";
+import FilmsModel from "../model/film.js";
 
 const Method = {
   GET: `GET`,
@@ -48,7 +48,7 @@ export default class Api {
       .then((films) => films.map(FilmsModel.adaptFilmToClient));
   }
 
-  updateFilms(film) {
+  updateFilm(film) {
     return this._load({
       url: `/movies/${film.id}`,
       method: Method.PUT,
@@ -57,6 +57,16 @@ export default class Api {
     })
       .then(Api.toJSON)
       .then(FilmsModel.adaptFilmToClient);
+  }
+
+  sync(films) {
+    return this._load({
+      url: `/movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(films.map(FilmsModel.adaptFilmToServer)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON);
   }
 
   _load({

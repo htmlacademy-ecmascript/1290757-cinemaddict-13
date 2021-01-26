@@ -45,38 +45,35 @@ const getFilmsStats = (films) => {
   return filmsStats;
 };
 
-const getRank = (count) => {
+const getRank = (films) => {
   let rank = ``;
 
-  if (count >= Rating.NOVICE.limit && count < Rating.FAN.limit) {
-    rank = Rating.NOVICE.name;
-  } else if (count >= Rating.FAN.limit && count < Rating.MOVIE_BUFF.limit) {
-    rank = Rating.FAN.name;
-  } else if (count >= Rating.MOVIE_BUFF.limit) {
-    rank = Rating.MOVIE_BUFF.name;
+  if (films.length !== 0) {
+    const count = films.filter((film) => film.watched).length;
+
+    if (count >= Rating.NOVICE.limit && count < Rating.FAN.limit) {
+      rank = Rating.NOVICE.name;
+    } else if (count >= Rating.FAN.limit && count < Rating.MOVIE_BUFF.limit) {
+      rank = Rating.FAN.name;
+    } else if (count >= Rating.MOVIE_BUFF.limit) {
+      rank = Rating.MOVIE_BUFF.name;
+    }
   }
 
   return rank;
 };
 
-const getFavoriteGenre = (genresData) => {
-  if (!genresData.size) {
+const sortCharsData = (charsData) => Object.entries(charsData).sort((genreA, genreB) => genreB[1] - genreA[1]);
+const sortGenreByCount = (charsData) => Object.fromEntries(sortCharsData(charsData));
+
+const getFavoriteGenre = (films) => {
+  if (films.length === 0) {
     return ``;
   }
 
-  let favoriteGenre;
+  const charsData = getCharsData(films);
 
-  for (const [key, value] of genresData) {
-    if (!favoriteGenre) {
-      favoriteGenre = [key, value];
-    } else {
-      if (favoriteGenre[1] < value) {
-        favoriteGenre = [key, value];
-      }
-    }
-  }
-
-  return favoriteGenre[0];
+  return sortCharsData(charsData)[0][0];
 };
 
 const getStats = (films) => {
@@ -84,28 +81,25 @@ const getStats = (films) => {
 
   return {
     watched: filmsStats.count,
-    rank: getRank(filmsStats.count),
+    rank: getRank(films),
     totalDuration: filmsStats.minutes,
-    favoriteGenre: getFavoriteGenre(filmsStats.genres),
+    favoriteGenre: getFavoriteGenre(films),
   };
 };
 
 const getFilmInDateRange = (data) => {
   const {films, dateFrom, dateTo} = data;
+  const watchedFilms = films.filter((film) => film.watched);
 
   if (dateFrom === null) {
-    return films;
+    return watchedFilms;
   }
 
-  return films.filter((film) => {
-    return dayjs(film.watchingDate).isSame(dateFrom) ||
-      dayjs(film.watchingDate).isBetween(dateFrom, dateTo) ||
-      dayjs(film.watchingDate).isSame(dateTo);
+  return watchedFilms.filter((watchedFilm) => {
+    return dayjs(watchedFilm.watchingDate).isSame(dateFrom) ||
+      dayjs(watchedFilm.watchingDate).isBetween(dateFrom, dateTo) ||
+      dayjs(watchedFilm.watchingDate).isSame(dateTo);
   });
-};
-
-const sortGenreByCount = (charsData) => {
-  return Object.fromEntries(Object.entries(charsData).sort((genreA, genreB) => genreB[1] - genreA[1]));
 };
 
 const getCharsData = (films) => {

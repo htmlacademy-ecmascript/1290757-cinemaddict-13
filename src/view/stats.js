@@ -115,10 +115,10 @@ const createIntervalToggleTemplate = (currentInterval) => {
       <label for="statistic-${interval.value}" class="statistic__filters-label">${interval.name}</label>`).join(``);
 };
 
-const createStatisticsTemplate = (films, filmsCount, currentInterval) => {
+const createStatisticsTemplate = (films, allFilms, currentInterval) => {
   const stats = getStats(films);
   const {watched, totalDuration, favoriteGenre} = stats;
-  const rank = getRank(filmsCount);
+  const rank = getRank(allFilms);
   const durationTemplate = createDurationTemplate(totalDuration);
   const intervalToggleTemplate = createIntervalToggleTemplate(currentInterval);
 
@@ -193,7 +193,7 @@ export default class Statistics extends SmartView {
   }
 
   _getTemplate() {
-    return createStatisticsTemplate(this._filmInDateRange, this._data.films.length, this._currentInterval);
+    return createStatisticsTemplate(this._filmInDateRange, this._data.films, this._currentInterval);
   }
 
   _changeInterval(intervalName) {

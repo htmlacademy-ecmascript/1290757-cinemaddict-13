@@ -1,9 +1,11 @@
 import {getFormatTime} from "../utils/render.js";
 import SmartView from "./smart";
-import {ACTORS, Button, Event, SHAKE_ANIMATION_TIMEOUT} from "../const";
-import {checkButtonPress, getRandomArrayItem} from "../utils/common";
+import {Button, Event, SHAKE_ANIMATION_TIMEOUT} from "../const";
+import {checkButtonPress, isOnline} from "../utils/common";
 import dayjs from "dayjs";
 import he from "he";
+import {toast} from "../utils/toast";
+import {covertCommentDateToString} from "../utils/film";
 
 const EMOJIS = [
   `smile`,
@@ -53,6 +55,10 @@ const createGenresTemplate = (genres) => genres.map((genre) => `<span class="fil
 const createPopupTemplate = (filmData, commentData) => {
   const {name, poster, description, loadedComments, rating, releaseDate, runtime, genres, director, writers, actors, country,
     age, watched, watchlist, favorite} = filmData;
+
+  if (loadedComments) {
+    covertCommentDateToString(loadedComments);
+  }
 
   const commentCount = loadedComments ? loadedComments.length : 0;
   const genreTitle = genres.length > 1 ? `Genres` : `Genre`;
@@ -168,11 +174,8 @@ export default class Popup extends SmartView {
     this._data = {
       text: ``,
       emotion: ``,
-      author: getRandomArrayItem(ACTORS),
       date: dayjs().format(`YYYY/M/D H:mm`)
     };
-
-    this._scrollTop = 0;
 
     this._closePopupHandler = this._closePopupHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
@@ -196,6 +199,39 @@ export default class Popup extends SmartView {
 
   _getTemplate() {
     return createPopupTemplate(this._filmData, this._data);
+  }
+
+  removeElement() {
+    this._element = null;
+    this._closeButton = null;
+    this._watchedButton = null;
+    this._watchlistButton = null;
+    this._favoriteButton = null;
+    this._commentForm = null;
+    this._deleteButtons = null;
+  }
+
+  shakeField() {
+    const commentField = this._element.querySelector(`.film-details__comment-input`);
+
+    commentField.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      commentField.style.animation = ``;
+      commentField.disabled = false;
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shakeComment(data) {
+    const index = this._filmData.comments.indexOf(data.commentId);
+    const comment = this._element.querySelector(`.film-details__comment:nth-child(${index + 1})`);
+    const deleteButton = comment.querySelector(`.film-details__comment-delete`);
+
+    comment.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      comment.style.animation = ``;
+      deleteButton.disabled = false;
+      deleteButton.textContent = DeleteButtonStatus.DELETE;
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   _setScrollTop() {
@@ -259,6 +295,11 @@ export default class Popup extends SmartView {
 
   _addCommentHandler(evt) {
     if ((evt.key === Button.ENTER || evt.key === Button.META) && evt.ctrlKey) {
+      if (!isOnline()) {
+        toast(`You can't add comment offline`);
+        return;
+      }
+
       evt.preventDefault();
       evt.target.disabled = true;
       this._callback.addNewComment(this._data);
@@ -274,6 +315,11 @@ export default class Popup extends SmartView {
   }
 
   _deleteCommentHandler(evt) {
+    if (!isOnline()) {
+      toast(`You can't delete comment offline`);
+      return;
+    }
+
     evt.target.textContent = DeleteButtonStatus.DELETING;
     evt.target.disabled = true;
     this._defaultClickHandler(evt, this._callback.deleteComment);
@@ -301,39 +347,6 @@ export default class Popup extends SmartView {
 
   _favoriteClickHandler(evt) {
     this._defaultClickHandler(evt, this._callback.favoriteClick);
-  }
-
-  shakeField() {
-    const commentField = this._element.querySelector(`.film-details__comment-input`);
-
-    commentField.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    setTimeout(() => {
-      commentField.style.animation = ``;
-      commentField.disabled = false;
-    }, SHAKE_ANIMATION_TIMEOUT);
-  }
-
-  shakeComment(data) {
-    const index = this._filmData.comments.indexOf(data.commentId);
-    const comment = this._element.querySelector(`.film-details__comment:nth-child(${index + 1})`);
-    const deleteButton = comment.querySelector(`.film-details__comment-delete`);
-
-    comment.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    setTimeout(() => {
-      comment.style.animation = ``;
-      deleteButton.disabled = false;
-      deleteButton.textContent = DeleteButtonStatus.DELETE;
-    }, SHAKE_ANIMATION_TIMEOUT);
-  }
-
-  removeElement() {
-    this._element = null;
-    this._closeButton = null;
-    this._watchedButton = null;
-    this._watchlistButton = null;
-    this._favoriteButton = null;
-    this._commentForm = null;
-    this._deleteButtons = null;
   }
 
   setCommentDeleteHandler(callback) {

@@ -107,13 +107,6 @@ export default class Film extends AbstractView {
     this.element.addEventListener(Event.KEY_DOWN, this._showDetailHandler);
   }
 
-  removeShowDetailHandler(callback) {
-    this._callback.showDetail = callback;
-
-    this.element.removeEventListener(Event.MOUSE_DOWN, this._showDetailHandler);
-    this.element.removeEventListener(Event.KEY_DOWN, this._showDetailHandler);
-  }
-
   setWatchedClickHandler(callback) {
     this._callback.watchedClick = callback;
 
