@@ -199,13 +199,7 @@ export default class Film {
   }
 
   _popupClose() {
-    const filmDetails = this._bodyContainer.querySelector(`.film-details`);
-
-    if (!filmDetails) {
-      return;
-    }
-
-    this._bodyContainer.removeChild(filmDetails);
+    remove(this._popupView);
     this._bodyContainer.classList.remove(`hide-overflow`);
     this._popupView.removeElement();
     this._isPopupOpen = false;
