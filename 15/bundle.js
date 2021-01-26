@@ -40331,23 +40331,15 @@ class Film {
     };
 
     const prevFilmView = this._view;
-    const prevPopupView = this._popupView;
 
     this._view = new _view_film_js__WEBPACK_IMPORTED_MODULE_0__["default"](film);
-    this._popupView = new _view_popup_js__WEBPACK_IMPORTED_MODULE_1__["default"](film);
 
     this._view.setShowDetailHandler(this._popupShowHandler);
     this._view.setWatchedClickHandler(this._handleWatchedClick);
     this._view.setWatchlistClickHandler(this._handleWatchlistClick);
     this._view.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._popupView.setClosePopupHandler(this._popupCloseHandler);
-    this._popupView.setWatchedClickHandler(this._handleWatchedClick);
-    this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
-    this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._popupView.setCommentAddHandler(this._handleAddComment);
-    this._popupView.setCommentDeleteHandler(this._handleDeleteComment);
 
-    if (prevFilmView === null || prevPopupView === null) {
+    if (prevFilmView === null) {
       Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["render"])(this._container, this._view, _const_js__WEBPACK_IMPORTED_MODULE_3__["RenderPosition"].BEFORE_END);
       return;
     }
@@ -40356,14 +40348,18 @@ class Film {
       Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["replace"])(this._view, prevFilmView);
     }
 
-    if (this._bodyContainer.contains(prevPopupView.element)) {
+    Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["remove"])(prevFilmView);
+  }
+
+  replacePopup() {
+    const prevPopupView = this._popupView;
+
+    if (prevPopupView && this._bodyContainer.contains(prevPopupView.element)) {
       const scrollTop = prevPopupView._element.scrollTop;
+      this._initPopup();
       Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["replace"])(this._popupView, prevPopupView);
       this._popupView.element.scrollTo({top: scrollTop});
     }
-
-    Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["remove"])(prevFilmView);
-    Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["remove"])(prevPopupView);
   }
 
   destroy() {
@@ -40444,7 +40440,6 @@ class Film {
     }));
 
     if (this._isPopupOpen) {
-      this.updatePopup();
       this._changeableData = {
         watched: !this._film.watched,
         watchingDate: dayjs__WEBPACK_IMPORTED_MODULE_4___default.a.utc().format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`)
@@ -40460,7 +40455,6 @@ class Film {
     }));
 
     if (this._isPopupOpen) {
-      this.updatePopup();
       this._changeableData = {
         watchlist: !this._film.watchlist
       };
@@ -40475,7 +40469,6 @@ class Film {
     }));
 
     if (this._isPopupOpen) {
-      this.updatePopup();
       this._changeableData = {
         favorite: !this._film.favorite
       };
@@ -40492,16 +40485,19 @@ class Film {
   }
 
   _popupClose() {
-    const filmDetails = this._bodyContainer.querySelector(`.film-details`);
+    if (this._isPopupOpen) {
+      this._popupView.removeClosePopupHandler(this._popupCloseHandler);
+      this._popupView.removeWatchedClickHandler(this._handleWatchedClick);
+      this._popupView.removeWatchlistClickHandler(this._handleWatchlistClick);
+      this._popupView.removeFavoriteClickHandler(this._handleFavoriteClick);
+      this._popupView.removeCommentAddHandler(this._handleAddComment);
+      this._popupView.removeCommentDeleteHandler(this._handleDeleteComment);
 
-    if (!filmDetails) {
-      return;
+      Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["remove"])(this._popupView);
+      this._popupView.removeElement();
+      this._bodyContainer.classList.remove(`hide-overflow`);
+      this._isPopupOpen = false;
     }
-
-    this._bodyContainer.removeChild(filmDetails);
-    this._bodyContainer.classList.remove(`hide-overflow`);
-    this._popupView.removeElement();
-    this._isPopupOpen = false;
   }
 
   _popupCloseHandler() {
@@ -40521,7 +40517,23 @@ class Film {
       });
   }
 
+  _initPopup() {
+    this._popupView = new _view_popup_js__WEBPACK_IMPORTED_MODULE_1__["default"](this._film);
+    this._setPopupHandlers();
+  }
+
+  _setPopupHandlers() {
+    this._popupView.setClosePopupHandler(this._popupCloseHandler);
+    this._popupView.setWatchedClickHandler(this._handleWatchedClick);
+    this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupView.setCommentAddHandler(this._handleAddComment);
+    this._popupView.setCommentDeleteHandler(this._handleDeleteComment);
+  }
+
   _popupShow() {
+    this._initPopup();
+
     Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_2__["render"])(this._bodyContainer, this._popupView.element, _const_js__WEBPACK_IMPORTED_MODULE_3__["RenderPosition"].BEFORE_END);
     this._bodyContainer.classList.add(`hide-overflow`);
     this._isPopupOpen = true;
@@ -40737,7 +40749,9 @@ class PageMainContent {
     this._filmList = this._mainContainer.querySelector(`.films-list`);
     this._filmsContainer = this._filmList.querySelector(`.films-list__container`);
     this._filmListExtra = this._mainContainer.querySelectorAll(`.films-list.films-list--extra`);
-    this._renderFilmsList();
+    this._renderFilmsList({
+      limit: this._renderedFilmCount
+    });
 
     if (films.length > this._renderedFilmCount) {
       this._renderLoadMoreButton();
@@ -40801,7 +40815,12 @@ class PageMainContent {
     Object(_utils_render_js__WEBPACK_IMPORTED_MODULE_7__["render"])(this._mainContainer, this._loadingView, _const_js__WEBPACK_IMPORTED_MODULE_8__["RenderPosition"].BEFORE_END);
   }
 
-  _renderFilmsList(container = this._filmsContainer, filmsList = this._getFilms(), limit = MOVIES_PER_STEP, type = FilmCategory.COMMON) {
+  _renderFilmsList({
+    container = this._filmsContainer,
+    filmsList = this._getFilms(),
+    limit = MOVIES_PER_STEP,
+    type = FilmCategory.COMMON
+  }) {
     for (let i = 0; i < Math.min(filmsList.length, limit); i++) {
       this._renderFilm(container, filmsList[i], type);
     }
@@ -40819,7 +40838,12 @@ class PageMainContent {
 
     films.sort((a, b) => b.rating - a.rating);
 
-    this._renderFilmsList(container, films, MAX_ADDITIONAL_FILMS, FilmCategory.TOP_RATED);
+    this._renderFilmsList({
+      container,
+      filmsList: films,
+      limit: MAX_ADDITIONAL_FILMS,
+      type: FilmCategory.TOP_RATED
+    });
   }
 
   _updateMostCommentedFilms() {
@@ -40833,7 +40857,12 @@ class PageMainContent {
 
     films.sort((a, b) => b.comments.length - a.comments.length);
 
-    this._renderFilmsList(container, films, MAX_ADDITIONAL_FILMS, FilmCategory.MOST_COMMENTED);
+    this._renderFilmsList({
+      container,
+      filmsList: films,
+      limit: MAX_ADDITIONAL_FILMS,
+      type: FilmCategory.MOST_COMMENTED
+    });
   }
 
   _renderLoadMoreButton() {
@@ -40881,8 +40910,10 @@ class PageMainContent {
           if (presenter._film.id === data.id) {
             if (updateType === _const_js__WEBPACK_IMPORTED_MODULE_8__["UpdateType"].PATCH) {
               presenter.init(presenter._film);
+              presenter.replacePopup();
             } else {
               presenter.init(data);
+              presenter.updatePopup();
             }
           }
         });
@@ -40973,7 +41004,7 @@ class PageMainContent {
         this._updateFilmPresenters(data);
         break;
       case _const_js__WEBPACK_IMPORTED_MODULE_8__["UpdateType"].PRE_MAJOR:
-        this._clearFilmList({resetRenderedFilmCount: true});
+        this._clearFilmList();
         this._updateFilmPresenters(data);
         this.init();
         break;
