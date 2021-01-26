@@ -74,7 +74,9 @@ export default class PageMainContent {
     this._filmList = this._mainContainer.querySelector(`.films-list`);
     this._filmsContainer = this._filmList.querySelector(`.films-list__container`);
     this._filmListExtra = this._mainContainer.querySelectorAll(`.films-list.films-list--extra`);
-    this._renderFilmsList();
+    this._renderFilmsList({
+      limit: this._renderedFilmCount
+    });
 
     if (films.length > this._renderedFilmCount) {
       this._renderLoadMoreButton();
@@ -138,7 +140,12 @@ export default class PageMainContent {
     render(this._mainContainer, this._loadingView, RenderPosition.BEFORE_END);
   }
 
-  _renderFilmsList(container = this._filmsContainer, filmsList = this._getFilms(), limit = MOVIES_PER_STEP, type = FilmCategory.COMMON) {
+  _renderFilmsList({
+    container = this._filmsContainer,
+    filmsList = this._getFilms(),
+    limit = MOVIES_PER_STEP,
+    type = FilmCategory.COMMON
+  }) {
     for (let i = 0; i < Math.min(filmsList.length, limit); i++) {
       this._renderFilm(container, filmsList[i], type);
     }
@@ -156,7 +163,12 @@ export default class PageMainContent {
 
     films.sort((a, b) => b.rating - a.rating);
 
-    this._renderFilmsList(container, films, MAX_ADDITIONAL_FILMS, FilmCategory.TOP_RATED);
+    this._renderFilmsList({
+      container,
+      filmsList: films,
+      limit: MAX_ADDITIONAL_FILMS,
+      type: FilmCategory.TOP_RATED
+    });
   }
 
   _updateMostCommentedFilms() {
@@ -170,7 +182,12 @@ export default class PageMainContent {
 
     films.sort((a, b) => b.comments.length - a.comments.length);
 
-    this._renderFilmsList(container, films, MAX_ADDITIONAL_FILMS, FilmCategory.MOST_COMMENTED);
+    this._renderFilmsList({
+      container,
+      filmsList: films,
+      limit: MAX_ADDITIONAL_FILMS,
+      type: FilmCategory.MOST_COMMENTED
+    });
   }
 
   _renderLoadMoreButton() {
@@ -218,6 +235,7 @@ export default class PageMainContent {
           if (presenter._film.id === data.id) {
             if (updateType === UpdateType.PATCH) {
               presenter.init(presenter._film);
+              presenter.replacePopup();
             } else {
               presenter.init(data);
               presenter.updatePopup();
@@ -311,7 +329,7 @@ export default class PageMainContent {
         this._updateFilmPresenters(data);
         break;
       case UpdateType.PRE_MAJOR:
-        this._clearFilmList({resetRenderedFilmCount: true});
+        this._clearFilmList();
         this._updateFilmPresenters(data);
         this.init();
         break;

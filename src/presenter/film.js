@@ -41,7 +41,6 @@ export default class Film {
     };
 
     const prevFilmView = this._view;
-    this._prevPopupView = this._popupView;
 
     this._view = new FilmView(film);
 
@@ -59,14 +58,18 @@ export default class Film {
       replace(this._view, prevFilmView);
     }
 
-    if (this._bodyContainer.contains(this._prevPopupView.element)) {
-      const scrollTop = this._prevPopupView._element.scrollTop;
-      replace(this._popupView, this._prevPopupView);
+    remove(prevFilmView);
+  }
+
+  replacePopup() {
+    const prevPopupView = this._popupView;
+
+    if (prevPopupView && this._bodyContainer.contains(prevPopupView.element)) {
+      const scrollTop = prevPopupView._element.scrollTop;
+      this._initPopup();
+      replace(this._popupView, prevPopupView);
       this._popupView.element.scrollTo({top: scrollTop});
     }
-
-    this._prevPopupView = null;
-    remove(prevFilmView);
   }
 
   destroy() {
@@ -224,14 +227,22 @@ export default class Film {
       });
   }
 
-  _popupShow() {
+  _initPopup() {
     this._popupView = new PopupView(this._film);
+    this._setPopupHandlers();
+  }
+
+  _setPopupHandlers() {
     this._popupView.setClosePopupHandler(this._popupCloseHandler);
     this._popupView.setWatchedClickHandler(this._handleWatchedClick);
     this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
     this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
     this._popupView.setCommentAddHandler(this._handleAddComment);
     this._popupView.setCommentDeleteHandler(this._handleDeleteComment);
+  }
+
+  _popupShow() {
+    this._initPopup();
 
     render(this._bodyContainer, this._popupView.element, RenderPosition.BEFORE_END);
     this._bodyContainer.classList.add(`hide-overflow`);
