@@ -212,18 +212,28 @@ export default class Statistics extends SmartView {
     this.updateElement();
   }
 
-  _changeIntervalHandler(evt) {
-    evt.preventDefault();
-
-    this._changeInterval(evt.target.innerText);
-  }
-
   _setInnerHandlers() {
     this.element
       .querySelectorAll(`.statistic__filters-label`)
       .forEach((input) => {
         input.addEventListener(Event.MOUSE_DOWN, this._changeIntervalHandler);
       });
+  }
+
+  _setCharts() {
+    if (this._daysChart !== null) {
+      this._daysChart = null;
+    }
+
+    const statisticCtx = this.element.querySelector(`.statistic__chart`);
+
+    this._daysChart = renderDaysChart(statisticCtx, this._filmInDateRange);
+  }
+
+  _changeIntervalHandler(evt) {
+    evt.preventDefault();
+
+    this._changeInterval(evt.target.innerText);
   }
 
   _dateChangeHandler([dateFrom, dateTo]) {
@@ -235,15 +245,5 @@ export default class Statistics extends SmartView {
       dateFrom,
       dateTo
     });
-  }
-
-  _setCharts() {
-    if (this._daysChart !== null) {
-      this._daysChart = null;
-    }
-
-    const statisticCtx = this.element.querySelector(`.statistic__chart`);
-
-    this._daysChart = renderDaysChart(statisticCtx, this._filmInDateRange);
   }
 }

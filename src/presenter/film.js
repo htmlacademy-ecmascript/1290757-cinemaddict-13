@@ -210,11 +210,6 @@ export default class Film {
     }
   }
 
-  _popupCloseHandler() {
-    this._popupClose();
-    this._updateFilmStatus();
-  }
-
   _loadComment() {
     if (!isOnline()) {
       toast(`You can't load comment offline`);
@@ -232,6 +227,15 @@ export default class Film {
     this._setPopupHandlers();
   }
 
+  _popupShow() {
+    this._initPopup();
+
+    render(this._bodyContainer, this._popupView.element, RenderPosition.BEFORE_END);
+    this._bodyContainer.classList.add(`hide-overflow`);
+    this._isPopupOpen = true;
+    this._loadComment();
+  }
+
   _setPopupHandlers() {
     this._popupView.setClosePopupHandler(this._popupCloseHandler);
     this._popupView.setWatchedClickHandler(this._handleWatchedClick);
@@ -241,13 +245,9 @@ export default class Film {
     this._popupView.setCommentDeleteHandler(this._handleDeleteComment);
   }
 
-  _popupShow() {
-    this._initPopup();
-
-    render(this._bodyContainer, this._popupView.element, RenderPosition.BEFORE_END);
-    this._bodyContainer.classList.add(`hide-overflow`);
-    this._isPopupOpen = true;
-    this._loadComment();
+  _popupCloseHandler() {
+    this._popupClose();
+    this._updateFilmStatus();
   }
 
   _popupShowHandler(evt) {

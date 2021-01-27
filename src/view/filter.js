@@ -36,22 +36,6 @@ export default class Filter extends AbstractView {
     return createFilterTemplate(this._filter, this._currentFilter);
   }
 
-  _defaultClickHandler(evt, cb) {
-    if (evt.type === Event.KEY_DOWN) {
-      checkButtonPress(evt, cb, Button.ENTER);
-    } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, cb, Button.MOUSE_MAIN);
-    }
-  }
-
-  _statisticsClickHandler(evt) {
-    this._defaultClickHandler(evt, this._callback.statisticsClick);
-  }
-
-  _filterTypeChangeHandler(evt) {
-    this._defaultClickHandler(evt, this._callback.filterTypeChange);
-  }
-
   setStatisticsClickHandler(callback) {
     this._callback.statisticsClick = callback;
     const statisticsButtons = this.element.querySelector(`.main-navigation__additional`);
@@ -68,5 +52,21 @@ export default class Filter extends AbstractView {
       button.addEventListener(Event.MOUSE_DOWN, this._filterTypeChangeHandler);
       button.addEventListener(Event.KEY_DOWN, this._filterTypeChangeHandler);
     });
+  }
+
+  _defaultClickHandler(evt, cb) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, cb, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, cb, Button.MOUSE_MAIN);
+    }
+  }
+
+  _statisticsClickHandler(evt) {
+    this._defaultClickHandler(evt, this._callback.statisticsClick);
+  }
+
+  _filterTypeChangeHandler(evt) {
+    this._defaultClickHandler(evt, this._callback.filterTypeChange);
   }
 }

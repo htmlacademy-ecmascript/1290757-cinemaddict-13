@@ -63,43 +63,6 @@ export default class Film extends AbstractView {
     return createFilmTemplate(this._film);
   }
 
-  _showDetailHandler(evt) {
-    if (evt.target.classList.contains(`film-card__poster`)
-      || evt.target.classList.contains(`film-card__title`)
-      || evt.target.classList.contains(`film-card__comments`)) {
-
-      if (evt.type === Event.KEY_DOWN) {
-        checkButtonPress(evt, this._callback.showDetail, Button.ENTER);
-      } else if (evt.type === Event.MOUSE_DOWN) {
-        checkButtonPress(evt, this._callback.showDetail, Button.MOUSE_MAIN);
-      }
-    }
-  }
-
-  _watchedClickHandler(evt) {
-    if (evt.type === Event.KEY_DOWN) {
-      checkButtonPress(evt, this._callback.watchedClick, Button.ENTER);
-    } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, this._callback.watchedClick, Button.MOUSE_MAIN);
-    }
-  }
-
-  _watchlistClickHandler(evt) {
-    if (evt.type === Event.KEY_DOWN) {
-      checkButtonPress(evt, this._callback.watchlistClick, Button.ENTER);
-    } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, this._callback.watchlistClick, Button.MOUSE_MAIN);
-    }
-  }
-
-  _favoriteClickHandler(evt) {
-    if (evt.type === Event.KEY_DOWN) {
-      checkButtonPress(evt, this._callback.favoriteClick, Button.ENTER);
-    } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, this._callback.favoriteClick, Button.MOUSE_MAIN);
-    }
-  }
-
   setShowDetailHandler(callback) {
     this._callback.showDetail = callback;
 
@@ -153,5 +116,42 @@ export default class Film extends AbstractView {
 
     this._favoriteButton.removeEventListener(Event.MOUSE_DOWN, this._favoriteClickHandler);
     this._favoriteButton.removeEventListener(Event.KEY_DOWN, this._favoriteClickHandler);
+  }
+
+  _showDetailHandler(evt) {
+    if (evt.target.classList.contains(`film-card__poster`)
+      || evt.target.classList.contains(`film-card__title`)
+      || evt.target.classList.contains(`film-card__comments`)) {
+
+      if (evt.type === Event.KEY_DOWN) {
+        checkButtonPress(evt, this._callback.showDetail, Button.ENTER);
+      } else if (evt.type === Event.MOUSE_DOWN) {
+        checkButtonPress(evt, this._callback.showDetail, Button.MOUSE_MAIN);
+      }
+    }
+  }
+
+  _watchedClickHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, this._callback.watchedClick, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.watchedClick, Button.MOUSE_MAIN);
+    }
+  }
+
+  _watchlistClickHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, this._callback.watchlistClick, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.watchlistClick, Button.MOUSE_MAIN);
+    }
+  }
+
+  _favoriteClickHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, this._callback.favoriteClick, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.favoriteClick, Button.MOUSE_MAIN);
+    }
   }
 }
