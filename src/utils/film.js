@@ -64,7 +64,7 @@ const covertCommentDateToString = (comments) => {
       const diff = dayjs().diff(comment.date, interval.dayjsValue);
 
       if (diff >= 1 && diff < interval.limit) {
-        comment.date = `${diff} ${diff === 1 ? interval.name : interval.name + `s`} ago`;
+        comment.date = `${diff} ${interval.name}${diff === 1 ? `` : `s`} ago`;
       } else if (interval.dayjsValue === TimeIntervals.MINUTE.dayjsValue && diff < 1) {
         comment.date = `now`;
       }
