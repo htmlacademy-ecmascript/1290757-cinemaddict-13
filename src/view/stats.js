@@ -197,7 +197,7 @@ export default class Statistics extends SmartView {
   }
 
   _changeInterval(intervalName) {
-    for (let interval in Intervals) {
+    for (const interval in Intervals) {
       if (Intervals[interval].name === intervalName) {
         this._currentInterval = Intervals[interval];
       }
