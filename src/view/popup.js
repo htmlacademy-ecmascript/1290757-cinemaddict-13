@@ -388,6 +388,10 @@ export default class Popup extends SmartView {
         return;
       }
 
+      if (this._data.text === `` || this._data.emotion === ``) {
+        return;
+      }
+
       evt.preventDefault();
       evt.target.disabled = true;
       this._callback.addNewComment(this._data);

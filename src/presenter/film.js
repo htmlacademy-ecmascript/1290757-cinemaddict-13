@@ -113,10 +113,6 @@ export default class Film {
   }
 
   _handleAddComment(comment) {
-    if (comment.text === `` || comment.emotion === ``) {
-      return;
-    }
-
     this._updateData(UserAction.ADD_COMMENT, UpdateType.PATCH, {
       "id": this._film.id,
       "comment": comment
