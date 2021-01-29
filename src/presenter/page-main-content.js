@@ -157,11 +157,23 @@ export default class PageMainContent {
     this._filmPresenters.get(type)[film.id] = filmPresenter;
   }
 
+  _getDisplayedFilms(films) {
+    return films.slice(0, Math.min(films.length, MAX_ADDITIONAL_FILMS));
+  }
+
   _renderTopRatedFilms() {
     const container = this._filmListExtra[0].querySelector(`.films-list__container`);
     const films = [...this._getFilms()];
 
     films.sort((a, b) => b.rating - a.rating);
+
+    const displayedFilms = this._getDisplayedFilms(films);
+    const countDisplayedFilms = displayedFilms.filter((film) => film.rating > 0).length !== 0;
+
+    if (!countDisplayedFilms) {
+      this._filmListExtra[0].innerHTML = ``;
+      return;
+    }
 
     this._renderFilmsList({
       container,
@@ -176,6 +188,14 @@ export default class PageMainContent {
     const films = [...this._getFilms()];
 
     films.sort((a, b) => b.comments.length - a.comments.length);
+
+    const displayedFilms = this._getDisplayedFilms(films);
+    const countDisplayedFilms = displayedFilms.filter((film) => film.comments.length > 0).length !== 0;
+
+    if (!countDisplayedFilms) {
+      this._filmListExtra[1].innerHTML = ``;
+      return;
+    }
 
     this._renderFilmsList({
       container,

@@ -274,79 +274,12 @@ export default class Popup extends SmartView {
     this._restoreScrollTop();
   }
 
-  _changeEmotionHandler(evt) {
-    evt.preventDefault();
-
-    this._changeEmotion(evt.target);
-  }
-
   _commentTextInputUpdate() {
     const text = this._element.querySelector(`.film-details__comment-input`).value;
 
     this._updateData({
       text,
     });
-  }
-
-  _commentTextInputHandler(evt) {
-    evt.preventDefault();
-    this._commentTextInputUpdate();
-  }
-
-  _addCommentHandler(evt) {
-    if ((evt.key === Button.ENTER || evt.key === Button.META) && evt.ctrlKey) {
-      if (!isOnline()) {
-        toast(`You can't add comment offline`);
-        return;
-      }
-
-      evt.preventDefault();
-      evt.target.disabled = true;
-      this._callback.addNewComment(this._data);
-    }
-  }
-
-  _defaultClickHandler(evt, cb) {
-    if (evt.type === Event.KEY_DOWN) {
-      checkButtonPress(evt, cb, Button.ENTER);
-    } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, cb, Button.MOUSE_MAIN);
-    }
-  }
-
-  _deleteCommentHandler(evt) {
-    if (!isOnline()) {
-      toast(`You can't delete comment offline`);
-      return;
-    }
-
-    evt.target.textContent = DeleteButtonStatus.DELETING;
-    evt.target.disabled = true;
-    this._defaultClickHandler(evt, this._callback.deleteComment);
-  }
-
-  _closePopupHandler(evt) {
-    if (evt.type === Event.KEY_DOWN) {
-      if (evt.target.className === `film-details__close-btn`) {
-        checkButtonPress(evt, this._callback.closePopup, Button.ENTER);
-      } else {
-        checkButtonPress(evt, this._callback.closePopup, Button.ESCAPE);
-      }
-    } else if (evt.type === Event.MOUSE_DOWN) {
-      checkButtonPress(evt, this._callback.closePopup, Button.MOUSE_MAIN);
-    }
-  }
-
-  _watchedClickHandler(evt) {
-    this._defaultClickHandler(evt, this._callback.watchedClick);
-  }
-
-  _watchlistClickHandler(evt) {
-    this._defaultClickHandler(evt, this._callback.watchlistClick);
-  }
-
-  _favoriteClickHandler(evt) {
-    this._defaultClickHandler(evt, this._callback.favoriteClick);
   }
 
   setCommentDeleteHandler(callback) {
@@ -441,5 +374,76 @@ export default class Popup extends SmartView {
 
     this._favoriteButton.removeEventListener(Event.MOUSE_DOWN, this._favoriteClickHandler);
     this._favoriteButton.removeEventListener(Event.KEY_DOWN, this._favoriteClickHandler);
+  }
+
+  _commentTextInputHandler(evt) {
+    evt.preventDefault();
+    this._commentTextInputUpdate();
+  }
+
+  _addCommentHandler(evt) {
+    if ((evt.key === Button.ENTER || evt.key === Button.META) && evt.ctrlKey) {
+      if (!isOnline()) {
+        toast(`You can't add comment offline`);
+        return;
+      }
+
+      if (this._data.text === `` || this._data.emotion === ``) {
+        return;
+      }
+
+      evt.preventDefault();
+      evt.target.disabled = true;
+      this._callback.addNewComment(this._data);
+    }
+  }
+
+  _defaultClickHandler(evt, cb) {
+    if (evt.type === Event.KEY_DOWN) {
+      checkButtonPress(evt, cb, Button.ENTER);
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, cb, Button.MOUSE_MAIN);
+    }
+  }
+
+  _changeEmotionHandler(evt) {
+    evt.preventDefault();
+
+    this._changeEmotion(evt.target);
+  }
+
+  _watchedClickHandler(evt) {
+    this._defaultClickHandler(evt, this._callback.watchedClick);
+  }
+
+  _watchlistClickHandler(evt) {
+    this._defaultClickHandler(evt, this._callback.watchlistClick);
+  }
+
+  _favoriteClickHandler(evt) {
+    this._defaultClickHandler(evt, this._callback.favoriteClick);
+  }
+
+  _deleteCommentHandler(evt) {
+    if (!isOnline()) {
+      toast(`You can't delete comment offline`);
+      return;
+    }
+
+    evt.target.textContent = DeleteButtonStatus.DELETING;
+    evt.target.disabled = true;
+    this._defaultClickHandler(evt, this._callback.deleteComment);
+  }
+
+  _closePopupHandler(evt) {
+    if (evt.type === Event.KEY_DOWN) {
+      if (evt.target.className === `film-details__close-btn`) {
+        checkButtonPress(evt, this._callback.closePopup, Button.ENTER);
+      } else {
+        checkButtonPress(evt, this._callback.closePopup, Button.ESCAPE);
+      }
+    } else if (evt.type === Event.MOUSE_DOWN) {
+      checkButtonPress(evt, this._callback.closePopup, Button.MOUSE_MAIN);
+    }
   }
 }

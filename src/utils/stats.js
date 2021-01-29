@@ -19,7 +19,7 @@ const Rating = {
 };
 
 const getFilmsStats = (films) => {
-  let filmsStats = {
+  const filmsStats = {
     count: 0,
     minutes: 0,
     genres: new Map()
@@ -103,7 +103,7 @@ const getFilmInDateRange = (data) => {
 };
 
 const getCharsData = (films) => {
-  let chartData = {};
+  const chartData = {};
 
   films.forEach((film) => {
     film.genres.forEach((genre) => {
